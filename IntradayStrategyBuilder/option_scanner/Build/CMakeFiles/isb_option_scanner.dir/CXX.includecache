@@ -1,0 +1,44 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/include/Candle.h
+iostream
+-
+OptionEnums.h
+/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/include/OptionEnums.h
+
+/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/include/OptionEnums.h
+iostream
+-
+unordered_map
+-
+
+/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/src/Candle.cpp
+../include/Candle.h
+/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/include/Candle.h
+chrono
+-
+iomanip
+-
+sstream
+-
+
+/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/src/CandleTags.cpp
+
+/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/src/ContractData.cpp
+
+/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/src/OptionEnums.cpp
+../include/OptionEnums.h
+/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/include/OptionEnums.h
+
+/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/src/OptionScanner.cpp
+
+/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/src/OptionTagFormulas.cpp
+
+/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/src/PerformanceTracker.cpp
+
