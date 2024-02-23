@@ -79,6 +79,7 @@ option_scanner_test_EXTERNAL_OBJECTS =
 
 option_scanner_test: CMakeFiles/option_scanner_test.dir/option_scanner_test.o
 option_scanner_test: CMakeFiles/option_scanner_test.dir/build.make
+option_scanner_test: libisb_option_scanner.a
 option_scanner_test: CMakeFiles/option_scanner_test.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/Build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable option_scanner_test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/option_scanner_test.dir/link.txt --verbose=$(VERBOSE)

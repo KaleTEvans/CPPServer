@@ -6,5 +6,5 @@ CXX_FLAGS =
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/src -I/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/option_scanner/../third_party_libs/TwsApiC++/Api 
+CXX_INCLUDES = 
 

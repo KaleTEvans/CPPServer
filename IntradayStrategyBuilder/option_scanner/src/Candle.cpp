@@ -1,4 +1,4 @@
-#include "../include/Candle.h"
+#include "Candle.h"
 
 #include <chrono>
 #include <iomanip>

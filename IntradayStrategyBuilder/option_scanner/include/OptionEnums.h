@@ -10,61 +10,61 @@
 namespace isb_option_tags {
 
 // Option Types
-enum OptionType {
-	Call = 1,
-	Put = 2
+enum class OptionType {
+	Call,
+	Put
 };
 
 // Time frame for each different kind of candle created
-enum TimeFrame {
-	FiveSecs = 3,
-	ThirtySecs = 4,
-	OneMin = 5,
-	FiveMin = 6,
-	ThirtyMin = 53,
-	OneHour = 54
+enum class TimeFrame {
+	FiveSecs,
+	ThirtySecs,
+	OneMin,
+	FiveMin,
+	ThirtyMin,
+	OneHour
 };
 
 // Option Strike relative to underlying price
-enum RelativeToMoney {
-	ATM = 7,
-	OTM1 = 8, 
-	OTM2 = 9, 
-	OTM3 = 10, 
-	OTM4 = 11, 
-	OTM5 = 12,
-	ITM1 = 13, 
-	ITM2 = 14, 
-	ITM3 = 15, 
-	ITM4 = 16, 
-	ITM5 = 17
+enum class RelativeToMoney {
+	ATM,
+	OTM1, 
+	OTM2, 
+	OTM3, 
+	OTM4, 
+	OTM5,
+	ITM1, 
+	ITM2, 
+	ITM3, 
+	ITM4, 
+	ITM5
 };
 
 // Time of day tagged by hour during stock market operating times
-enum TimeOfDay { 
-	Hour1 = 18, 
-	Hour2 = 19, 
-	Hour3 = 20, 
-	Hour4 = 21, 
-	Hour5 = 22, 
-	Hour6 = 23, 
-	Hour7 = 24 
+enum class TimeOfDay { 
+	Hour1,
+	Hour2,
+	Hour3,
+	Hour4,
+	Hour5,
+	Hour6,
+	Hour7
 };
 
 // Volume Data
 enum class VolumeStDev { 
-	Over1 = 25, 
-	Over2 = 26, 
-	Over3 = 27, 
-	Over4 = 28, 
-	LowVol = 29 
+	Over1,
+	Over2, 
+	Over3, 
+	Over4, 
+	LowVol 
 };
 enum class VolumeThreshold { 
-	Vol100 = 30, 
-	Vol250 = 31, 
-	Vol500 = 32, 
-	Vol1000 = 33, 
-	LowVol = 34 
+	Vol100, 
+	Vol250, 
+	Vol500, 
+	Vol1000, 
+	LowVol 
 };
 
 // Standard deviation of candle high to low
@@ -90,36 +90,36 @@ enum class LocalHighsAndLows {
 
 // Multi-candle rate of change categories
 // Volume movement over several candles
-enum VolumeROC {
-	VolumeIncrease = 55, // Volume increase over 3 candles or more
-	HighVolumeIncrease = 56, // Volume over standard deviation for 3 or more candles
-	VolumeDecrease = 57 // Volume decrease over 3 candles or more
+enum class VolumeROC {
+	VolumeIncrease, // Volume increase over 3 candles or more
+	HighVolumeIncrease, // Volume over standard deviation for 3 or more candles
+	VolumeDecrease // Volume decrease over 3 candles or more
 };
 
 // Price movement over several candles
-enum PriceROC {
-	PriceIncrease = 58, // Price increase over 3 candles or more
-	HighPriceIncrease = 59, // Price increase over stdev 3 or more candles
-	PriceDecrease = 60, // 3 or more candles
-	HighPriceDecrease = 61 // Decrease over stdev 3 or more candles
+enum class PriceROC {
+	PriceIncrease, // Price increase over 3 candles or more
+	HighPriceIncrease, // Price increase over stdev 3 or more candles
+	PriceDecrease, // 3 or more candles
+	HighPriceDecrease // Decrease over stdev 3 or more candles
 };
 
 // Current intraday trending direction of the underlying
 enum class TrendingDirectionIntraday {
-	Bullish = 62,
-	Bearish = 63,
-	Sideways = 64
+	Bullish,
+	Bearish,
+	Sideways
 };
 
 // Will determine how many days this trend will include, likely will be arbitrary
 enum class TrendingDirectionDaily {
-	Bullish = 65,
-	Bearish = 66,
-	Sideways = 67
+	Bullish,
+	Bearish,
+	Sideways
 };
 
 // Categories for tags
-enum TagCategory {
+enum class TagCategory {
 	OptionType,
 	TimeFrame,
 	RelativeToMoney,
@@ -140,9 +140,19 @@ enum TagCategory {
 std::string tag_category(TagCategory val);
 
 // Tag to int key conversions
+int tag_to_db_key(OptionType val);
+int tag_to_db_key(TimeFrame val);
+int tag_to_db_key(RelativeToMoney val);
+int tag_to_db_key(TimeOfDay val);
+int tag_to_db_key(VolumeStDev val);
+int tag_to_db_key(VolumeThreshold val);
 int tag_to_db_key(PriceDelta val, TagCategory tc);
 int tag_to_db_key(DailyHighsAndLows val, TagCategory tc);
 int tag_to_db_key(LocalHighsAndLows val, TagCategory tc);
+int tag_to_db_key(VolumeROC val);
+int tag_to_db_key(PriceROC val);
+int tag_to_db_key(TrendingDirectionIntraday val);
+int tag_to_db_key(TrendingDirectionDaily val);
 }
 
 #endif

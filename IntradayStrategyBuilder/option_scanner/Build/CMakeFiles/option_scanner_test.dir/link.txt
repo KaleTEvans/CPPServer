@@ -1,1 +1,1 @@
-/usr/bin/c++    -rdynamic CMakeFiles/option_scanner_test.dir/option_scanner_test.o  -o option_scanner_test 
+/usr/bin/c++    -rdynamic CMakeFiles/option_scanner_test.dir/option_scanner_test.o  -o option_scanner_test  libisb_option_scanner.a 
