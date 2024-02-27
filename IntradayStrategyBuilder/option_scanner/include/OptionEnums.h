@@ -12,7 +12,8 @@ namespace isb_option_tags {
 // Option Types
 enum class OptionType {
 	Call,
-	Put
+	Put,
+	NoValue
 };
 
 // Time frame for each different kind of candle created
@@ -22,7 +23,8 @@ enum class TimeFrame {
 	OneMin,
 	FiveMin,
 	ThirtyMin,
-	OneHour
+	OneHour,
+	NoValue
 };
 
 // Option Strike relative to underlying price
@@ -37,7 +39,8 @@ enum class RelativeToMoney {
 	ITM2, 
 	ITM3, 
 	ITM4, 
-	ITM5
+	ITM5,
+	NoValue
 };
 
 // Time of day tagged by hour during stock market operating times
@@ -48,7 +51,8 @@ enum class TimeOfDay {
 	Hour4,
 	Hour5,
 	Hour6,
-	Hour7
+	Hour7,
+	NoValue
 };
 
 // Volume Data
@@ -57,43 +61,49 @@ enum class VolumeStDev {
 	Over2, 
 	Over3, 
 	Over4, 
-	LowVol 
+	LowVol,
+	NoValue
 };
 enum class VolumeThreshold { 
 	Vol100, 
 	Vol250, 
 	Vol500, 
 	Vol1000, 
-	LowVol 
+	LowVol,
+	NoValue 
 };
 
 // Standard deviation of candle high to low
 enum class PriceDelta { 
 	Under1, 
 	Under2, 
-	Over2 
-}; // Int values must be retrieved from tag_to_int function
+	Over2,
+	NoValue 
+};
 
 // Whether contract or underlying are near intraday highs or lows
 enum class DailyHighsAndLows { 
 	NDL , 
 	NDH, 
-	Inside 
-}; // Int values must be retrieved from tag_to_int function
+	Inside,
+	NoValue 
+};
 
 // Whether contract or underlying are near local (30 min) highs or lows
 enum class LocalHighsAndLows { 
 	NLL, 
 	NLH, 
-	Inside 
-}; // Int values must be retrieved from tag_to_int function
+	Inside,
+	NoValue 
+}; 
 
 // Multi-candle rate of change categories
 // Volume movement over several candles
 enum class VolumeROC {
 	VolumeIncrease, // Volume increase over 3 candles or more
 	HighVolumeIncrease, // Volume over standard deviation for 3 or more candles
-	VolumeDecrease // Volume decrease over 3 candles or more
+	VolumeDecrease, // Volume decrease over 3 candles or more
+	NoValue
 };
 
 // Price movement over several candles
@@ -101,21 +111,24 @@ enum class PriceROC {
 	PriceIncrease, // Price increase over 3 candles or more
 	HighPriceIncrease, // Price increase over stdev 3 or more candles
 	PriceDecrease, // 3 or more candles
-	HighPriceDecrease // Decrease over stdev 3 or more candles
+	HighPriceDecrease, // Decrease over stdev 3 or more candles
+	NoValue
 };
 
 // Current intraday trending direction of the underlying
 enum class TrendingDirectionIntraday {
 	Bullish,
 	Bearish,
-	Sideways
+	Sideways,
+	NoValue
 };
 
 // Will determine how many days this trend will include, likely will be arbitrary
 enum class TrendingDirectionDaily {
 	Bullish,
 	Bearish,
-	Sideways
+	Sideways,
+	NoValue
 };
 
 // Categories for tags
