@@ -1,16 +1,19 @@
 cmake_minimum_required(VERSION 3.10)
-project(option_scanner_test)
 
-set(LIBRARY_NAME isb_option_scanner)
+project(isb_option_scanner)
 
-set(OPTION_SCANNER_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+# Include files
+include_directories(include)
 
-file (GLOB OPTION_SCANNER_SOURCES ${OPTION_SCANNER_SRC_DIR}/*.cpp)
+# Source files
+file (GLOB SOURCES "src/*.cpp")
 
-include_directories(${OPTION_SCANNER_INCLUDE_DIR})
+add_library(${PROJECT_NAME} ${SOURCES})
 
-add_library(${LIBRARY_NAME} ${OPTION_SCANNER_INCLUDES} ${OPTION_SCANNER_SOURCES})
+target_link_libraries(${PROJECT_NAME} PRIVATE twsapicpp)
 
-add_executable(option_scanner_test ${CMAKE_CURRENT_SOURCE_DIR}/option_scanner_test.cpp)
-target_link_libraries(option_scanner_test PRIVATE ${LIBRARY_NAME})
-target_compile_options(option_scanner_test PRIVATE -Wno-switch)
+option(BUILD_OPTION_SCANNER_TEST "Build the test file in option_scanner" ON)
+if(BUILD_OPTION_SCANNER_TEST)
+    add_executable(option_scanner_test option_scanner_test.cpp)
+    target_link_libraries(option_scanner_test isb_option_scanner twsapicpp)
+endif()

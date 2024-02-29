@@ -1,18 +1,19 @@
 cmake_minimum_required(VERSION 3.10)
-project(http_server_test)
 
-set(LIBRARY_NAME isb_http_server)
+project(isb_http_server)
 
-set(CPP_SERVER_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/../third_party_libs/CppServer/include)
-set(HTTP_SERVER_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+# Include files
+include_directories(include)
 
-file (GLOB HTTP_SERVER_SOURCES ${HTTP_SERVER_SRC_DIR}/*.cpp)
+# Source Files
+file(GLOB SOURCES "src/*.cpp")
 
-include_directories(${HTTP_SERVER_INCLUDE_DIR})
+add_library(${PROJECT_NAME} ${SOURCES})
 
-add_library(${LIBRARY_NAME} ${HTTP_SERVER_INCLUDES} ${HTTP_SERVER_SOURCES})
+target_link_libraries(${PROJECT_NAME} PRIVATE cppserver)
 
-add_executable(http_server_test ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
-target_include_directories(http_server_test PRIVATE ${CPP_SERVER_INCLUDE})
-target_link_libraries(http_server_test PRIVATE cppserver)
-target_link_libraries(http_server_test PRIVATE ${LIBRARY_NAME})
+option(BUILD_HTTP_SERVER_TEST "Build the test file in http_server" ON)
+if(BUILD_HTTP_SERVER_TEST)
+    add_executable(http_server_test http_server_test.cpp)
+    target_link_libraries(http_server_test isb_http_server cppserver)
+endif()

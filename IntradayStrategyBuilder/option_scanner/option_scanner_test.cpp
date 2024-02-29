@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "Candle.h"
+#include "TwsApiL0.h"
 
 int main(void) {
 

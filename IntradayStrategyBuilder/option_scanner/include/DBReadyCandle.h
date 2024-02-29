@@ -6,6 +6,7 @@
 
 #include "OptionEnums.h"
 #include "Candle.h"
+#include "TwsApiL0.h"
 
 using namespace isb_option_tags;
 
