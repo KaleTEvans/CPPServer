@@ -9,8 +9,8 @@
 # ---------------------------------------------------------
 
 # Paths to Library source code and project source directories
-lib_path="$HOME/dev/twsapi/IntradayStrategyBuilder/third_party_libs/"
-src_path="$HOME/dev/twsapi/IntradayStrategyBuilder/third_party_libs/TwsApiC++/Test/Src"
+lib_path="$HOME/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/TwsApiWrapper"
+src_path="$HOME/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/TwsApiWrapper/TwsApiC++/Test/Src"
 
 # Set optimization level (0 for fast compile, 2 or 3 for production)
 op_lvl="0"
@@ -20,7 +20,7 @@ lib_src="TwsApiL0"
 src="Test"
 
 #Target directory
-target_path="$HOME/dev/twsapi"
+target_path="$HOME/dev/TWSStrategyCPPServer"
 
 #Output file name
 output_file="bash_st_test"
