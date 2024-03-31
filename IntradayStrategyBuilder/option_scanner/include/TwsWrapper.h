@@ -25,6 +25,11 @@ public:
     bool notDone(void) { return !(m_Done || m_ErrorForRequest); }
 
     //========================================
+    // Message Bus
+    //========================================
+    std::shared_ptr<MessageBus> getMessageBus();
+
+    //========================================
     // Error Handling
     //========================================
 
@@ -52,8 +57,8 @@ public:
 
     virtual void currentTime(long time);
 
-    virtual void contractDetails(TickerId reqId, const ContractDetails& contractDetails);
-    virtual void contractDetailsEnd(TickerId reqId);
+    virtual void contractDetails(int reqId, const ContractDetails& contractDetails);
+    virtual void contractDetailsEnd(int reqId);
 
     /////// Tick Options /////////
     virtual void tickPrice(TickerId tickerId, TickType field, double price, int canAutoExecute);
@@ -83,7 +88,7 @@ public:
 
 private:
     // There should only be a single instance of the message bus associated with the wrapper
-    std::unique_ptr<MessageBus> messageBus;
+    std::shared_ptr<MessageBus> messageBus;
 
     std::mutex wrapperMtx_;
     std::condition_variable cv_;

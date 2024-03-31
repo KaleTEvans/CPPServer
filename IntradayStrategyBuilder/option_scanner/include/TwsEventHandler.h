@@ -22,7 +22,7 @@ enum class EventType {
     HistoricalCandleData,
     RealTimeCandleData,
     ContractInfo,
-    LastTickPrice
+    EndOfRequest
 };
 
 // Base event type
@@ -40,14 +40,35 @@ class CandleDataEvent : public DataEvent {
         CandleDataEvent(int reqId, std::shared_ptr<Candle> candle) : reqId(reqId), candle(candle) {}
 };
 
-class HistoricalCandleDataEvent : public CandleDataEvent {};
-class RealTimeCandleDataEvent : public CandleDataEvent {};
+class HistoricalCandleDataEvent : public CandleDataEvent {
+    public:
+        HistoricalCandleDataEvent(int reqId, std::shared_ptr<Candle> candle)
+            : CandleDataEvent(reqId, candle) {}
+
+        virtual EventType getType() const override;
+};
+class RealTimeCandleDataEvent : public CandleDataEvent {
+    public:
+        RealTimeCandleDataEvent(int reqId, std::shared_ptr<Candle> candle)
+            : CandleDataEvent(reqId, candle) {}
+
+        virtual EventType getType() const override;
+};
 
 class ContractDataEvent : public DataEvent {
     public:
         int reqId = 0;
         ContractDetails details;
         ContractDataEvent(int reqId, ContractDetails details) : reqId(reqId), details(details) {}
+        virtual EventType getType() const override;
+};
+
+class EndOfRequestEvent : public DataEvent {
+    public:
+        int reqId = 0;
+        EndOfRequestEvent(int reqId) : reqId(reqId) {}
+
+        virtual EventType getType() const override;
 };
 
 //======================================================================================
@@ -58,6 +79,8 @@ class ContractDataEvent : public DataEvent {
 
 class MessageBus {
     public:
+        MessageBus();
+
         void subscribe(EventType type, std::function<void(std::shared_ptr<DataEvent>)> listener);
 
         // Each subscriber will receive all data associated with the EventType, and must filter accordingly

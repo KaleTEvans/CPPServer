@@ -10,7 +10,9 @@ file (GLOB SOURCES "src/*.cpp")
 
 add_library(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE twsapicpp)
+find_package(Threads REQUIRED)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE twsapicpp Threads::Threads)
 
 option(BUILD_OPTION_SCANNER_TEST "Build the test file in option_scanner" ON)
 if(BUILD_OPTION_SCANNER_TEST)

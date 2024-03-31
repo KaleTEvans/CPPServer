@@ -1,10 +1,12 @@
 #include "TwsWrapper.h"
 
-tWrapper::tWrapper(bool runEReader) : EWrapperL0(runEReader), messageBus(std::make_unique<MessageBus>())
+tWrapper::tWrapper(bool runEReader) : EWrapperL0(runEReader), messageBus(std::make_shared<MessageBus>())
 {
     m_Done = false;
     m_ErrorForRequest = false;
 }
+
+std::shared_ptr<MessageBus> tWrapper::getMessageBus() { return messageBus; }
 
 //==================== Error Handling ========================
 
@@ -38,15 +40,20 @@ void tWrapper::managedAccounts(const IBString& accountsList) { std::cout << acco
 
 // ================== tWrapper callback functions =======================
 
-void tWrapper::currentTime(long time) { time = time; }
+void tWrapper::currentTime(long time) { 
+    std::cout << "Current Time: " << time << std::endl;
+    time = time;
+}
 
-void tWrapper::contractDetails(TickerId reqId, const ContractDetails& contractDetails) {
+void tWrapper::contractDetails(int reqId, const ContractDetails& contractDetails) {
+    std::cout << "Contract Details received" << std::endl;
     auto event = std::make_shared<ContractDataEvent>(reqId, contractDetails);
     messageBus->publish(event);
 }
 
-void tWrapper::contractDetailsEnd(TickerId reqId) {
-    std::cout << "End of contract details for reqID: " << reqId << std::endl;
+void tWrapper::contractDetailsEnd(int reqId) {
+    auto event = std::make_shared<EndOfRequestEvent>(reqId);
+    messageBus->publish(event);
 }
 
 void tWrapper::tickPrice(TickerId tickerId, TickType field, double price, int canAutoExecute) {
