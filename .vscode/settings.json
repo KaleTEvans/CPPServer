@@ -70,6 +70,12 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "csetjmp": "cpp",
+        "charconv": "cpp",
+        "cuchar": "cpp",
+        "forward_list": "cpp",
+        "scoped_allocator": "cpp",
+        "valarray": "cpp"
     }
 }

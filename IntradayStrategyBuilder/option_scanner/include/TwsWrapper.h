@@ -1,6 +1,17 @@
 #ifndef TWSWRAPPER_H
 #define TWSWRAPPER_H
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// TWS Wrapper
+// Receives data from the tws EReader and translates to readable data via the wrapper functions.
+// via the wrapper functions. As the data is received, it is then packaged into a new type and 
+// sent to the message bus (found in TwsEventHandler.h) for centralized event data distribution
+// across the program
+//
+// NOTE: If adding new wrapper functions, must create new DataEvent classes to be sent to  
+// the message bus if data is of different type than any existing classes.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include <iostream>
 #include <vector>
 #include <chrono>
@@ -12,9 +23,12 @@
 #include <set>
 
 #include "TwsEventHandler.h"
-using namespace TwsApi; // for TwsApiDefs.h
+#include "EReaderOSSignal.h"
+#include "EReader.h"
 
-class tWrapper : public EWrapperL0 {
+class EClientSocket;
+
+class tWrapper : public EWrapper {
 
 public:
     ///Easier: The EReader calls all methods automatically(optional)
@@ -34,8 +48,8 @@ public:
     //========================================
 
     ///Methods winError & error print the errors reported by IB TWS
-    virtual void winError(const IBString& str, int lastError);
-    virtual void error(const int id, const int errorCode, const IBString errorString);
+    virtual void winError(const std::string& str, int lastError);
+    virtual void error(const int id, const int errorCode, const std::string& errorString, const std::string& advancedOrderRejectJson);
 
     ///Safer: uncatched exceptions are catched before they reach the IB library code.
     ///       The Id is tickerId, orderId, or reqId, or -1 when no id known
@@ -45,11 +59,10 @@ public:
     // Connectivity
     //=======================================
 
-    virtual void connectionOpened();
     virtual void connectionClosed();
 
     // Upon initial API connection, recieves a comma-separated string with the managed account IDs
-    virtual void managedAccounts(const IBString& accountsList);
+    virtual void managedAccounts(const std::string& accountsList);
 
     //========================================
     // Data Retrieval
@@ -61,24 +74,20 @@ public:
     virtual void contractDetailsEnd(int reqId);
 
     /////// Tick Options /////////
-    virtual void tickPrice(TickerId tickerId, TickType field, double price, int canAutoExecute);
+    virtual void tickPrice(TickerId tickerId, TickType field, double price, const TickAttrib& attrib);
     virtual void tickGeneric(TickerId tickerId, TickType tickType, double value);
     virtual void tickSize(TickerId tickerId, TickType field, int size);
     virtual void marketDataType(TickerId reqId, int marketDataType);
-    virtual void tickString(TickerId tickerId, TickType tickType, const IBString& value);
+    virtual void tickString(TickerId tickerId, TickType tickType, const std::string& value);
     virtual void tickSnapshotEnd(int reqId);
+    virtual void tickNews(int tickerId, time_t timeStamp, const std::string& providerCode, 
+        const std::string& articleId, const std::string& headline, const std::string& extraData);
 
-    virtual void historicalData(TickerId reqId, const IBString& date
-        , double open, double high, double low, double close
-        , int volume, int barCount, double WAP, int hasGaps);
+    virtual void historicalData(TickerId reqId, const Bar& bar);
 
     // Retrieve real time bars, TWS Api currently only returns 5 second candles
     virtual void realtimeBar(TickerId reqId, long time, double open, double high,
         double low, double close, long volume, double wap, int count);
-
-    virtual void cancelRealTimeBars(TickerId tickerId) {
-        std::cout << "Cancelled real time bar data for " << tickerId << std::endl;
-    }
 
     long getCurrentime(long time);
     std::pair<TickerId, double> getLastPrice(TickerId reqId, double price);
@@ -97,6 +106,10 @@ private:
     // will just provide direct access from the wrapper
     long time{0};
     std::pair<TickerId, double> lastPrice{0, 0};
+
+
+public:
+    //#include "EWrapper_prototypes.h"
 };
 
 

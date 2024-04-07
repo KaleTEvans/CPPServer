@@ -9,7 +9,7 @@ class Candle {
 public:
     // Constructor for historical data
     Candle(int reqId, const std::string& date, double open, double high, double low, double close
-        , int volume, int barCount, double WAP, int hasGaps);
+        , int volume, int barCount, double WAP);
 
     // Constructor for 5 Second data
     Candle(int reqId, long time, double open, double high, double low, double close, long volume, double wap, int count);
@@ -49,7 +49,6 @@ private:
     long volume_;
     int barCount_;
     double WAP_;
-    int hasGaps_;
     int count_;
 };
 

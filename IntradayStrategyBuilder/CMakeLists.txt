@@ -11,12 +11,18 @@ add_subdirectory(http_server)
 add_subdirectory(third_party_libs)
 
 add_executable(TwsStrategyCppServer main.cpp)
+
+# Path to TwsApiIBKR
+# set(TWSAPIIBKR_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/third_party_libs/TwsApiIBKR/source/cppclient/client/libTwsSocketClient.so")
+# set(TWSAPIIBKR_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party_libs/TwsApiIBKR/source/cppclient/client")
+
 target_link_libraries(TwsStrategyCppServer PUBLIC 
     isb_option_scanner
     isb_http_server
     cppserver
-    twsapicpp
+    #twsapicpp
     pthread
+    TwsSocketClient
 )
 
 target_include_directories(TwsStrategyCppServer PUBLIC 
@@ -24,7 +30,7 @@ target_include_directories(TwsStrategyCppServer PUBLIC
     ${HTTP_SERVER_INCLUDE_DIR}
 )
 
-target_compile_options(twsapicpp PRIVATE -Wno-switch)
+#target_compile_options(twsapicpp PRIVATE -Wno-switch)
 
 set_target_properties(
     TwsStrategyCppServer

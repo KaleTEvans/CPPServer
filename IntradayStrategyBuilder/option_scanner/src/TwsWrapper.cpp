@@ -1,6 +1,6 @@
 #include "TwsWrapper.h"
 
-tWrapper::tWrapper(bool runEReader) : EWrapperL0(runEReader), messageBus(std::make_shared<MessageBus>())
+tWrapper::tWrapper(bool runEReader) : messageBus(std::make_shared<MessageBus>())
 {
     m_Done = false;
     m_ErrorForRequest = false;
@@ -11,16 +11,16 @@ std::shared_ptr<MessageBus> tWrapper::getMessageBus() { return messageBus; }
 //==================== Error Handling ========================
 
 ///Methods winError & error print the errors reported by IB TWS
-void tWrapper::winError(const IBString& str, int lastError) {
-    fprintf(stderr, "WinError: %d = %s\n", lastError, (const char*)str);
+void tWrapper::winError(const std::string& str, int lastError) {
+    fprintf(stderr, "WinError: %d = %s\n", lastError, str.c_str());
     m_ErrorForRequest = true;
 }
 
-void tWrapper::error(const int id, const int errorCode, const IBString errorString) {
-    if (errorCode != 2176) { // 2176 is a weird api error that claims to not allow use of fractional shares
-        fprintf(stderr, "Error for id=%d: %d = %s\n"
-            , id, errorCode, (const char*)errorString);
-        m_ErrorForRequest = (id > 0);    // id == -1 are 'system' messages, not for user requests
+void tWrapper::error(const int id, const int errorCode, const std::string& errorString, const std::string& advancedOrderRejectJson) {
+    if (!advancedOrderRejectJson.empty()) {
+        printf("Error. Id: %d, Code: %d, Msg: %s, AdvancedOrderRejectJson: %s\n", id, errorCode, errorString.c_str(), advancedOrderRejectJson.c_str());
+    } else {
+        printf("Error. Id: %d, Code: %d, Msg: %s\n", id, errorCode, errorString.c_str());
     }
 }
 
@@ -32,11 +32,10 @@ void tWrapper::OnCatch(const char* MethodName, const long Id) {
 
 //======================== Connectivity =============================
 
-void tWrapper::connectionOpened() { std::cout << "Connected to TWS" << std::endl; }
 void tWrapper::connectionClosed() { std::cout << "Connection has been closed" << std::endl; }
 
 // Upon initial API connection, recieves a comma-separated string with the managed account IDs
-void tWrapper::managedAccounts(const IBString& accountsList) { std::cout << accountsList << std::endl; }
+void tWrapper::managedAccounts(const std::string& accountsList) { std::cout << accountsList << std::endl; }
 
 // ================== tWrapper callback functions =======================
 
@@ -46,7 +45,6 @@ void tWrapper::currentTime(long time) {
 }
 
 void tWrapper::contractDetails(int reqId, const ContractDetails& contractDetails) {
-    std::cout << "Contract Details received" << std::endl;
     auto event = std::make_shared<ContractDataEvent>(reqId, contractDetails);
     messageBus->publish(event);
 }
@@ -56,39 +54,45 @@ void tWrapper::contractDetailsEnd(int reqId) {
     messageBus->publish(event);
 }
 
-void tWrapper::tickPrice(TickerId tickerId, TickType field, double price, int canAutoExecute) {
-    if (field == TickType::LAST) lastPrice = {tickerId, price};
-    // std::cout << "Field: " << field << " Price: " << price << std::endl;
+void tWrapper::tickPrice(TickerId tickerId, TickType field, double price, const TickAttrib& attrib) {
+    auto event = std::make_shared<TickPriceEvent>(tickerId, field, price, attrib);
+    messageBus->publish(event);
 }
 
 void tWrapper::tickGeneric(TickerId tickerId, TickType tickType, double value) {
-    // std::cout << "Tick Type: " << tickType << " Value: " << value << std::endl;
+    auto event = std::make_shared<TickGenericEvent>(tickerId, tickType, value);
+    messageBus->publish(event);
 }
 
 void tWrapper::tickSize(TickerId tickerId, TickType field, int size) {
-    //std::cout << "Tick Size: " << size << std::endl;
+    auto event = std::make_shared<TickSizeEvent>(tickerId, field, size);
+    messageBus->publish(event);
 }
 
 void tWrapper::marketDataType(TickerId reqId, int marketDataType) {
     //std::cout << "Market data type: " << marketDataType << std::endl;
 }
 
-void tWrapper::tickString(TickerId tickerId, TickType tickType, const IBString& value) {
-    // std::cout << "Value: " << value << std::endl;
+void tWrapper::tickString(TickerId tickerId, TickType tickType, const std::string& value) {
+    
 }
 
 void tWrapper::tickSnapshotEnd(int reqId) {
-    std::cout << "Tick snapshot end for reqID: " << reqId << std::endl;
+    auto event = std::make_shared<EndOfRequestEvent>(reqId);
+    messageBus->publish(event);
 }
 
-void tWrapper::historicalData(TickerId reqId, const IBString& date
-    , double open, double high, double low, double close
-    , int volume, int barCount, double WAP, int hasGaps) {
+void tWrapper::tickNews(int tickerId, time_t timeStamp, const std::string& providerCode, 
+    const std::string& articleId, const std::string& headline, const std::string& extraData) {
+        
+    }
+
+void tWrapper::historicalData(TickerId reqId, const Bar& bar) {
 
     // Need to cast volume as a long
-    long vol = static_cast<long>(volume);
+    long vol = static_cast<long>(bar.volume);
     std::shared_ptr<Candle> candle = std::make_shared<Candle>(
-        reqId, date, open, high, low, close, vol, barCount, WAP, hasGaps
+        reqId, bar.time, bar.open, bar.high, bar.low, bar.close, vol, bar.count, bar.wap
     );
 
     auto event = std::make_shared<HistoricalCandleDataEvent>(reqId, candle);
