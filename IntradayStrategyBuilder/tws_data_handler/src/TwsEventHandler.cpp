@@ -3,10 +3,9 @@
 #include <sstream>
 #include <string>
 
-TickNewsEvent::TickNewsEvent(int reqId, TickType tickType, time_t dateTime, std::string providerCode, std::string articleId,
-    std::string headline, std::string extraData) : TickDataEvent(reqId, TickType::NOT_SET), 
-        dateTime(dateTime), providerCode(providerCode), articleId(articleId), headline(headline),
-        extraData(extraData) {
+TickNewsEvent::TickNewsEvent(int reqId, time_t dateTime, std::string providerCode, std::string articleId,
+    std::string headline, std::string extraData) : TickDataEvent(reqId), dateTime(dateTime), 
+    providerCode(providerCode), articleId(articleId), headline(headline), extraData(extraData) {
         // Break apart news string into useful info
         std::string str = extraData;
         std::stringstream ss(str);

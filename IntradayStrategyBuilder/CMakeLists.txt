@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=x86-64 -O0 -fPIC")
 
+add_subdirectory(tws_data_handler)
 add_subdirectory(option_scanner)
 add_subdirectory(http_server)
 add_subdirectory(third_party_libs)
@@ -20,7 +21,7 @@ target_link_libraries(TwsStrategyCppServer PUBLIC
     isb_option_scanner
     isb_http_server
     cppserver
-    #twsapicpp
+    tws_data_handler
     pthread
     TwsSocketClient
 )
@@ -36,5 +37,6 @@ set_target_properties(
     TwsStrategyCppServer
     option_scanner_test
     http_server_test
+    TwsData_test
     PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Executables
 )

@@ -8,8 +8,6 @@
 ///////////////////////////////////////////////////////////////////////////////////
 
 #include "Candle.h"
-// #include "TwsApiL0.h"
-// #include "TwsApiDefs.h"
 #include "EWrapper.h"
 #include "Contract.h"
 
@@ -85,7 +83,7 @@ class TickDataEvent : public DataEvent {
     public:
         int reqId{0};
         TickType tickType{TickType::NOT_SET};
-        TickDataEvent(int reqId, TickType tickType) : reqId(reqId), tickType(tickType) {}
+        TickDataEvent(int reqId, TickType tickType = TickType::NOT_SET) : reqId(reqId), tickType(tickType) {}
 };
 
 class TickPriceEvent : public TickDataEvent {
@@ -124,7 +122,7 @@ class TickNewsEvent : public TickDataEvent {
         std::string articleId{""};
         std::string headline{""};
         std::string extraData{""};
-        TickNewsEvent(int reqId, TickType tickType, time_t dateTime, std::string providerCode, std::string articleId,
+        TickNewsEvent(int reqId, time_t dateTime, std::string providerCode, std::string articleId,
             std::string headline, std::string extraData); // Constructor defined in cpp file
 
         virtual EventType getType() const override;

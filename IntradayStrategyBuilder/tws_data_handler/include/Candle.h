@@ -1,9 +1,8 @@
+#pragma once
 #ifndef CANDLE_H
 #define CANDLE_H
 
 #include <iostream>
-
-#include "OptionEnums.h"
 
 class Candle {
 public:
