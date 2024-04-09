@@ -22,6 +22,7 @@
 #include <unordered_map>
 #include <condition_variable>
 #include <set>
+#include <thread>
 
 #include "TwsEventHandler.h"
 #include "EReaderOSSignal.h"
@@ -32,7 +33,6 @@ class EClientSocket;
 class tWrapper : public EWrapper {
 
 public:
-    ///Easier: The EReader calls all methods automatically(optional)
     tWrapper();
     ~tWrapper();
 
@@ -46,18 +46,37 @@ public:
     std::shared_ptr<MessageBus> getMessageBus();
 
     long getCurrentime(long time);
-    std::pair<TickerId, double> getLastPrice(TickerId reqId, double price);
 
     //===========================================
     // Connectivity
     //===========================================
 
     void setConnectOptions(const std::string&);
-	void processMessages();
 
     bool connect(const char * host, int port, int clientId = 0);
-	void disconnect() const;
+	void disconnect();
 	bool isConnected() const;
+
+    //===========================================
+    // Message Processing
+    //===========================================
+
+    void processMessages(); // One-time message processing
+    void processMsgLoop(); // Continuous message processing
+    void startMsgProcessingThread();
+
+    //===========================================
+    // EClient Request Functions
+    //===========================================
+
+    // Attempting to maintain simplicity here so that all requests and callbacks are contained within TWS Wrapper
+    // Add new request functions as needed
+
+    void reqMktData(int reqId, const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot);
+    void cancelMktData(int reqId);
+    void reqContractDetails(int reqId, const Contract& con);
+    void reqSecDefOptParams(int reqId, const std::string& underlyingSymbol, const std::string& futFopExchange, const std::string& underlyingSecType, int underlyingConId);
+
 
 private:
     // There should only be a single instance of the message bus associated with the wrapper
@@ -66,11 +85,9 @@ private:
     // These simple types will only be updated periodically, and rather than sending to the bus
     // will just provide direct access from the wrapper
     long time_{0};
-    std::pair<TickerId, double> lastPrice{0, 0};
 
 
 public:
-    #define EWRAPPER_VIRTUAL_IMPL = 0
     #include "EWrapper_prototypes.h"
 
 private:
@@ -83,6 +100,9 @@ private:
 	OrderId m_orderId;
 	std::unique_ptr<EReader> m_pReader;
     bool m_extraAuth;
+
+    // Thread for continuously checking messages
+    std::thread msgProcessingThread;
 };
 
 

@@ -35,14 +35,6 @@ void tWrapper::setConnectOptions(const std::string& connectOptions) {
 	m_pClient->setConnectOptions(connectOptions);
 }
 
-void tWrapper::processMessages() {
-    time_t now = time(NULL);
-
-    m_osSignal.waitForSignal();
-	errno = 0;
-	m_pReader->processMsgs();
-}
-
 bool tWrapper::connect(const char *host, int port, int clientId) {
 	// trying to connect
 	printf( "Connecting to %s:%d clientId:%d\n", !( host && *host) ? "127.0.0.1" : host, port, clientId);
@@ -57,6 +49,7 @@ bool tWrapper::connect(const char *host, int port, int clientId) {
 		m_pReader = std::unique_ptr<EReader>( new EReader(m_pClient, &m_osSignal) );
 		m_pReader->start();
 		//! [ereader]
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	else
 		printf( "Cannot connect to %s:%d clientId:%d\n", m_pClient->host().c_str(), m_pClient->port(), clientId);
@@ -64,14 +57,41 @@ bool tWrapper::connect(const char *host, int port, int clientId) {
 	return bRes;
 }
 
-void tWrapper::disconnect() const {
+void tWrapper::disconnect() {
 	m_pClient->eDisconnect();
+    if (msgProcessingThread.joinable()) msgProcessingThread.join();
 
 	printf ( "Disconnected\n");
 }
 
 bool tWrapper::isConnected() const {
 	return m_pClient->isConnected();
+}
+
+//================================================================
+// Message Processing
+//================================================================
+
+void tWrapper::processMessages() {
+    time_t now = time(NULL);
+
+    m_osSignal.waitForSignal();
+	errno = 0;
+	m_pReader->processMsgs();
+}
+
+void tWrapper::processMsgLoop() {
+    while (m_pClient->isConnected()) {
+        m_pReader->processMsgs();
+        std::this_thread::sleep_for(std::chrono::microseconds(100));
+    }
+}
+
+// Thread will stop once client is disconnected from tws
+void tWrapper::startMsgProcessingThread() {
+    msgProcessingThread = std::thread([this]() {
+        processMsgLoop();
+    });
 }
 
 //================================================================
@@ -100,6 +120,21 @@ void tWrapper::connectionClosed() { std::cout << "Connection has been closed" <<
 
 // Upon initial API connection, recieves a comma-separated string with the managed account IDs
 void tWrapper::managedAccounts(const std::string& accountsList) { std::cout << accountsList << std::endl; }
+
+//==================================================================
+// EClient Request Functions
+//==================================================================
+
+void tWrapper::reqMktData(int reqId, const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot) {
+    m_pClient->reqMktData(reqId, con, genericTicks, snapshot, regulatorySnapshot, TagValueListSPtr());
+}
+
+void tWrapper::cancelMktData(int reqId) { m_pClient->cancelMktData(reqId); }
+void tWrapper::reqContractDetails(int reqId, const Contract& con) { m_pClient->reqContractDetails(reqId, con); }
+void tWrapper::reqSecDefOptParams(int reqId, const std::string& underlyingSymbol, 
+    const std::string& futFopExchange, const std::string& underlyingSecType, int underlyingConId) {
+        m_pClient->reqSecDefOptParams(reqId, underlyingSymbol, futFopExchange, underlyingSecType, underlyingConId);
+    }
 
 //================================================================
 // Wrapper callback functions 
@@ -163,10 +198,21 @@ void tWrapper::securityDefinitionOptionalParameter(int reqId, const std::string&
 
         std::cout << "Strikes" << std::endl;
         for (auto& i : strikes) {
-            std::cout << i;
+            std::cout << i << " ";
+        }
+        std::cout << std::endl;
+
+        std::cout << "Expirations" << std::endl;
+        for (auto& i : expirations) {
+            std::cout << i << " ";
         }
         std::cout << std::endl;
     }
+
+void tWrapper::securityDefinitionOptionalParameterEnd(int reqId) {
+    auto event = std::make_shared<EndOfRequestEvent>(reqId);
+    messageBus->publish(event);
+}
 
 void tWrapper::historicalData(TickerId reqId, const Bar& bar) {
 
@@ -192,4 +238,92 @@ void tWrapper::realtimeBar(TickerId reqId, long time, double open, double high, 
 }
 
 long tWrapper::getCurrentime(long time) { return time; }
-std::pair<TickerId, double> tWrapper::getLastPrice(TickerId reqId, double price) { return {reqId, price}; }
+
+///////////////////////////////////////////////////////////////////////////
+// All additional virtual function definitions. Move to top if adding 
+// any new data requests as needed
+////////////////////////////////////////////////////////////////////////////
+
+void tWrapper::tickOptionComputation( TickerId tickerId, TickType tickType, int tickAttrib, double impliedVol, double delta,
+double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice) {}
+void tWrapper::tickEFP(TickerId tickerId, TickType tickType, double basisPoints, const std::string& formattedBasisPoints,
+double totalDividends, int holdDays, const std::string& futureLastTradeDate, double dividendImpact, double dividendsToLastTradeDate) {}
+void tWrapper::orderStatus( OrderId orderId, const std::string& status, Decimal filled,
+Decimal remaining, double avgFillPrice, int permId, int parentId,
+double lastFillPrice, int clientId, const std::string& whyHeld, double mktCapPrice) {}
+void tWrapper::openOrder( OrderId orderId, const Contract&, const Order&, const OrderState&) {}
+void tWrapper::openOrderEnd() {}
+void tWrapper::updateAccountValue(const std::string& key, const std::string& val,
+const std::string& currency, const std::string& accountName) {}
+void tWrapper::updatePortfolio( const Contract& contract, Decimal position,
+double marketPrice, double marketValue, double averageCost,
+double unrealizedPNL, double realizedPNL, const std::string& accountName) {}
+void tWrapper::updateAccountTime(const std::string& timeStamp) {}
+void tWrapper::accountDownloadEnd(const std::string& accountName) {}
+void tWrapper::nextValidId( OrderId orderId) {}
+void tWrapper::bondContractDetails( int reqId, const ContractDetails& contractDetails) {}
+void tWrapper::execDetails( int reqId, const Contract& contract, const Execution& execution) {}
+void tWrapper::execDetailsEnd( int reqId) {}
+void tWrapper::updateMktDepth(TickerId id, int position, int operation, int side,
+double price, Decimal size) {}
+void tWrapper::updateMktDepthL2(TickerId id, int position, const std::string& marketMaker, int operation,
+int side, double price, Decimal size, bool isSmartDepth) {}
+void tWrapper::updateNewsBulletin(int msgId, int msgType, const std::string& newsMessage, const std::string& originExch) {}
+void tWrapper::receiveFA(faDataType pFaDataType, const std::string& cxml) {}
+void tWrapper::historicalDataEnd(int reqId, const std::string& startDateStr, const std::string& endDateStr) {}
+void tWrapper::scannerParameters(const std::string& xml) {}
+void tWrapper::scannerData(int reqId, int rank, const ContractDetails& contractDetails,
+const std::string& distance, const std::string& benchmark, const std::string& projection,
+const std::string& legsStr) {}
+void tWrapper::scannerDataEnd(int reqId) {}
+void tWrapper::fundamentalData(TickerId reqId, const std::string& data) {}
+void tWrapper::deltaNeutralValidation(int reqId, const DeltaNeutralContract& deltaNeutralContract) {}
+void tWrapper::commissionReport( const CommissionReport& commissionReport) {}
+void tWrapper::position( const std::string& account, const Contract& contract, Decimal position, double avgCost) {}
+void tWrapper::positionEnd() {}
+void tWrapper::accountSummary( int reqId, const std::string& account, const std::string& tag, const std::string& value, const std::string& curency) {}
+void tWrapper::accountSummaryEnd( int reqId) {}
+void tWrapper::verifyMessageAPI( const std::string& apiData) {}
+void tWrapper::verifyCompleted( bool isSuccessful, const std::string& errorText) {}
+void tWrapper::displayGroupList( int reqId, const std::string& groups) {}
+void tWrapper::displayGroupUpdated( int reqId, const std::string& contractInfo) {}
+void tWrapper::verifyAndAuthMessageAPI( const std::string& apiData, const std::string& xyzChallange) {}
+void tWrapper::verifyAndAuthCompleted( bool isSuccessful, const std::string& errorText) {}
+void tWrapper::connectAck() {}
+void tWrapper::positionMulti( int reqId, const std::string& account,const std::string& modelCode, const Contract& contract, Decimal pos, double avgCost) {}
+void tWrapper::positionMultiEnd( int reqId) {}
+void tWrapper::accountUpdateMulti( int reqId, const std::string& account, const std::string& modelCode, const std::string& key, const std::string& value, const std::string& currency) {}
+void tWrapper::accountUpdateMultiEnd( int reqId) {}
+void tWrapper::softDollarTiers(int reqId, const std::vector<SoftDollarTier> &tiers) {}
+void tWrapper::familyCodes(const std::vector<FamilyCode> &familyCodes) {}
+void tWrapper::symbolSamples(int reqId, const std::vector<ContractDescription> &contractDescriptions) {}
+void tWrapper::mktDepthExchanges(const std::vector<DepthMktDataDescription> &depthMktDataDescriptions) {}
+void tWrapper::smartComponents(int reqId, const SmartComponentsMap& theMap) {}
+void tWrapper::tickReqParams(int tickerId, double minTick, const std::string& bboExchange, int snapshotPermissions) {}
+void tWrapper::newsProviders(const std::vector<NewsProvider> &newsProviders) {}
+void tWrapper::newsArticle(int requestId, int articleType, const std::string& articleText) {}
+void tWrapper::historicalNews(int requestId, const std::string& time, const std::string& providerCode, const std::string& articleId, const std::string& headline) {}
+void tWrapper::historicalNewsEnd(int requestId, bool hasMore) {}
+void tWrapper::headTimestamp(int reqId, const std::string& headTimestamp) {}
+void tWrapper::histogramData(int reqId, const HistogramDataVector& data) {}
+void tWrapper::historicalDataUpdate(TickerId reqId, const Bar& bar) {}
+void tWrapper::rerouteMktDataReq(int reqId, int conid, const std::string& exchange) {}
+void tWrapper::rerouteMktDepthReq(int reqId, int conid, const std::string& exchange) {}
+void tWrapper::marketRule(int marketRuleId, const std::vector<PriceIncrement> &priceIncrements) {}
+void tWrapper::pnl(int reqId, double dailyPnL, double unrealizedPnL, double realizedPnL) {}
+void tWrapper::pnlSingle(int reqId, Decimal pos, double dailyPnL, double unrealizedPnL, double realizedPnL, double value) {}
+void tWrapper::historicalTicks(int reqId, const std::vector<HistoricalTick> &ticks, bool done) {}
+void tWrapper::historicalTicksBidAsk(int reqId, const std::vector<HistoricalTickBidAsk> &ticks, bool done) {}
+void tWrapper::historicalTicksLast(int reqId, const std::vector<HistoricalTickLast> &ticks, bool done) {}
+void tWrapper::tickByTickAllLast(int reqId, int tickType, time_t time, double price, Decimal size, const TickAttribLast& tickAttribLast, const std::string& exchange, const std::string& specialConditions) {}
+void tWrapper::tickByTickBidAsk(int reqId, time_t time, double bidPrice, double askPrice, Decimal bidSize, Decimal askSize, const TickAttribBidAsk& tickAttribBidAsk) {}
+void tWrapper::tickByTickMidPoint(int reqId, time_t time, double midPoint) {}
+void tWrapper::orderBound(long long orderId, int apiClientId, int apiOrderId) {}
+void tWrapper::completedOrder(const Contract& contract, const Order& order, const OrderState& orderState) {}
+void tWrapper::completedOrdersEnd() {}
+void tWrapper::replaceFAEnd(int reqId, const std::string& text) {}
+void tWrapper::wshMetaData(int reqId, const std::string& dataJson) {}
+void tWrapper::wshEventData(int reqId, const std::string& dataJson) {}
+void tWrapper::historicalSchedule(int reqId, const std::string& startDateTime, const std::string& endDateTime, const std::string& timeZone, const std::vector<HistoricalSession>& sessions) {}
+void tWrapper::userInfo(int reqId, const std::string& whiteBrandingId) {}
+
