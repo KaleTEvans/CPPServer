@@ -9,10 +9,10 @@ const unsigned SLEEP_TIME = 10;
 
 class Subscriber {
 public:
-    Subscriber(std::shared_ptr<MessageBus> bus) {
-        bus->subscribe(EventType::ContractInfo, [this](std::shared_ptr<DataEvent> event) {
-            this->handleContractDataEvent(std::dynamic_pointer_cast<ContractDataEvent>(event));
-        });
+    Subscriber(std::shared_ptr<MessageBus> bus, tWrapper& wrapper) : wrapper(wrapper) {
+        // bus->subscribe(EventType::ContractInfo, [this](std::shared_ptr<DataEvent> event) {
+        //     this->handleContractDataEvent(std::dynamic_pointer_cast<ContractDataEvent>(event));
+        // });
 
         bus->subscribe(EventType::TickPriceInfo, [this](std::shared_ptr<DataEvent> event) {
             this->handleTickPriceEvent(std::dynamic_pointer_cast<TickPriceEvent>(event));
@@ -22,19 +22,23 @@ public:
             this->handleTickNewsEvent(std::dynamic_pointer_cast<TickNewsEvent>(event));
         });
 
-        bus->subscribe(EventType::EndOfRequest, [this](std::shared_ptr<DataEvent> event) {
-            this->handleDataEvent(std::dynamic_pointer_cast<EndOfRequestEvent>(event));
+        // bus->subscribe(EventType::EndOfRequest, [this](std::shared_ptr<DataEvent> event) {
+        //     this->handleDataEvent(std::dynamic_pointer_cast<EndOfRequestEvent>(event));
+        // });
+
+        bus->subscribe(EventType::RealTimeCandleData, [this](std::shared_ptr<DataEvent> event) {
+            this->realTimeCandles(std::dynamic_pointer_cast<CandleDataEvent>(event));
         });
     }
 
-    void handleContractDataEvent(std::shared_ptr<ContractDataEvent> event) {
-        const int reqId = event->reqId;
-        if (reqIdList.find(reqId) != reqIdList.end()) {
-            std::cout << "Contract Details Received" << std::endl;
-            std::cout << event->details.tradingHours << std::endl;
-            const ContractDetails& cd = event->details;
-            container.push_back(cd);
-        }
+    void getContractData(const Contract& con) {
+        wrapper.reqContractDetails([this](const ContractDetails& contractDetails) {
+            this->handleContractDataEvent(contractDetails);
+        }, con);
+    }
+
+    void handleContractDataEvent(const ContractDetails& contractDetails) {
+        container.push_back(contractDetails);
     }
 
     void handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
@@ -54,15 +58,20 @@ public:
         }
     }
 
-    void handleDataEvent(std::shared_ptr<EndOfRequestEvent> event) {
-        const int reqId = event->reqId;
-        if (reqIdList.find(reqId) != reqIdList.end()) {
-            reqIdList.erase(reqId);
-            completedReqs.insert(reqId);
-        }
-
-        std::cout << "End of request for ID: " << reqId << std::endl;
+    void realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
+        event->candle->printCandle();
     }
+
+    // void handleDataEvent(std::shared_ptr<EndOfRequestEvent> event) {
+    //     const int reqId = event->reqId;
+    //     if (reqIdList.find(reqId) != reqIdList.end()) {
+    //         reqIdList.erase(reqId);
+    //         completedReqs.insert(reqId);
+    //     }
+
+    //     std::cout << "End of request for ID: " << reqId << std::endl;
+    // }
+    tWrapper& wrapper;
 
     void addReqId(int reqId) { reqIdList.insert(reqId); }
     bool checkCompletedReq(int reqId) { return completedReqs.find(reqId) != completedReqs.end(); }
@@ -87,7 +96,7 @@ int main() {
 
     testClient.connect("192.168.12.148", 7496, clientId);
 
-    Subscriber testSubscriber(testClient.getMessageBus());
+    Subscriber testSubscriber(testClient.getMessageBus(), testClient);
 
     // Create contract
     Contract con;
@@ -100,16 +109,16 @@ int main() {
 
     // Use reqContractDetails to get the contract ID
     // First add a req id to the list
-    testSubscriber.addReqId(11);
-    testClient.reqContractDetails(11, con);
+    testSubscriber.getContractData(con);
 
-    while (!testSubscriber.checkCompletedReq(11)) {
+    while (testSubscriber.getContainer().empty()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
     std::vector<ContractDetails> cd = testSubscriber.getContainer();
     for (auto& c : cd) {
         std::cout << "Con ID: " << c.contract.conId << std::endl;
+        std::cout << c.contract.description << std::endl;
     }
 
     long conId = cd[0].contract.conId;
@@ -117,11 +126,30 @@ int main() {
     std::string secType = cd[0].contract.secType;
     std::string exchange = cd[0].contract.primaryExchange;
 
-    testSubscriber.addReqId(12);
-    testClient.reqSecDefOptParams(12, conSymbol, exchange, secType, conId);
+    Contract con1;
+    con1.symbol = "SPX";
+    con1.secType = "OPT";
+    con1.currency = "USD";
+    con1.exchange = "SMART";
+    con1.primaryExchange = "CBOE";
+    con1.lastTradeDateOrContractMonth = "20240411";
+    con1.strike = 5205;
 
-    while (!testSubscriber.checkCompletedReq(12)) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    Contract con2 = con1;
+    con1.right = "C";
+    con2.right = "P";
+
+    testClient.reqRealTimeBars(5205, con1, 5, "TRADES", true);
+    testClient.reqRealTimeBars(5206, con2, 5, "TRADES", true);
+
+    for (int i=0; i < 150; i++) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+
+    std::cout << "Cancelling data for call" << std::endl;
+    testClient.cancelRealTimeBars(5205);
+    for (int i=0; i < 150; i++) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     testClient.disconnect();

@@ -19,10 +19,14 @@
 #include <ctime>
 #include <memory>
 #include <unordered_set>
-#include <unordered_map>
+#include <map>
 #include <condition_variable>
 #include <set>
 #include <thread>
+#include <functional>
+#include <mutex>
+#include <atomic>
+#include <queue>
 
 #include "TwsEventHandler.h"
 #include "EReaderOSSignal.h"
@@ -45,8 +49,6 @@ public:
     //========================================
     std::shared_ptr<MessageBus> getMessageBus();
 
-    long getCurrentime(long time);
-
     //===========================================
     // Connectivity
     //===========================================
@@ -66,25 +68,63 @@ public:
     void startMsgProcessingThread();
 
     //===========================================
-    // EClient Request Functions
+    // EClient Subscriptions for Streaming Data
     //===========================================
 
     // Attempting to maintain simplicity here so that all requests and callbacks are contained within TWS Wrapper
     // Add new request functions as needed
-
     void reqMktData(int reqId, const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot);
     void cancelMktData(int reqId);
-    void reqContractDetails(int reqId, const Contract& con);
-    void reqSecDefOptParams(int reqId, const std::string& underlyingSymbol, const std::string& futFopExchange, const std::string& underlyingSecType, int underlyingConId);
+    void reqRealTimeBars(int reqId, const Contract& con, int barSize, const std::string& whatToShow, bool useRTH);
+    void cancelRealTimeBars(int reqId);
 
+public:
+    //==========================================
+    // Callback Definitions
+    //==========================================
+
+    // Callback rerouting for all wrapper methods
+    using EventCurrentTime = std::function<void(long)>;
+    using EventContractDetails = std::function<void(const ContractDetails&)>;
+    using EventSecDefOptParamns = std::function<void(const std::string&, int, const std::string&, 
+        const std::string&, const std::set<std::string>&, const std::set<double>&)>;
+    using EventHistoricalData = std::function<void(std::shared_ptr<Candle>)>;
+
+private:
+    //==========================================
+    // Callback lists
+    //==========================================
+
+    std::mutex mtx;
+    std::atomic<int> subscriptionId{0}; // Atomic counter for subscription IDs
+    std::map<int, bool> currentRequests; // Incomplete requests will be false, completed true
+
+    std::queue<EventCurrentTime> currentTimeSubscribers; // Events with no reqId will use a queue
+    std::map<int, EventContractDetails> contractDetailsSubscribers;
+    std::map<int, EventSecDefOptParamns> optParamSubscribers;
+    std::map<int, EventHistoricalData> historicalDataSubscribers;
+
+public:
+    //==========================================
+    // Callback Subscriptions for Single Events
+    //==========================================
+
+    // All program components can subscribe to these methods to receive the specific data they need
+    // Each has the option to generate a new ID for requests and subscription handling, or use a custom ID
+    void reqCurrentTime(EventCurrentTime event);
+    void reqContractDetails(EventContractDetails event, const Contract& con);
+    void reqSecDefOptParams(EventSecDefOptParamns event, const std::string& underlyingSymbol, const std::string& futFopExchange, 
+        const std::string& underlyingSecType, int underlyingConId);
+    void reqHistoricalData(EventHistoricalData event, const Contract& con, const std::string& endDate, 
+        const std::string& durationStr, const std::string& barSizeSetting, const std::string& whatToShow, 
+        int useRTH, int formatDate, bool keepUpToDate);
+
+    bool checkEventCompleted(int reqId); // Check current requests map
+    void unsubscribeFromEvent(int subId); // EndOfRequest will automatically call unsubscribe
 
 private:
     // There should only be a single instance of the message bus associated with the wrapper
     std::shared_ptr<MessageBus> messageBus;
-
-    // These simple types will only be updated periodically, and rather than sending to the bus
-    // will just provide direct access from the wrapper
-    long time_{0};
 
 
 public:

@@ -8,7 +8,6 @@
 ///////////////////////////////////////////////////////////////////////////////////
 
 #include "Candle.h"
-#include "EWrapper.h"
 #include "Contract.h"
 
 
@@ -17,12 +16,13 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <set>
 
 // Types of data that are recieved by the wrapper
 enum class EventType {
-    HistoricalCandleData,
     RealTimeCandleData,
     ContractInfo,
+    ContractStrikesInfo,
     TickPriceInfo,
     TickSizeInfo,
     TickGenericInfo,
@@ -43,23 +43,8 @@ class DataEvent {
 
 class CandleDataEvent : public DataEvent {
     public:
-        int reqId{0};
         std::shared_ptr<Candle> candle;
-        CandleDataEvent(int reqId, std::shared_ptr<Candle> candle) : reqId(reqId), candle(candle) {}
-};
-
-class HistoricalCandleDataEvent : public CandleDataEvent {
-    public:
-        HistoricalCandleDataEvent(int reqId, std::shared_ptr<Candle> candle)
-            : CandleDataEvent(reqId, candle) {}
-
-        virtual EventType getType() const override;
-};
-class RealTimeCandleDataEvent : public CandleDataEvent {
-    public:
-        RealTimeCandleDataEvent(int reqId, std::shared_ptr<Candle> candle)
-            : CandleDataEvent(reqId, candle) {}
-
+        CandleDataEvent(std::shared_ptr<Candle> candle) : candle(candle) {}
         virtual EventType getType() const override;
 };
 
@@ -72,6 +57,17 @@ class ContractDataEvent : public DataEvent {
         int reqId{0};
         ContractDetails details;
         ContractDataEvent(int reqId, ContractDetails details) : reqId(reqId), details(details) {}
+        virtual EventType getType() const override;
+};
+
+class ContractOptStrikesEvent : public DataEvent {
+    public:
+        int reqId{0};
+        std::string exchange{""};
+        std::string tradingClass{""};
+        std::set<double> strikes;
+        ContractOptStrikesEvent(int reqId, std::string exchange, std::string tradingClass, std::set<double> strikes) :
+            reqId(reqId), exchange(exchange), tradingClass(tradingClass), strikes(strikes) {}
         virtual EventType getType() const override;
 };
 

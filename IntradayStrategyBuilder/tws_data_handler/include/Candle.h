@@ -4,17 +4,19 @@
 
 #include <iostream>
 
+#include "EWrapper.h"
+
 class Candle {
 public:
     // Constructor for historical data
     Candle(int reqId, const std::string& date, double open, double high, double low, double close
-        , int volume, int barCount, double WAP);
+        , Decimal volume, int barCount, Decimal WAP);
 
     // Constructor for 5 Second data
-    Candle(int reqId, long time, double open, double high, double low, double close, long volume, double wap, int count);
+    Candle(int reqId, long time, double open, double high, double low, double close, Decimal volume, Decimal wap, int count);
 
     // Constructor for other candles created from 5 sec
-    Candle(int reqId, long time, double open, double high, double low, double close, long volume);
+    Candle(int reqId, long time, double open, double high, double low, double close, Decimal volume);
 
     Candle();
 
@@ -27,14 +29,16 @@ public:
     double close() const;
     double high() const;
     double low() const;
-    long volume() const;
+    Decimal volume() const;
     int barCount() const;
-    double WAP() const;
+    Decimal WAP() const;
     int hasGaps() const;
     int count() const;
 
     void convertDateToUnix();
     void convertUnixToDate() const; // Lazy conversion only upon request
+
+    void printCandle() const; // use std::cout to print candle contents
     
 private:
     int reqId_;
@@ -45,9 +49,9 @@ private:
     double close_;
     double high_;
     double low_;
-    long volume_;
+    Decimal volume_;
     int barCount_;
-    double WAP_;
+    Decimal WAP_;
     int count_;
 };
 

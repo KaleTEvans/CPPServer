@@ -16,9 +16,9 @@ TickNewsEvent::TickNewsEvent(int reqId, time_t dateTime, std::string providerCod
         // getline(ss, headline);
     }
 
-EventType HistoricalCandleDataEvent::getType() const { return EventType::HistoricalCandleData; }
-EventType RealTimeCandleDataEvent::getType() const { return EventType::RealTimeCandleData; }
+EventType CandleDataEvent::getType() const { return EventType::RealTimeCandleData; }
 EventType ContractDataEvent::getType() const { return EventType::ContractInfo; }
+EventType ContractOptStrikesEvent::getType() const { return EventType::ContractStrikesInfo; }
 EventType TickPriceEvent::getType() const { return EventType::TickPriceInfo; }
 EventType TickSizeEvent::getType() const { return EventType::TickSizeInfo; }
 EventType TickGenericEvent::getType() const { return EventType::TickGenericInfo; }

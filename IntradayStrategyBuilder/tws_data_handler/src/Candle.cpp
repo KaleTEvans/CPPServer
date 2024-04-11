@@ -6,7 +6,7 @@
 
 // Constructor for historical data
 Candle::Candle(int reqId, const std::string& date, double open, double high, double low, double close, 
-    int volume, int barCount, double WAP)
+    Decimal volume, int barCount, Decimal WAP)
     : reqId_(reqId), date_(date), time_(0), open_(open), close_(close), high_(high), 
     low_(low), volume_(volume), barCount_(barCount), WAP_(WAP), count_(0)
 {
@@ -16,13 +16,13 @@ Candle::Candle(int reqId, const std::string& date, double open, double high, dou
 
 // Constructor for 5 Second data
 Candle::Candle(int reqId, long time, double open, double high, double low,
-    double close, long volume, double wap, int count)
+    double close, Decimal volume, Decimal wap, int count)
     : reqId_(reqId), date_(""), time_(time), open_(open), close_(close), high_(high), 
     low_(low), volume_(volume), barCount_(0), WAP_(wap), count_(count) {}
 
 // Constructor for other candles created from 5 sec
 Candle::Candle(int reqId, long time, double open, double high,
-    double low, double close, long volume)
+    double low, double close, Decimal volume)
     : reqId_(reqId), date_(""), time_(time), open_(open), close_(close), high_(high), 
     low_(low), volume_(volume), barCount_(0), WAP_(0.0), count_(0) {}
 
@@ -40,9 +40,9 @@ double Candle::open() const { return open_; }
 double Candle::close() const { return close_; }
 double Candle::high() const { return high_; }
 double Candle::low() const { return low_; }
-long Candle::volume() const { return volume_; }
+Decimal Candle::volume() const { return volume_; }
 int Candle::barCount() const { return barCount_; }
-double Candle::WAP() const { return WAP_; }
+Decimal Candle::WAP() const { return WAP_; }
 int Candle::count() const { return count_; }
 
 std::string Candle::date() const {
@@ -73,4 +73,9 @@ void Candle::convertUnixToDate() const {
     strftime(buffer, sizeof(buffer), "%Y%m%d %H:%M:%S", timeInfo);
     std::string date = buffer;
     date_ = date;
+}
+
+void Candle::printCandle() const {
+    std::cout << "ID: " << reqId_ << " | Date: " << this->date() << " | Time: " << time_ << " Close: " << close_ <<
+        " | Volume: " << decimalStringToDisplay(volume_).c_str()<< " | Traded Count: " << count_ << std::endl;
 }

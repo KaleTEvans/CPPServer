@@ -82,8 +82,8 @@ void tWrapper::processMessages() {
 
 void tWrapper::processMsgLoop() {
     while (m_pClient->isConnected()) {
-        m_pReader->processMsgs();
         std::this_thread::sleep_for(std::chrono::microseconds(100));
+        m_pReader->processMsgs();
     }
 }
 
@@ -122,7 +122,66 @@ void tWrapper::connectionClosed() { std::cout << "Connection has been closed" <<
 void tWrapper::managedAccounts(const std::string& accountsList) { std::cout << accountsList << std::endl; }
 
 //==================================================================
-// EClient Request Functions
+// Single Event EClient Request Functions
+// 
+// All functions contain an 'End' callback, which will automatically
+// unsubscribe listeners using the reqId
+//==================================================================
+
+bool tWrapper::checkEventCompleted(int reqId) {
+    if (currentRequests.find(reqId) != currentRequests.end()) {
+        return currentRequests[reqId];
+    }
+
+    std::cout << "No request for this ID found" << std::endl;
+}
+
+void tWrapper::reqCurrentTime(EventCurrentTime event) {
+    std::unique_lock<std::mutex> lock(mtx);
+    currentTimeSubscribers.push(event);
+    lock.unlock();
+
+    m_pClient->reqCurrentTime();
+}
+
+void tWrapper::reqContractDetails(EventContractDetails event, const Contract& con) { 
+    std::unique_lock<std::mutex> lock(mtx);
+    int id = subscriptionId++;
+    contractDetailsSubscribers[id] = event;
+    currentRequests[id] = false;
+    lock.unlock();
+
+    m_pClient->reqContractDetails(id, con); 
+}
+
+void tWrapper::reqSecDefOptParams(EventSecDefOptParamns event, const std::string& underlyingSymbol, 
+    const std::string& futFopExchange, const std::string& underlyingSecType, int underlyingConId) {
+        std::unique_lock<std::mutex> lock(mtx);
+        int id = subscriptionId++;
+        optParamSubscribers[id] = event;
+        currentRequests[id] = false;
+        lock.unlock();
+
+        m_pClient->reqSecDefOptParams(id, underlyingSymbol, futFopExchange, underlyingSecType, underlyingConId);
+    }
+
+void tWrapper::reqHistoricalData(EventHistoricalData event, const Contract &con, const std::string &endDateTime, 
+    const std::string &durationStr, const std::string &barSizeSetting, const std::string &whatToShow, 
+    int useRTH, int formatDate, bool keepUpToDate) {
+        std::unique_lock<std::mutex> lock(mtx);
+        int id = subscriptionId++;
+        historicalDataSubscribers[id] = event;
+        currentRequests[id] = false;
+        lock.unlock();
+
+        m_pClient->reqHistoricalData(id, con, endDateTime, durationStr, barSizeSetting, whatToShow, useRTH,
+            formatDate, keepUpToDate, TagValueListSPtr());
+    }
+
+//==================================================================
+// Data Streaming EClient Functions
+// 
+// Continuous data will be published to the message bus
 //==================================================================
 
 void tWrapper::reqMktData(int reqId, const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot) {
@@ -130,30 +189,71 @@ void tWrapper::reqMktData(int reqId, const Contract& con, const std::string& gen
 }
 
 void tWrapper::cancelMktData(int reqId) { m_pClient->cancelMktData(reqId); }
-void tWrapper::reqContractDetails(int reqId, const Contract& con) { m_pClient->reqContractDetails(reqId, con); }
-void tWrapper::reqSecDefOptParams(int reqId, const std::string& underlyingSymbol, 
-    const std::string& futFopExchange, const std::string& underlyingSecType, int underlyingConId) {
-        m_pClient->reqSecDefOptParams(reqId, underlyingSymbol, futFopExchange, underlyingSecType, underlyingConId);
-    }
+
+void tWrapper::reqRealTimeBars(int reqId, const Contract& con, int barSize, const std::string& whatToShow, bool useRTH) {
+    m_pClient->reqRealTimeBars(reqId, con, barSize, whatToShow, useRTH, TagValueListSPtr());
+}
+
+void tWrapper::cancelRealTimeBars(int reqId) { m_pClient->cancelRealTimeBars(reqId); }
 
 //================================================================
-// Wrapper callback functions 
+// Single Event Wrapper callback functions 
+// 
+// All functions contain an 'End' callback, which will automatically
+// unsubscribe listeners using the reqId
 //================================================================
 
 void tWrapper::currentTime(long time) { 
-    std::cout << "Current Time: " << time << std::endl;
-    time_ = time;
+    std::lock_guard<std::mutex> lock(mtx);
+    currentTimeSubscribers.front()(time); // Send time to event in front of the queue
+    currentTimeSubscribers.pop();
 }
 
 void tWrapper::contractDetails(int reqId, const ContractDetails& contractDetails) {
-    auto event = std::make_shared<ContractDataEvent>(reqId, contractDetails);
-    messageBus->publish(event);
+    std::lock_guard<std::mutex> lock(mtx);
+    contractDetailsSubscribers[reqId](contractDetails); // Send contract details object to assiciated reqId
 }
 
 void tWrapper::contractDetailsEnd(int reqId) {
-    auto event = std::make_shared<EndOfRequestEvent>(reqId);
-    messageBus->publish(event);
+    std::lock_guard<std::mutex> lock(mtx);
+    contractDetailsSubscribers.erase(reqId); // Use end functions to erase reqId from subscription maps
+    currentRequests[reqId] = true; // Set request completion map to have a true value
 }
+
+void tWrapper::securityDefinitionOptionalParameter(int reqId, const std::string& exchange, 
+    int underlyingConId, const std::string& tradingClass, const std::string& multiplier, 
+    const std::set<std::string>& expirations, const std::set<double>& strikes) {
+        std::lock_guard<std::mutex> lock(mtx);
+        optParamSubscribers[reqId](exchange, underlyingConId, tradingClass, multiplier, expirations, strikes);
+    }
+
+void tWrapper::securityDefinitionOptionalParameterEnd(int reqId) {
+    std::lock_guard<std::mutex> lock(mtx);
+    optParamSubscribers.erase(reqId);
+    currentRequests[reqId] = true;
+}
+
+void tWrapper::historicalData(TickerId reqId, const Bar& bar) {
+
+    // Need to cast volume as a long
+    std::shared_ptr<Candle> candle = std::make_shared<Candle>(
+        reqId, bar.time, bar.open, bar.high, bar.low, bar.close, bar.volume, bar.count, bar.wap
+    );
+
+    historicalDataSubscribers[reqId](candle);
+}
+
+void tWrapper::historicalDataEnd(int reqId, const std::string& startDateStr, const std::string& endDateStr) {
+    std::lock_guard<std::mutex> lock(mtx);
+    historicalDataSubscribers.erase(reqId);
+    currentRequests[reqId] = true;
+}
+
+//==================================================================
+// Data Streaming Wrapper Functions
+// 
+// Continuous data will be published to the message bus
+//==================================================================
 
 void tWrapper::tickPrice(TickerId tickerId, TickType field, double price, const TickAttrib& attrib) {
     auto event = std::make_shared<TickPriceEvent>(tickerId, field, price, attrib);
@@ -190,54 +290,16 @@ void tWrapper::tickNews(int tickerId, time_t timeStamp, const std::string& provi
         messageBus->publish(event);
     }
 
-void tWrapper::securityDefinitionOptionalParameter(int reqId, const std::string& exchange, 
-    int underlyingConId, const std::string& tradingClass, const std::string& multiplier, 
-    const std::set<std::string>& expirations, const std::set<double>& strikes) {
-        std::cout << "Exchange: " << exchange << " Trading Class: " << tradingClass << " multiplier: " << 
-            multiplier << std::endl;
-
-        std::cout << "Strikes" << std::endl;
-        for (auto& i : strikes) {
-            std::cout << i << " ";
-        }
-        std::cout << std::endl;
-
-        std::cout << "Expirations" << std::endl;
-        for (auto& i : expirations) {
-            std::cout << i << " ";
-        }
-        std::cout << std::endl;
-    }
-
-void tWrapper::securityDefinitionOptionalParameterEnd(int reqId) {
-    auto event = std::make_shared<EndOfRequestEvent>(reqId);
-    messageBus->publish(event);
-}
-
-void tWrapper::historicalData(TickerId reqId, const Bar& bar) {
-
-    // Need to cast volume as a long
-    long vol = static_cast<long>(bar.volume);
-    std::shared_ptr<Candle> candle = std::make_shared<Candle>(
-        reqId, bar.time, bar.open, bar.high, bar.low, bar.close, vol, bar.count, bar.wap
-    );
-
-    auto event = std::make_shared<HistoricalCandleDataEvent>(reqId, candle);
-    messageBus->publish(event);
-}
-
 void tWrapper::realtimeBar(TickerId reqId, long time, double open, double high, double low, double close,
 	Decimal volume, Decimal wap, int count) {
-
+    std::cout << "Decimal Volume: " << decimalStringToDisplay(volume).c_str() << std::endl;
     std::shared_ptr<Candle> candle = std::make_shared<Candle>(
         reqId, time, open, high, low, close, volume, wap, count
     );
 
-    auto event = std::make_shared<HistoricalCandleDataEvent>(reqId, candle);
+    auto event = std::make_shared<CandleDataEvent>(candle);
     messageBus->publish(event);
 }
-
-long tWrapper::getCurrentime(long time) { return time; }
 
 ///////////////////////////////////////////////////////////////////////////
 // All additional virtual function definitions. Move to top if adding 
@@ -270,7 +332,6 @@ void tWrapper::updateMktDepthL2(TickerId id, int position, const std::string& ma
 int side, double price, Decimal size, bool isSmartDepth) {}
 void tWrapper::updateNewsBulletin(int msgId, int msgType, const std::string& newsMessage, const std::string& originExch) {}
 void tWrapper::receiveFA(faDataType pFaDataType, const std::string& cxml) {}
-void tWrapper::historicalDataEnd(int reqId, const std::string& startDateStr, const std::string& endDateStr) {}
 void tWrapper::scannerParameters(const std::string& xml) {}
 void tWrapper::scannerData(int reqId, int rank, const ContractDetails& contractDetails,
 const std::string& distance, const std::string& benchmark, const std::string& projection,
