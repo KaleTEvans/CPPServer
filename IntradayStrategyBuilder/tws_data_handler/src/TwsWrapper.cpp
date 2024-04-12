@@ -1,5 +1,17 @@
 #include "TwsWrapper.h"
 
+#if 0
+//Old version
+#define TwsApiDefsImpl		// Allocate the string values
+#include "TwsApiDefs.h"
+#else
+//New version
+#include "TwsApiDefs.h"
+#undef   _TwsApiDefs_h
+#define ENUMImplementation
+#include "TwsApiDefs.h"
+#endif
+
 #include "EClientSocket.h"
 #include "EPosixClientSocketPlatform.h"
 
@@ -12,10 +24,7 @@ tWrapper::tWrapper() : messageBus(std::make_shared<MessageBus>())
 	, m_sleepDeadline(0)
 	, m_orderId(0)
     , m_extraAuth(false)
-{
-    m_Done = false;
-    m_ErrorForRequest = false;
-}
+{}
 
 tWrapper::~tWrapper() {
     // destroy the reader before the client
@@ -101,7 +110,6 @@ void tWrapper::startMsgProcessingThread() {
 ///Methods winError & error print the errors reported by IB TWS
 void tWrapper::winError(const std::string& str, int lastError) {
     fprintf(stderr, "WinError: %d = %s\n", lastError, str.c_str());
-    m_ErrorForRequest = true;
 }
 
 void tWrapper::error(const int id, const int errorCode, const std::string& errorString, const std::string& advancedOrderRejectJson) {
@@ -133,7 +141,18 @@ bool tWrapper::checkEventCompleted(int reqId) {
         return currentRequests[reqId];
     }
 
-    std::cout << "No request for this ID found" << std::endl;
+    std::cout << "No request found for ID: " << reqId << std::endl;
+    return false;
+}
+
+Contract tWrapper::getContractById(int reqId) {
+    if (tickSubscribers.find(reqId) == tickSubscribers.end()) {
+        std::cout << "No Contract with this ID" << std::endl;
+        Contract con;
+        return con; // Return empty contract
+    }
+
+    return tickSubscribers[reqId];
 }
 
 void tWrapper::reqCurrentTime(EventCurrentTime event) {
@@ -184,17 +203,47 @@ void tWrapper::reqHistoricalData(EventHistoricalData event, const Contract &con,
 // Continuous data will be published to the message bus
 //==================================================================
 
-void tWrapper::reqMktData(int reqId, const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot) {
-    m_pClient->reqMktData(reqId, con, genericTicks, snapshot, regulatorySnapshot, TagValueListSPtr());
+void tWrapper::reqMktData(const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot) {
+    std::lock_guard<std::mutex> lock(mtx);
+    int id = subscriptionId++;
+    tickSubscribers[id] = con;
+    
+    m_pClient->reqMktData(id, con, genericTicks, snapshot, regulatorySnapshot, TagValueListSPtr());
 }
 
-void tWrapper::cancelMktData(int reqId) { m_pClient->cancelMktData(reqId); }
-
-void tWrapper::reqRealTimeBars(int reqId, const Contract& con, int barSize, const std::string& whatToShow, bool useRTH) {
-    m_pClient->reqRealTimeBars(reqId, con, barSize, whatToShow, useRTH, TagValueListSPtr());
+void tWrapper::cancelMktData(int reqId) { 
+    tickSubscribers.erase(reqId);
+    m_pClient->cancelMktData(reqId); 
 }
 
-void tWrapper::cancelRealTimeBars(int reqId) { m_pClient->cancelRealTimeBars(reqId); }
+void tWrapper::reqRealTimeBars(const Contract& con, int barSize, const std::string& whatToShow, bool useRTH) {
+    std::lock_guard<std::mutex> lock(mtx);
+    int id = subscriptionId++;
+    tickSubscribers[id] = con;
+    
+    m_pClient->reqRealTimeBars(id, con, barSize, whatToShow, useRTH, TagValueListSPtr());
+}
+
+void tWrapper::cancelRealTimeBars(int reqId) {
+    tickSubscribers.erase(reqId); 
+    m_pClient->cancelRealTimeBars(reqId); 
+}
+
+void tWrapper::calculateOptionPrice(const Contract& con, double volatility, double underlyingPrice) {
+    std::lock_guard<std::mutex> lock(mtx);
+    int id = subscriptionId++;
+    tickSubscribers[id] = con;
+    
+    m_pClient->calculateOptionPrice(id, con, volatility, underlyingPrice, TagValueListSPtr());
+}
+
+void tWrapper::calculateImpliedVolatility(const Contract& con, double optionPrice, double underlyingPrice) {
+    std::lock_guard<std::mutex> lock(mtx);
+    int id = subscriptionId++;
+    tickSubscribers[id] = con;
+    
+    m_pClient->calculateImpliedVolatility(id, con, optionPrice, underlyingPrice, TagValueListSPtr());
+}
 
 //================================================================
 // Single Event Wrapper callback functions 
@@ -234,8 +283,6 @@ void tWrapper::securityDefinitionOptionalParameterEnd(int reqId) {
 }
 
 void tWrapper::historicalData(TickerId reqId, const Bar& bar) {
-
-    // Need to cast volume as a long
     std::shared_ptr<Candle> candle = std::make_shared<Candle>(
         reqId, bar.time, bar.open, bar.high, bar.low, bar.close, bar.volume, bar.count, bar.wap
     );
@@ -246,6 +293,12 @@ void tWrapper::historicalData(TickerId reqId, const Bar& bar) {
 void tWrapper::historicalDataEnd(int reqId, const std::string& startDateStr, const std::string& endDateStr) {
     std::lock_guard<std::mutex> lock(mtx);
     historicalDataSubscribers.erase(reqId);
+    currentRequests[reqId] = true;
+}
+
+void tWrapper::tickSnapshotEnd(int reqId) {
+    std::lock_guard<std::mutex> lock(mtx);
+    // Add tick snapshot subscriber
     currentRequests[reqId] = true;
 }
 
@@ -278,17 +331,21 @@ void tWrapper::tickString(TickerId tickerId, TickType tickType, const std::strin
     
 }
 
-void tWrapper::tickSnapshotEnd(int reqId) {
-    auto event = std::make_shared<EndOfRequestEvent>(reqId);
-    messageBus->publish(event);
-}
+void tWrapper::tickOptionComputation(TickerId reqId, TickType tickType, int tickAttrib, double impliedVol, 
+    double delta, double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice) {
+        auto event = std::make_shared<TickOptionComputationEvent>(
+            reqId, tickType, tickAttrib, impliedVol, delta, optPrice, pvDividend, gamma, vega, theta, undPrice
+        );
+        messageBus->publish(event);
+    }
 
 void tWrapper::tickNews(int tickerId, time_t timeStamp, const std::string& providerCode, 
     const std::string& articleId, const std::string& headline, const std::string& extraData) {
         auto event = std::make_shared<TickNewsEvent>(tickerId, timeStamp, providerCode, articleId,
         headline, extraData);
         messageBus->publish(event);
-    }
+        std::cout << "Tick News Received" << std::endl;
+    } 
 
 void tWrapper::realtimeBar(TickerId reqId, long time, double open, double high, double low, double close,
 	Decimal volume, Decimal wap, int count) {
@@ -306,8 +363,6 @@ void tWrapper::realtimeBar(TickerId reqId, long time, double open, double high, 
 // any new data requests as needed
 ////////////////////////////////////////////////////////////////////////////
 
-void tWrapper::tickOptionComputation( TickerId tickerId, TickType tickType, int tickAttrib, double impliedVol, double delta,
-double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice) {}
 void tWrapper::tickEFP(TickerId tickerId, TickType tickType, double basisPoints, const std::string& formattedBasisPoints,
 double totalDividends, int holdDays, const std::string& futureLastTradeDate, double dividendImpact, double dividendsToLastTradeDate) {}
 void tWrapper::orderStatus( OrderId orderId, const std::string& status, Decimal filled,

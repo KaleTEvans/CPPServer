@@ -3,27 +3,14 @@
 #include <sstream>
 #include <string>
 
-TickNewsEvent::TickNewsEvent(int reqId, time_t dateTime, std::string providerCode, std::string articleId,
-    std::string headline, std::string extraData) : TickDataEvent(reqId), dateTime(dateTime), 
-    providerCode(providerCode), articleId(articleId), headline(headline), extraData(extraData) {
-        // Break apart news string into useful info
-        std::string str = extraData;
-        std::stringstream ss(str);
-
-        // getline(ss, newsId, ' ');
-        // getline(ss, dateTime, ' ');
-        // getline(ss, newsSource, ' ');
-        // getline(ss, headline);
-    }
+int DataEvent::getReqId() const { return reqId; }
 
 EventType CandleDataEvent::getType() const { return EventType::RealTimeCandleData; }
-EventType ContractDataEvent::getType() const { return EventType::ContractInfo; }
-EventType ContractOptStrikesEvent::getType() const { return EventType::ContractStrikesInfo; }
 EventType TickPriceEvent::getType() const { return EventType::TickPriceInfo; }
 EventType TickSizeEvent::getType() const { return EventType::TickSizeInfo; }
 EventType TickGenericEvent::getType() const { return EventType::TickGenericInfo; }
 EventType TickNewsEvent::getType() const { return EventType::TickNewsInfo; }
-EventType EndOfRequestEvent::getType() const { return EventType::EndOfRequest; }
+EventType TickOptionComputationEvent::getType() const { return EventType::TickOptionInfo; }
 
 MessageBus::MessageBus() {
     std::cout << "Message bus starting engines" << std::endl;

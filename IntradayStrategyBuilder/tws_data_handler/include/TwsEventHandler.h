@@ -21,53 +21,31 @@
 // Types of data that are recieved by the wrapper
 enum class EventType {
     RealTimeCandleData,
-    ContractInfo,
-    ContractStrikesInfo,
     TickPriceInfo,
     TickSizeInfo,
     TickGenericInfo,
     TickNewsInfo,
-    EndOfRequest
+    TickOptionInfo
 };
 
 // Base event type
 class DataEvent {
     public:
+        int reqId{0};
+        DataEvent(int reqId) : reqId(reqId) {}
         virtual ~DataEvent() = default;
         virtual EventType getType() const = 0;
+        virtual int getReqId() const;
 };
 
 //==============================================================
-// Candle event - use for historical and live candlestick data
+// Candle event - use for live candlestick data
 //==============================================================
 
 class CandleDataEvent : public DataEvent {
     public:
         std::shared_ptr<Candle> candle;
-        CandleDataEvent(std::shared_ptr<Candle> candle) : candle(candle) {}
-        virtual EventType getType() const override;
-};
-
-//==============================================================
-// Contract Data Event
-//==============================================================
-
-class ContractDataEvent : public DataEvent {
-    public:
-        int reqId{0};
-        ContractDetails details;
-        ContractDataEvent(int reqId, ContractDetails details) : reqId(reqId), details(details) {}
-        virtual EventType getType() const override;
-};
-
-class ContractOptStrikesEvent : public DataEvent {
-    public:
-        int reqId{0};
-        std::string exchange{""};
-        std::string tradingClass{""};
-        std::set<double> strikes;
-        ContractOptStrikesEvent(int reqId, std::string exchange, std::string tradingClass, std::set<double> strikes) :
-            reqId(reqId), exchange(exchange), tradingClass(tradingClass), strikes(strikes) {}
+        CandleDataEvent(std::shared_ptr<Candle> candle) : candle(candle), DataEvent(candle->reqId()) {}
         virtual EventType getType() const override;
 };
 
@@ -77,9 +55,8 @@ class ContractOptStrikesEvent : public DataEvent {
 
 class TickDataEvent : public DataEvent {
     public:
-        int reqId{0};
         TickType tickType{TickType::NOT_SET};
-        TickDataEvent(int reqId, TickType tickType = TickType::NOT_SET) : reqId(reqId), tickType(tickType) {}
+        TickDataEvent(int reqId, TickType tickType = TickType::NOT_SET) : DataEvent(reqId), tickType(tickType) {}
 };
 
 class TickPriceEvent : public TickDataEvent {
@@ -94,8 +71,8 @@ class TickPriceEvent : public TickDataEvent {
 
 class TickSizeEvent : public TickDataEvent {
     public:
-        int size{0};
-        TickSizeEvent(int reqId, TickType tickType, int size) :
+        Decimal size{0};
+        TickSizeEvent(int reqId, TickType tickType, Decimal size) :
             TickDataEvent(reqId, tickType), size(size) {}
 
         virtual EventType getType() const override;
@@ -112,22 +89,33 @@ class TickGenericEvent : public TickDataEvent {
 
 class TickNewsEvent : public TickDataEvent {
     public:
-        TickType tickType{TickType::NOT_SET};
         time_t dateTime{0};
         std::string providerCode{""};
         std::string articleId{""};
         std::string headline{""};
         std::string extraData{""};
         TickNewsEvent(int reqId, time_t dateTime, std::string providerCode, std::string articleId,
-            std::string headline, std::string extraData); // Constructor defined in cpp file
+            std::string headline, std::string extraData) : TickDataEvent(reqId), dateTime(dateTime), 
+            providerCode(providerCode), articleId(articleId), headline(headline), extraData(extraData) {}
 
         virtual EventType getType() const override;
 };
 
-class EndOfRequestEvent : public DataEvent {
+class TickOptionComputationEvent : public TickDataEvent {
     public:
-        int reqId{0};
-        EndOfRequestEvent(int reqId) : reqId(reqId) {}
+        int tickAttrib{0};
+        double impliedVol{0};
+        double delta{0};
+        double optPrice{0};
+        double pvDividend{0};
+        double gamma{0};
+        double vega{0};
+        double theta{0};
+        double undPrice{0};
+        TickOptionComputationEvent(int reqId, TickType tickType, int tickAttrib, double impliedVol, double delta,
+            double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice) :
+            TickDataEvent(reqId, tickType), tickAttrib(tickAttrib), impliedVol(impliedVol), delta(delta), 
+            optPrice(optPrice), pvDividend(pvDividend), gamma(gamma), vega(vega), theta(theta), undPrice(undPrice) {}
 
         virtual EventType getType() const override;
 };

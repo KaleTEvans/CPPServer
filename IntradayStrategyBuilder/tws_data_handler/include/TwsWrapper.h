@@ -28,6 +28,26 @@
 #include <atomic>
 #include <queue>
 
+//----------------------------------------------------------------------------
+// IBString is extended for downward compatibility
+// and to make the TwsApiDefs special operators work
+//----------------------------------------------------------------------------
+#define IB_USE_STD_STRING
+/**/
+#define IBString _IBString
+#include "IBString.h"
+#undef IBString
+
+struct IBString: public _IBString
+{
+	IBString( void					) { reserve(32); }
+	IBString( const char*		 s	) { this->assign(s); }
+	IBString( const std::string& s	) { this->assign(s.data()); }
+
+	operator const char*  (void) const{ return data(); }
+};
+/**/
+
 #include "TwsEventHandler.h"
 #include "EReaderOSSignal.h"
 #include "EReader.h"
@@ -39,10 +59,6 @@ class tWrapper : public EWrapper {
 public:
     tWrapper();
     ~tWrapper();
-
-    // Public variables to determine completion of certain wrapper requests
-    bool m_Done, m_ErrorForRequest;
-    bool notDone(void) { return !(m_Done || m_ErrorForRequest); }
 
     //========================================
     // Message Bus
@@ -73,10 +89,15 @@ public:
 
     // Attempting to maintain simplicity here so that all requests and callbacks are contained within TWS Wrapper
     // Add new request functions as needed
-    void reqMktData(int reqId, const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot);
+    void reqMktData(const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot);
     void cancelMktData(int reqId);
-    void reqRealTimeBars(int reqId, const Contract& con, int barSize, const std::string& whatToShow, bool useRTH);
+    void reqRealTimeBars(const Contract& con, int barSize, const std::string& whatToShow, bool useRTH);
     void cancelRealTimeBars(int reqId);
+
+    // Note for price and volatility calculations: Output will be in tickOptionComputation, only filter for 
+    // price and volatility for these, everything else will come out as garbage
+    void calculateOptionPrice(const Contract& con, double volatility, double underlyingPrice);
+    void calculateImpliedVolatility(const Contract& con, double optionPrice, double underlyingPrice);
 
 public:
     //==========================================
@@ -98,6 +119,7 @@ private:
     std::mutex mtx;
     std::atomic<int> subscriptionId{0}; // Atomic counter for subscription IDs
     std::map<int, bool> currentRequests; // Incomplete requests will be false, completed true
+    std::map<int, Contract> tickSubscribers; // This will map all generated IDs to associated contracts to help manage tick data
 
     std::queue<EventCurrentTime> currentTimeSubscribers; // Events with no reqId will use a queue
     std::map<int, EventContractDetails> contractDetailsSubscribers;
@@ -120,7 +142,7 @@ public:
         int useRTH, int formatDate, bool keepUpToDate);
 
     bool checkEventCompleted(int reqId); // Check current requests map
-    void unsubscribeFromEvent(int subId); // EndOfRequest will automatically call unsubscribe
+    Contract getContractById(int reqId); // Get the contract associated with a tick subscription
 
 private:
     // There should only be a single instance of the message bus associated with the wrapper
