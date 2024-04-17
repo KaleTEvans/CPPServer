@@ -137,22 +137,13 @@ void tWrapper::managedAccounts(const std::string& accountsList) { std::cout << a
 //==================================================================
 
 bool tWrapper::checkEventCompleted(int reqId) {
+    std::lock_guard<std::mutex> lock(mtx);
     if (currentRequests.find(reqId) != currentRequests.end()) {
         return currentRequests[reqId];
     }
 
     std::cout << "No request found for ID: " << reqId << std::endl;
     return false;
-}
-
-Contract tWrapper::getContractById(int reqId) {
-    if (tickSubscribers.find(reqId) == tickSubscribers.end()) {
-        std::cout << "No Contract with this ID" << std::endl;
-        Contract con;
-        return con; // Return empty contract
-    }
-
-    return tickSubscribers[reqId];
 }
 
 void tWrapper::reqCurrentTime(EventCurrentTime event) {
@@ -163,9 +154,10 @@ void tWrapper::reqCurrentTime(EventCurrentTime event) {
     m_pClient->reqCurrentTime();
 }
 
-void tWrapper::reqContractDetails(EventContractDetails event, const Contract& con) { 
+void tWrapper::reqContractDetails(CallbackID cbId, EventContractDetails event, const Contract& con) { 
     std::unique_lock<std::mutex> lock(mtx);
     int id = subscriptionId++;
+    cbId(id);
     contractDetailsSubscribers[id] = event;
     currentRequests[id] = false;
     lock.unlock();
@@ -173,10 +165,11 @@ void tWrapper::reqContractDetails(EventContractDetails event, const Contract& co
     m_pClient->reqContractDetails(id, con); 
 }
 
-void tWrapper::reqSecDefOptParams(EventSecDefOptParamns event, const std::string& underlyingSymbol, 
+void tWrapper::reqSecDefOptParams(CallbackID cbId, EventSecDefOptParamns event, const std::string& underlyingSymbol, 
     const std::string& futFopExchange, const std::string& underlyingSecType, int underlyingConId) {
         std::unique_lock<std::mutex> lock(mtx);
         int id = subscriptionId++;
+        cbId(id);
         optParamSubscribers[id] = event;
         currentRequests[id] = false;
         lock.unlock();
@@ -184,11 +177,12 @@ void tWrapper::reqSecDefOptParams(EventSecDefOptParamns event, const std::string
         m_pClient->reqSecDefOptParams(id, underlyingSymbol, futFopExchange, underlyingSecType, underlyingConId);
     }
 
-void tWrapper::reqHistoricalData(EventHistoricalData event, const Contract &con, const std::string &endDateTime, 
+void tWrapper::reqHistoricalData(CallbackID cbId, EventHistoricalData event, const Contract &con, const std::string &endDateTime, 
     const std::string &durationStr, const std::string &barSizeSetting, const std::string &whatToShow, 
     int useRTH, int formatDate, bool keepUpToDate) {
         std::unique_lock<std::mutex> lock(mtx);
         int id = subscriptionId++;
+        cbId(id);
         historicalDataSubscribers[id] = event;
         currentRequests[id] = false;
         lock.unlock();
@@ -227,6 +221,17 @@ void tWrapper::reqRealTimeBars(const Contract& con, int barSize, const std::stri
 void tWrapper::cancelRealTimeBars(int reqId) {
     tickSubscribers.erase(reqId); 
     m_pClient->cancelRealTimeBars(reqId); 
+}
+
+Contract tWrapper::getContractById(int reqId) {
+    std::lock_guard<std::mutex> lock(mtx);
+    if (tickSubscribers.find(reqId) == tickSubscribers.end()) {
+        std::cout << "No Contract with this ID" << std::endl;
+        Contract con;
+        return con; // Return empty contract
+    }
+
+    return tickSubscribers[reqId];
 }
 
 void tWrapper::calculateOptionPrice(const Contract& con, double volatility, double underlyingPrice) {

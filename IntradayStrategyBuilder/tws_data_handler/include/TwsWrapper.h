@@ -28,10 +28,7 @@
 #include <atomic>
 #include <queue>
 
-//----------------------------------------------------------------------------
-// IBString is extended for downward compatibility
-// and to make the TwsApiDefs special operators work
-//----------------------------------------------------------------------------
+
 #define IB_USE_STD_STRING
 /**/
 #define IBString _IBString
@@ -93,6 +90,7 @@ public:
     void cancelMktData(int reqId);
     void reqRealTimeBars(const Contract& con, int barSize, const std::string& whatToShow, bool useRTH);
     void cancelRealTimeBars(int reqId);
+    Contract getContractById(int reqId); // Get the contract associated with a tick subscription
 
     // Note for price and volatility calculations: Output will be in tickOptionComputation, only filter for 
     // price and volatility for these, everything else will come out as garbage
@@ -105,6 +103,7 @@ public:
     //==========================================
 
     // Callback rerouting for all wrapper methods
+    using CallbackID = std::function<void(int)>;
     using EventCurrentTime = std::function<void(long)>;
     using EventContractDetails = std::function<void(const ContractDetails&)>;
     using EventSecDefOptParamns = std::function<void(const std::string&, int, const std::string&, 
@@ -134,15 +133,14 @@ public:
     // All program components can subscribe to these methods to receive the specific data they need
     // Each has the option to generate a new ID for requests and subscription handling, or use a custom ID
     void reqCurrentTime(EventCurrentTime event);
-    void reqContractDetails(EventContractDetails event, const Contract& con);
-    void reqSecDefOptParams(EventSecDefOptParamns event, const std::string& underlyingSymbol, const std::string& futFopExchange, 
-        const std::string& underlyingSecType, int underlyingConId);
-    void reqHistoricalData(EventHistoricalData event, const Contract& con, const std::string& endDate, 
+    void reqContractDetails(CallbackID cbId, EventContractDetails event, const Contract& con);
+    void reqSecDefOptParams(CallbackID cbId, EventSecDefOptParamns event, const std::string& underlyingSymbol, 
+        const std::string& futFopExchange, const std::string& underlyingSecType, int underlyingConId);
+    void reqHistoricalData(CallbackID cbId, EventHistoricalData event, const Contract& con, const std::string& endDate, 
         const std::string& durationStr, const std::string& barSizeSetting, const std::string& whatToShow, 
         int useRTH, int formatDate, bool keepUpToDate);
 
     bool checkEventCompleted(int reqId); // Check current requests map
-    Contract getContractById(int reqId); // Get the contract associated with a tick subscription
 
 private:
     // There should only be a single instance of the message bus associated with the wrapper

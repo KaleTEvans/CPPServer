@@ -38,10 +38,16 @@ public:
         });
     }
 
-    void getContractData(const Contract& con) {
-        wrapper.reqContractDetails([this](const ContractDetails& contractDetails) {
+    int getContractData(const Contract& con) {
+        int reqId = 0;
+        wrapper.reqContractDetails(
+            [this](int reqId) {
+                reqId = reqId;
+            },
+            [this](const ContractDetails& contractDetails) {
             this->handleContractDataEvent(contractDetails);
         }, con);
+        return reqId;
     }
 
     void handleContractDataEvent(const ContractDetails& contractDetails) {
@@ -77,7 +83,7 @@ public:
         std::cout << "News ID: " << event->articleId << std::endl;
         std::cout << "Time of Article: " << event->dateTime << std::endl;
         std::cout << "Headline: " << event->headline << std::endl;
-        std::cout << "Extra Data" << event->extraData << std::endl;
+        std::cout << "Extra Data: " << event->extraData << std::endl;
     }
 
     void realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
@@ -112,9 +118,6 @@ int main() {
 
     int clientId = 0;
 
-    TickType field = TickType::ASK;
-    std::cout << *(TickTypes::ENUMS)field << std::endl;
-
 	unsigned attempt = 0;
 	printf( "Start of C++ Socket Client Test %u\n", attempt);
 
@@ -134,9 +137,9 @@ int main() {
 
     // Use reqContractDetails to get the contract ID
     // First add a req id to the list
-    testSubscriber.getContractData(con);
+    int req = testSubscriber.getContractData(con);
 
-    while (testSubscriber.getContainer().empty()) {
+    while (!testClient.checkEventCompleted(req)) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
@@ -173,10 +176,10 @@ int main() {
     news.secType = "NEWS";
     news.exchange = "BZ";
     
-    //testClient.reqMktData(news, "mdoff,292", false, false);
+    testClient.reqMktData(news, "mdoff,292", false, false);
 
     for (int i=0; i < 150; i++) {
-        testSubscriber.getTime();
+        //testSubscriber.getTime();
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
@@ -255,5 +258,30 @@ News ID: BZ$1729f04d
 Time of Article: 1712952425000
 Headline: Medical Properties Trust Sells Majority Interest In Utah Hospitals;  MPT Has Retained An ~25% Interest In The Venture And The Fund Purchased An ~75% Interest For $886M, Fully Validating MPT's Underwritten Lease Base Of ~$1.2B; Will Generate ~$1.1B Of Total Cash Proceeds
 Extra DataA:800015:L:en:K:0.42:C:0.4189840257167816
+
+News ID: BZ$172e1882
+Time of Article: 1713205827000
+Headline: $100 Invested In This Stock 5 Years Ago Would Be Worth $500 Today
+Extra Data: A:800015:L:en:K:n/a:C:0.8727717995643616
+
+News ID: BZ$172e1892
+Time of Article: 1713205831000
+Headline: How Is The Market Feeling About Schlumberger?
+Extra Data: A:800015:L:en:K:n/a:C:0.879279613494873
+
+News ID: BZ$172e1897
+Time of Article: 1713205837000
+Headline: S&P 500 Down Over 1%; US Retail Sales Increase 0.7% In March
+Extra Data: A:800015:L:en:K:0.97:C:0.97
+
+News ID: BZ$172e1904
+Time of Article: 1713205860000
+Headline: Cantor Fitzgerald Reiterates Overweight on Eli Lilly and Co, Maintains $815 Price Target
+Extra Data: A:800015:L:en:K:0.97:C:0.97
+
+News ID: BZ$172e1fdb
+Time of Article: 1713206215000
+Headline: Biohaven shares are trading lower after the company announced the presentatino of data at the 2024 American Academy of Neurology Annual Meeting this weekend.
+Extra Data: A:800015:L:en:K:n/a:C:0.7615593671798706
 
 */
