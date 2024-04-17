@@ -13,6 +13,7 @@ struct Contract;
 class ContractDefs {
 public:
     static Contract SPXInd();
+    static int SPXConID();
     static Contract BZBroadTape();
     static Contract SPXOpt(const std::string& expDate, const std::string& right, int strike);
     static Contract SPXOpt0DTE(const std::string& right, int strike);

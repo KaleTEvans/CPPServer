@@ -61,10 +61,12 @@ public:
     // All data returned as shared pointers
     // allows for easy cleanup of unused data
     //=========================================
+    double lastPrice = 0;
 
     void handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
         printf( "Tick Price. Ticker Id: %d, Field: %d, Price: %f, CanAutoExecute: %d, PastLimit: %d, PreOpen: %d\n", 
         event->reqId, (int)event->tickType, event->price, event->attrib.canAutoExecute, event->attrib.pastLimit, event->attrib.preOpen);
+        if (event->tickType == 4) lastPrice = event->price;
     }
 
     void handleTickNewsEvent(std::shared_ptr<TickNewsEvent> event) {
@@ -125,7 +127,7 @@ public:
         return reqId;
     }
 
-    int getOptionsChain(const std::string& underlyingSymbol, const std::string& futFopExchange = "", 
+    int getOptionsChain(const std::string& underlyingSymbol, const std::string& futFopExchange, 
         const std::string& underlyingSecType, int underlyingConId) {
             int reqId = 0;
             wrapper->reqSecDefOptParams(
@@ -177,7 +179,18 @@ public:
     void handleOptionsChainData(const std::string& exchange, 
         int underlyingConId, const std::string& tradingClass, const std::string& multiplier, 
         const std::set<std::string>& expirations, const std::set<double>& strikes) {
+            std::vector<double> sortedStrikes;
+            for (auto& i : strikes) {
+                sortedStrikes.push_back(i);
+            }
 
+            for (int i=0; i < sortedStrikes.size(); i++) {
+                if (lastPrice > sortedStrikes[i-1] && lastPrice < sortedStrikes[i]) {
+                    std::cout << "Last Price" << lastPrice << std::endl;
+                    std::cout << "Lower Strikes: " << sortedStrikes[i-4] << " " << sortedStrikes[i-3] <<
+                        " " << sortedStrikes[i-2] << " " << sortedStrikes[i-1] << " " << sortedStrikes[i] << std::endl;
+                }
+            }
     }
 
     void handleHistoricalData(std::shared_ptr<Candle> candle) {

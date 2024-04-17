@@ -117,6 +117,10 @@ void tWrapper::error(const int id, const int errorCode, const std::string& error
         printf("Error. Id: %d, Code: %d, Msg: %s, AdvancedOrderRejectJson: %s\n", id, errorCode, errorString.c_str(), advancedOrderRejectJson.c_str());
     } else {
         printf("Error. Id: %d, Code: %d, Msg: %s\n", id, errorCode, errorString.c_str());
+
+        // Mark single event request as true to skip over any waiting loops
+        currentRequests[id] = true;
+        printf("Request has been skipped for ID: %d\n", id);
     }
 }
 

@@ -4,126 +4,23 @@
 
 #include "TwsWrapper.h"
 #include "TwsApiDefs.h"
+#include "SampleDataSubscriber.h"
+#include "ContractDefs.h"
 
 using namespace TwsApi;
 
-const unsigned MAX_ATTEMPTS = 50;
-const unsigned SLEEP_TIME = 10;
-
-class Subscriber {
-public:
-    Subscriber(std::shared_ptr<MessageBus> bus, tWrapper& wrapper) : wrapper(wrapper) {
-        bus->subscribe(EventType::TickPriceInfo, [this](std::shared_ptr<DataEvent> event) {
-            this->handleTickPriceEvent(std::dynamic_pointer_cast<TickPriceEvent>(event));
-        });
-
-        bus->subscribe(EventType::TickNewsInfo, [this](std::shared_ptr<DataEvent> event) {
-            this->handleTickNewsEvent(std::dynamic_pointer_cast<TickNewsEvent>(event));
-        });
-
-        bus->subscribe(EventType::RealTimeCandleData, [this](std::shared_ptr<DataEvent> event) {
-            this->realTimeCandles(std::dynamic_pointer_cast<CandleDataEvent>(event));
-        });
-
-        bus->subscribe(EventType::TickOptionInfo, [this](std::shared_ptr<DataEvent> event) {
-            this->tickOptionInfo(std::dynamic_pointer_cast<TickOptionComputationEvent>(event));
-        });
-
-        bus->subscribe(EventType::TickGenericInfo, [this](std::shared_ptr<DataEvent> event) {
-            this->handleTickGenericEvent(std::dynamic_pointer_cast<TickGenericEvent>(event));
-        });
-
-        bus->subscribe(EventType::TickSizeInfo, [this](std::shared_ptr<DataEvent> event) {
-            this->handleTickSizeEvent(std::dynamic_pointer_cast<TickSizeEvent>(event));
-        });
-    }
-
-    int getContractData(const Contract& con) {
-        int reqId = 0;
-        wrapper.reqContractDetails(
-            [this](int reqId) {
-                reqId = reqId;
-            },
-            [this](const ContractDetails& contractDetails) {
-            this->handleContractDataEvent(contractDetails);
-        }, con);
-        return reqId;
-    }
-
-    void handleContractDataEvent(const ContractDetails& contractDetails) {
-        container.push_back(contractDetails);
-    }
-
-    void getTime() {
-        wrapper.reqCurrentTime([this](long time){
-            this->printTime(time);
-        });
-    }
-
-    void printTime(long time) {
-        std::cout << "Time: " << time << std::endl;
-    }
-
-    void handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
-        printf( "Tick Price. Ticker Id: %d, Field: %d, Price: %f, CanAutoExecute: %d, PastLimit: %d, PreOpen: %d\n", 
-        event->reqId, (int)event->tickType, event->price, event->attrib.canAutoExecute, event->attrib.pastLimit, event->attrib.preOpen);
-    }
-
-    void handleTickGenericEvent(std::shared_ptr<TickGenericEvent> event) {
-        printf( "Tick Generic. Ticker Id: %d, Type: %d, Value: %f\n", 
-            event->reqId, (int)event->tickType, event->value);
-    }
-
-    void handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
-        printf( "Tick Size. Ticker Id: %d, Field: %d, Size: %s\n", 
-            event->reqId, (int)event->tickType, decimalStringToDisplay(event->size).c_str());
-    }
-
-    void handleTickNewsEvent(std::shared_ptr<TickNewsEvent> event) {
-        std::cout << "News ID: " << event->articleId << std::endl;
-        std::cout << "Time of Article: " << event->dateTime << std::endl;
-        std::cout << "Headline: " << event->headline << std::endl;
-        std::cout << "Extra Data: " << event->extraData << std::endl;
-    }
-
-    void realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
-        event->candle->printCandle();
-    }
-
-    void tickOptionInfo(std::shared_ptr<TickOptionComputationEvent> event) {
-        printf("TickOptionComputation. Ticker Id: %d, Type: %d, TickAttrib: %d," 
-        "ImpliedVolatility: %f, Delta: %f, OptionPrice: %f, pvDividend: %f, Gamma: %f," 
-        "Vega: %f, Theta: %f, Underlying Price: %f\n", event->reqId, (int)event->tickType, 
-        event->tickAttrib, event->impliedVol, event->delta, event->optPrice, event->pvDividend, 
-        event->gamma, event->vega, event->theta, event->undPrice);
-    }
-
-    tWrapper& wrapper;
-
-    void addReqId(int reqId) { reqIdList.insert(reqId); }
-    bool checkCompletedReq(int reqId) { return completedReqs.find(reqId) != completedReqs.end(); }
-    std::vector<ContractDetails> getContainer() { return container; }
-
-    double price{0};
-
-private:
-    std::set<TickerId> reqIdList;
-    std::set<TickerId> completedReqs;
-    std::vector<ContractDetails> container;
-        
-};
-
 int main() {
-    tWrapper testClient;
+    std::shared_ptr<tWrapper> testClient = std::make_shared<tWrapper>();
 
     int clientId = 0;
 
 	unsigned attempt = 0;
 	printf( "Start of C++ Socket Client Test %u\n", attempt);
 
-    testClient.connect("192.168.12.148", 7496, clientId);
+    testClient->connect("192.168.12.148", 7496, clientId);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-    Subscriber testSubscriber(testClient.getMessageBus(), testClient);
+    Subscriber testSubscriber(testClient);
 
     // Create contract
     Contract con;
@@ -133,26 +30,15 @@ int main() {
     con.exchange = "SMART";
     con.primaryExchange = "CBOE";
 
-    testClient.startMsgProcessingThread();
+    testClient->startMsgProcessingThread();
 
     // Use reqContractDetails to get the contract ID
     // First add a req id to the list
-    int req = testSubscriber.getContractData(con);
+    int req = testSubscriber.getContractData(ContractDefs::SPXInd());
 
-    while (!testClient.checkEventCompleted(req)) {
+    while (!testClient->checkEventCompleted(req)) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-
-    std::vector<ContractDetails> cd = testSubscriber.getContainer();
-    for (auto& c : cd) {
-        std::cout << "Con ID: " << c.contract.conId << std::endl;
-        std::cout << c.contract.description << std::endl;
-    }
-
-    long conId = cd[0].contract.conId;
-    std::string conSymbol = cd[0].contract.symbol;
-    std::string secType = cd[0].contract.secType;
-    std::string exchange = cd[0].contract.primaryExchange;
 
     Contract con1;
     con1.symbol = "SPX";
@@ -169,14 +55,21 @@ int main() {
 
     //testClient.reqRealTimeBars(con1, 5, "TRADES", true);
     //testClient.reqRealTimeBars(con2, 5, "TRADES", true);
-    //testClient.reqMktData(con, "100,101,106,104,225,233,293,295,411", false, false);
-    
+    testClient->reqMktData(con, "100,101,106,104,225,233,293,295,411", false, false);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    int chainID = 0;
+    if (testSubscriber.lastPrice != 0) chainID = testSubscriber.getOptionsChain("SPX", "", "IND", ContractDefs::SPXConID());
+    while (!testClient->checkEventCompleted(chainID)) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
     Contract news;
     news.symbol = "BZ:BZ_ALL";
     news.secType = "NEWS";
     news.exchange = "BZ";
     
-    testClient.reqMktData(news, "mdoff,292", false, false);
+    //testClient->reqMktData(news, "mdoff,292", false, false);
 
     for (int i=0; i < 150; i++) {
         //testSubscriber.getTime();
@@ -189,7 +82,7 @@ int main() {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
-    testClient.disconnect();
+    testClient->disconnect();
 
     return 0;
 }
@@ -232,7 +125,31 @@ Tick Size. Ticker Id: 101, Field: 0, Size:
 Tick Price. Ticker Id: 101, Field: 2, Price: 0.000000, CanAutoExecute: 0, PastLimit: 0, PreOpen: 0
 Tick Size. Ticker Id: 101, Field: 3, Size: 
 
+=========
+Ticks for SPX after market close 
 
+Tick Price. Ticker Id: 1, Field: 1, Price: -1.000000, CanAutoExecute: 1, PastLimit: 0, PreOpen: 0
+Tick Size. Ticker Id: 1, Field: 0, Size: 0
+Tick Price. Ticker Id: 1, Field: 2, Price: -1.000000, CanAutoExecute: 1, PastLimit: 0, PreOpen: 0
+Tick Size. Ticker Id: 1, Field: 3, Size: 0
+Tick Price. Ticker Id: 1, Field: 4, Price: 5022.210000, CanAutoExecute: 0, PastLimit: 0, PreOpen: 0
+Tick Size. Ticker Id: 1, Field: 5, Size: 
+Tick Size. Ticker Id: 1, Field: 0, Size: 0
+Tick Size. Ticker Id: 1, Field: 3, Size: 0
+Tick Size. Ticker Id: 1, Field: 8, Size: 24600
+Tick Price. Ticker Id: 1, Field: 6, Price: 5077.960000, CanAutoExecute: 0, PastLimit: 0, PreOpen: 0
+Tick Price. Ticker Id: 1, Field: 7, Price: 5007.250000, CanAutoExecute: 0, PastLimit: 0, PreOpen: 0
+Tick Price. Ticker Id: 1, Field: 9, Price: 5051.410000, CanAutoExecute: 0, PastLimit: 0, PreOpen: 0
+Tick Size. Ticker Id: 1, Field: 29, Size: 3961530
+Tick Size. Ticker Id: 1, Field: 30, Size: 4880340
+Tick Size. Ticker Id: 1, Field: 27, Size: 19599996
+Tick Size. Ticker Id: 1, Field: 28, Size: 38265290
+Tick Generic. Ticker Id: 1, Type: 23, Value: 0.114762
+Tick Generic. Ticker Id: 1, Type: 24, Value: 0.158317
+Tick Size. Ticker Id: 1, Field: 29, Size: 4286204
+Tick Size. Ticker Id: 1, Field: 30, Size: 5461824
+Tick Generic. Ticker Id: 1, Type: 23, Value: 0.114374
+========
 
 News ID: BZ$1729eb9e
 Time of Article: 1712952261000
