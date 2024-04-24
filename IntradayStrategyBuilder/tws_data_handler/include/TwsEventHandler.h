@@ -24,6 +24,7 @@ enum class EventType {
     TickPriceInfo,
     TickSizeInfo,
     TickGenericInfo,
+    TickStringInfo,
     TickNewsInfo,
     TickOptionInfo
 };
@@ -55,16 +56,18 @@ class CandleDataEvent : public DataEvent {
 
 class TickDataEvent : public DataEvent {
     public:
+        long timeStamp{0};
         TickType tickType{TickType::NOT_SET};
-        TickDataEvent(int reqId, TickType tickType = TickType::NOT_SET) : DataEvent(reqId), tickType(tickType) {}
+        TickDataEvent(int reqId, long timeStamp, TickType tickType = TickType::NOT_SET) : 
+            DataEvent(reqId), timeStamp(timeStamp), tickType(tickType) {}
 };
 
 class TickPriceEvent : public TickDataEvent {
     public:
         double price{0};
         TickAttrib attrib;
-        TickPriceEvent(int reqId, TickType tickType, double price, const TickAttrib& attrib) :
-            TickDataEvent(reqId, tickType), price(price), attrib(attrib) {}
+        TickPriceEvent(int reqId, long timeStamp, TickType tickType, double price, const TickAttrib& attrib) :
+            TickDataEvent(reqId, timeStamp, tickType), price(price), attrib(attrib) {}
 
         virtual EventType getType() const override;
 };
@@ -72,8 +75,8 @@ class TickPriceEvent : public TickDataEvent {
 class TickSizeEvent : public TickDataEvent {
     public:
         Decimal size{0};
-        TickSizeEvent(int reqId, TickType tickType, Decimal size) :
-            TickDataEvent(reqId, tickType), size(size) {}
+        TickSizeEvent(int reqId, long timeStamp, TickType tickType, Decimal size) :
+            TickDataEvent(reqId, timeStamp, tickType), size(size) {}
 
         virtual EventType getType() const override;
 };
@@ -81,13 +84,22 @@ class TickSizeEvent : public TickDataEvent {
 class TickGenericEvent : public TickDataEvent {
     public:
         double value{0};
-        TickGenericEvent(int reqId, TickType tickType, double value) :
-            TickDataEvent(reqId, tickType), value(value) {}
+        TickGenericEvent(int reqId, long timeStamp, TickType tickType, double value) :
+            TickDataEvent(reqId, timeStamp, tickType), value(value) {}
 
         virtual EventType getType() const override;
 };
 
-class TickNewsEvent : public TickDataEvent {
+class TickStringEvent : public TickDataEvent {
+    public:
+        std::string value{""};
+        TickStringEvent(int reqId, long timeStamp, TickType tickType, std::string value) :
+            TickDataEvent(reqId, timeStamp, tickType), value(value) {}
+
+        virtual EventType getType() const override;
+};
+
+class TickNewsEvent : public DataEvent {
     public:
         time_t dateTime{0};
         std::string providerCode{""};
@@ -95,7 +107,7 @@ class TickNewsEvent : public TickDataEvent {
         std::string headline{""};
         std::string extraData{""};
         TickNewsEvent(int reqId, time_t dateTime, std::string providerCode, std::string articleId,
-            std::string headline, std::string extraData) : TickDataEvent(reqId), dateTime(dateTime), 
+            std::string headline, std::string extraData) : DataEvent(reqId), dateTime(dateTime), 
             providerCode(providerCode), articleId(articleId), headline(headline), extraData(extraData) {}
 
         virtual EventType getType() const override;
@@ -112,9 +124,9 @@ class TickOptionComputationEvent : public TickDataEvent {
         double vega{0};
         double theta{0};
         double undPrice{0};
-        TickOptionComputationEvent(int reqId, TickType tickType, int tickAttrib, double impliedVol, double delta,
+        TickOptionComputationEvent(int reqId, long timeStamp, TickType tickType, int tickAttrib, double impliedVol, double delta,
             double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice) :
-            TickDataEvent(reqId, tickType), tickAttrib(tickAttrib), impliedVol(impliedVol), delta(delta), 
+            TickDataEvent(reqId, timeStamp, tickType), tickAttrib(tickAttrib), impliedVol(impliedVol), delta(delta), 
             optPrice(optPrice), pvDividend(pvDividend), gamma(gamma), vega(vega), theta(theta), undPrice(undPrice) {}
 
         virtual EventType getType() const override;

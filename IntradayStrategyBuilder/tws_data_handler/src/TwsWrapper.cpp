@@ -90,8 +90,10 @@ void tWrapper::processMessages() {
 }
 
 void tWrapper::processMsgLoop() {
+    std::cout << "Listening for Messages from TWS" << std::endl;
+
     while (m_pClient->isConnected()) {
-        std::this_thread::sleep_for(std::chrono::microseconds(100));
+        std::this_thread::sleep_for(std::chrono::microseconds(10));
         m_pReader->processMsgs();
     }
 }
@@ -102,6 +104,8 @@ void tWrapper::startMsgProcessingThread() {
         processMsgLoop();
     });
 }
+
+long tWrapper::getSystemTime() { return systemTime; }
 
 //================================================================
 // Error Handling 
@@ -118,9 +122,9 @@ void tWrapper::error(const int id, const int errorCode, const std::string& error
     } else {
         printf("Error. Id: %d, Code: %d, Msg: %s\n", id, errorCode, errorString.c_str());
 
-        // Mark single event request as true to skip over any waiting loops
+        // Mark single event request as true if there is a request error to skip over any waiting loops
         currentRequests[id] = true;
-        printf("Request has been skipped for ID: %d\n", id);
+        if (id != -1) printf("Request has been skipped for ID: %d\n", id);
     }
 }
 
@@ -150,11 +154,8 @@ bool tWrapper::checkEventCompleted(int reqId) {
     return false;
 }
 
-void tWrapper::reqCurrentTime(EventCurrentTime event) {
+void tWrapper::reqCurrentTime() {
     std::unique_lock<std::mutex> lock(mtx);
-    currentTimeSubscribers.push(event);
-    lock.unlock();
-
     m_pClient->reqCurrentTime();
 }
 
@@ -263,8 +264,7 @@ void tWrapper::calculateImpliedVolatility(const Contract& con, double optionPric
 
 void tWrapper::currentTime(long time) { 
     std::lock_guard<std::mutex> lock(mtx);
-    currentTimeSubscribers.front()(time); // Send time to event in front of the queue
-    currentTimeSubscribers.pop();
+    systemTime = time;
 }
 
 void tWrapper::contractDetails(int reqId, const ContractDetails& contractDetails) {
@@ -318,17 +318,29 @@ void tWrapper::tickSnapshotEnd(int reqId) {
 //==================================================================
 
 void tWrapper::tickPrice(TickerId tickerId, TickType field, double price, const TickAttrib& attrib) {
-    auto event = std::make_shared<TickPriceEvent>(tickerId, field, price, attrib);
+    std::lock_guard<std::mutex> lock(mtx);
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    auto timeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime.time_since_epoch()).count();
+    
+    auto event = std::make_shared<TickPriceEvent>(tickerId, timeStamp, field, price, attrib);
     messageBus->publish(event);
 }
 
 void tWrapper::tickGeneric(TickerId tickerId, TickType tickType, double value) {
-    auto event = std::make_shared<TickGenericEvent>(tickerId, tickType, value);
+    std::lock_guard<std::mutex> lock(mtx);
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    auto timeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime.time_since_epoch()).count();
+    
+    auto event = std::make_shared<TickGenericEvent>(tickerId, timeStamp, tickType, value);
     messageBus->publish(event);
 }
 
 void tWrapper::tickSize(TickerId tickerId, TickType field, Decimal size) {
-    auto event = std::make_shared<TickSizeEvent>(tickerId, field, size);
+    std::lock_guard<std::mutex> lock(mtx);
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    auto timeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime.time_since_epoch()).count();
+    
+    auto event = std::make_shared<TickSizeEvent>(tickerId, timeStamp, field, size);
     messageBus->publish(event);
 }
 
@@ -337,13 +349,22 @@ void tWrapper::marketDataType(TickerId reqId, int marketDataType) {
 }
 
 void tWrapper::tickString(TickerId tickerId, TickType tickType, const std::string& value) {
+    std::lock_guard<std::mutex> lock(mtx);
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    auto timeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime.time_since_epoch()).count();
     
+    auto event = std::make_shared<TickStringEvent>(tickerId, timeStamp, tickType, value);
+    messageBus->publish(event);
 }
 
 void tWrapper::tickOptionComputation(TickerId reqId, TickType tickType, int tickAttrib, double impliedVol, 
     double delta, double optPrice, double pvDividend, double gamma, double vega, double theta, double undPrice) {
+        std::lock_guard<std::mutex> lock(mtx);
+        auto currentTime = std::chrono::high_resolution_clock::now();
+        auto timeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime.time_since_epoch()).count();
+        
         auto event = std::make_shared<TickOptionComputationEvent>(
-            reqId, tickType, tickAttrib, impliedVol, delta, optPrice, pvDividend, gamma, vega, theta, undPrice
+            reqId, timeStamp, tickType, tickAttrib, impliedVol, delta, optPrice, pvDividend, gamma, vega, theta, undPrice
         );
         messageBus->publish(event);
     }

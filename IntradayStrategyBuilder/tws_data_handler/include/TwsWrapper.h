@@ -79,6 +79,7 @@ public:
     void processMessages(); // One-time message processing
     void processMsgLoop(); // Continuous message processing
     void startMsgProcessingThread();
+    long getSystemTime(); // Get TWS system time
 
     //===========================================
     // EClient Subscriptions for Streaming Data
@@ -86,6 +87,7 @@ public:
 
     // Attempting to maintain simplicity here so that all requests and callbacks are contained within TWS Wrapper
     // Add new request functions as needed
+    void reqCurrentTime();
     void reqMktData(const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot);
     void cancelMktData(int reqId);
     void reqRealTimeBars(const Contract& con, int barSize, const std::string& whatToShow, bool useRTH);
@@ -104,7 +106,6 @@ public:
 
     // Callback rerouting for all wrapper methods
     using CallbackID = std::function<void(int)>;
-    using EventCurrentTime = std::function<void(long)>;
     using EventContractDetails = std::function<void(const ContractDetails&)>;
     using EventSecDefOptParamns = std::function<void(const std::string&, int, const std::string&, 
         const std::string&, const std::set<std::string>&, const std::set<double>&)>;
@@ -120,7 +121,6 @@ private:
     std::map<int, bool> currentRequests; // Incomplete requests will be false, completed true
     std::map<int, Contract> tickSubscribers; // This will map all generated IDs to associated contracts to help manage tick data
 
-    std::queue<EventCurrentTime> currentTimeSubscribers; // Events with no reqId will use a queue
     std::map<int, EventContractDetails> contractDetailsSubscribers;
     std::map<int, EventSecDefOptParamns> optParamSubscribers;
     std::map<int, EventHistoricalData> historicalDataSubscribers;
@@ -132,7 +132,6 @@ public:
 
     // All program components can subscribe to these methods to receive the specific data they need
     // Each has the option to generate a new ID for requests and subscription handling, or use a custom ID
-    void reqCurrentTime(EventCurrentTime event);
     void reqContractDetails(CallbackID cbId, EventContractDetails event, const Contract& con);
     void reqSecDefOptParams(CallbackID cbId, EventSecDefOptParamns event, const std::string& underlyingSymbol, 
         const std::string& futFopExchange, const std::string& underlyingSecType, int underlyingConId);
@@ -145,6 +144,8 @@ public:
 private:
     // There should only be a single instance of the message bus associated with the wrapper
     std::shared_ptr<MessageBus> messageBus;
+    // TWS system time will be automatically requested every second and stored in this variable
+    long systemTime = 0;
 
 
 public:

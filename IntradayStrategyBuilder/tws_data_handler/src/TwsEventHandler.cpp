@@ -9,6 +9,7 @@ EventType CandleDataEvent::getType() const { return EventType::RealTimeCandleDat
 EventType TickPriceEvent::getType() const { return EventType::TickPriceInfo; }
 EventType TickSizeEvent::getType() const { return EventType::TickSizeInfo; }
 EventType TickGenericEvent::getType() const { return EventType::TickGenericInfo; }
+EventType TickStringEvent::getType() const { return EventType::TickStringInfo; }
 EventType TickNewsEvent::getType() const { return EventType::TickNewsInfo; }
 EventType TickOptionComputationEvent::getType() const { return EventType::TickOptionInfo; }
 

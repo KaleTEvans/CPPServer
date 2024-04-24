@@ -46,8 +46,8 @@ int main() {
     con1.currency = "USD";
     con1.exchange = "SMART";
     con1.primaryExchange = "CBOE";
-    con1.lastTradeDateOrContractMonth = "20240412";
-    con1.strike = 5110;
+    con1.lastTradeDateOrContractMonth = "20240424";
+    con1.strike = 5060;
 
     Contract con2 = con1;
     con1.right = "C";
@@ -55,7 +55,7 @@ int main() {
 
     //testClient.reqRealTimeBars(con1, 5, "TRADES", true);
     //testClient.reqRealTimeBars(con2, 5, "TRADES", true);
-    testClient->reqMktData(con, "100,101,106,104,225,233,293,295,411", false, false);
+    testClient->reqMktData(con2, "100,101,106,104,225,233,293,295,411", false, false);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     int chainID = 0;
@@ -69,7 +69,7 @@ int main() {
     news.secType = "NEWS";
     news.exchange = "BZ";
     
-    //testClient->reqMktData(news, "mdoff,292", false, false);
+    testClient->reqMktData(news, "mdoff,292", false, false);
 
     for (int i=0; i < 150; i++) {
         //testSubscriber.getTime();

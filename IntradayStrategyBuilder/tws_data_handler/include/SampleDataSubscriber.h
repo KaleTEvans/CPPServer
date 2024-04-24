@@ -1,6 +1,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <sstream>
 
 #include "TwsWrapper.h"
 #include "TwsApiDefs.h"
@@ -64,8 +65,8 @@ public:
     double lastPrice = 0;
 
     void handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
-        printf( "Tick Price. Ticker Id: %d, Field: %d, Price: %f, CanAutoExecute: %d, PastLimit: %d, PreOpen: %d\n", 
-        event->reqId, (int)event->tickType, event->price, event->attrib.canAutoExecute, event->attrib.pastLimit, event->attrib.preOpen);
+        printf( "Tick Price. Ticker Id: %d, Field: %s, Price: %f, CanAutoExecute: %d, PastLimit: %d, PreOpen: %d\n", 
+        event->reqId, *(TickTypes::ENUMS)event->tickType, event->price, event->attrib.canAutoExecute, event->attrib.pastLimit, event->attrib.preOpen);
         if (event->tickType == 4) lastPrice = event->price;
     }
 
@@ -74,6 +75,22 @@ public:
         std::cout << "Time of Article: " << event->dateTime << std::endl;
         std::cout << "Headline: " << event->headline << std::endl;
         std::cout << "Extra Data: " << event->extraData << std::endl;
+        
+        // Parse the extra data string to get the sentiment score
+        std::istringstream ss(event->extraData);
+        std::string token;
+        std::string score;
+        // Need to account for no K in field
+        while (std::getline(ss, token, ':')) {
+            std::string key = token;
+            if (!std::getline(ss, token, ':')) break;
+
+            std::string val = token;
+            if (key == "K") score = val;
+        }
+        double scoreVal = 0;
+        if (score != "n/a") scoreVal = std::stod(score);
+        std::cout << "Sentiment Score: " << scoreVal << std::endl;
     }
 
     void realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
@@ -81,21 +98,21 @@ public:
     }
 
     void tickOptionInfo(std::shared_ptr<TickOptionComputationEvent> event) {
-        printf("TickOptionComputation. Ticker Id: %d, Type: %d, TickAttrib: %d," 
+        printf("TickOptionComputation. Ticker Id: %d, Type: %s, TickAttrib: %d," 
         "ImpliedVolatility: %f, Delta: %f, OptionPrice: %f, pvDividend: %f, Gamma: %f," 
-        "Vega: %f, Theta: %f, Underlying Price: %f\n", event->reqId, (int)event->tickType, 
+        "Vega: %f, Theta: %f, Underlying Price: %f\n", event->reqId, *(TickTypes::ENUMS)event->tickType, 
         event->tickAttrib, event->impliedVol, event->delta, event->optPrice, event->pvDividend, 
         event->gamma, event->vega, event->theta, event->undPrice);
     }
 
     void handleTickGenericEvent(std::shared_ptr<TickGenericEvent> event) {
-        printf( "Tick Generic. Ticker Id: %d, Type: %d, Value: %f\n", 
-            event->reqId, (int)event->tickType, event->value);
+        printf( "Tick Generic. Ticker Id: %d, Type: %s, Value: %f\n", 
+            event->reqId, *(TickTypes::ENUMS)event->tickType, event->value);
     }
 
     void handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
-        printf( "Tick Size. Ticker Id: %d, Field: %d, Size: %s\n", 
-            event->reqId, (int)event->tickType, decimalStringToDisplay(event->size).c_str());
+        printf( "Tick Size. Ticker Id: %d, Field: %s, Size: %s\n", 
+            event->reqId, *(TickTypes::ENUMS)event->tickType, decimalStringToDisplay(event->size).c_str());
     }
 
     //===============================================
@@ -107,13 +124,6 @@ public:
     // checkEventCompleted() to determine if all 
     // batch data has been received 
     //===============================================
-
-    // The only function that doesn't require an ID is getTime
-    void getTime() {
-        wrapper->reqCurrentTime([this](long time){
-            this->printTime(time);
-        });
-    }
 
     int getContractData(const Contract& con) {
         int reqId = 0;
@@ -127,6 +137,7 @@ public:
         return reqId;
     }
 
+    // Will return a chain for every exchange the security trades on
     int getOptionsChain(const std::string& underlyingSymbol, const std::string& futFopExchange, 
         const std::string& underlyingSecType, int underlyingConId) {
             int reqId = 0;
@@ -167,10 +178,6 @@ public:
     // Now you can send this information elsewhere
     //================================================
 
-    void printTime(long time) {
-        std::cout << "Time: " << time << std::endl;
-    }
-
     void handleContractDataEvent(const ContractDetails& contractDetails) {
         std::cout << "Con ID: " << contractDetails.contract.conId << std::endl;
         std::cout << contractDetails.contract.description << std::endl;
@@ -184,13 +191,13 @@ public:
                 sortedStrikes.push_back(i);
             }
 
-            for (int i=0; i < sortedStrikes.size(); i++) {
-                if (lastPrice > sortedStrikes[i-1] && lastPrice < sortedStrikes[i]) {
-                    std::cout << "Last Price" << lastPrice << std::endl;
-                    std::cout << "Lower Strikes: " << sortedStrikes[i-4] << " " << sortedStrikes[i-3] <<
-                        " " << sortedStrikes[i-2] << " " << sortedStrikes[i-1] << " " << sortedStrikes[i] << std::endl;
-                }
-            }
+            getClostestStrikes(sortedStrikes);
+    }
+
+    void getClostestStrikes(const std::vector<double>& strikes) {
+        std::cout << "Strikes Received" << std::endl;
+        sortedStrikes.clear();
+        for (auto& i : strikes) sortedStrikes.push_back(i);
     }
 
     void handleHistoricalData(std::shared_ptr<Candle> candle) {
@@ -199,4 +206,5 @@ public:
 
 private:
     std::shared_ptr<tWrapper> wrapper;
+    std::vector<double> sortedStrikes;
 };
