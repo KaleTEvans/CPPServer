@@ -46,7 +46,7 @@ int main() {
     con1.currency = "USD";
     con1.exchange = "SMART";
     con1.primaryExchange = "CBOE";
-    con1.lastTradeDateOrContractMonth = "20240424";
+    con1.lastTradeDateOrContractMonth = "20240430";
     con1.strike = 5060;
 
     Contract con2 = con1;

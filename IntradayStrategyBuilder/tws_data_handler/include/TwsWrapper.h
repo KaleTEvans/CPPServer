@@ -88,9 +88,9 @@ public:
     // Attempting to maintain simplicity here so that all requests and callbacks are contained within TWS Wrapper
     // Add new request functions as needed
     void reqCurrentTime();
-    void reqMktData(const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot);
+    int reqMktData(const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot);
     void cancelMktData(int reqId);
-    void reqRealTimeBars(const Contract& con, int barSize, const std::string& whatToShow, bool useRTH);
+    int reqRealTimeBars(const Contract& con, int barSize, const std::string& whatToShow, bool useRTH);
     void cancelRealTimeBars(int reqId);
     Contract getContractById(int reqId); // Get the contract associated with a tick subscription
 

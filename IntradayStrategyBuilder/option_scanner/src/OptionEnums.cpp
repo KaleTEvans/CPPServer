@@ -42,6 +42,26 @@ int tag_to_db_key(RelativeToMoney val) {
     }
 }
 
+RelativeToMoney getRTM(int x) {
+    switch (x)
+    {
+    case 0: return RelativeToMoney::ATM;
+    case 1: return RelativeToMoney::ITM1;
+    case 2: return RelativeToMoney::ITM2;
+    case 3: return RelativeToMoney::ITM3;
+    case 4: return RelativeToMoney::ITM4;
+    case 5: return RelativeToMoney::ITM5;
+    
+    case -1: return RelativeToMoney::OTM1;
+    case -2: return RelativeToMoney::OTM2;
+    case -3: return RelativeToMoney::OTM3;
+    case -4: return RelativeToMoney::OTM4;
+    case -5: return RelativeToMoney::OTM5;
+    
+    default: return RelativeToMoney::NoValue;
+    }
+}
+
 int tag_to_db_key(TimeOfDay val) {
     switch (val)
     {

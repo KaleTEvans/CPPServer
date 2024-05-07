@@ -202,12 +202,13 @@ void tWrapper::reqHistoricalData(CallbackID cbId, EventHistoricalData event, con
 // Continuous data will be published to the message bus
 //==================================================================
 
-void tWrapper::reqMktData(const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot) {
+int tWrapper::reqMktData(const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot) {
     std::lock_guard<std::mutex> lock(mtx);
     int id = subscriptionId++;
     tickSubscribers[id] = con;
     
     m_pClient->reqMktData(id, con, genericTicks, snapshot, regulatorySnapshot, TagValueListSPtr());
+    return id;
 }
 
 void tWrapper::cancelMktData(int reqId) { 
@@ -215,12 +216,13 @@ void tWrapper::cancelMktData(int reqId) {
     m_pClient->cancelMktData(reqId); 
 }
 
-void tWrapper::reqRealTimeBars(const Contract& con, int barSize, const std::string& whatToShow, bool useRTH) {
+int tWrapper::reqRealTimeBars(const Contract& con, int barSize, const std::string& whatToShow, bool useRTH) {
     std::lock_guard<std::mutex> lock(mtx);
     int id = subscriptionId++;
     tickSubscribers[id] = con;
     
     m_pClient->reqRealTimeBars(id, con, barSize, whatToShow, useRTH, TagValueListSPtr());
+    return id;
 }
 
 void tWrapper::cancelRealTimeBars(int reqId) {

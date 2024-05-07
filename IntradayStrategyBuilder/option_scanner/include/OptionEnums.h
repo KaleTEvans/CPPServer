@@ -43,6 +43,9 @@ enum class RelativeToMoney {
 	NoValue
 };
 
+// Get RelativeToMoney based on integer input
+RelativeToMoney getRTM(int x);
+
 // Time of day tagged by hour during stock market operating times
 enum class TimeOfDay { 
 	Hour1,
