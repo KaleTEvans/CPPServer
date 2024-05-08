@@ -48,8 +48,31 @@ struct IBString: public _IBString
 #include "TwsEventHandler.h"
 #include "EReaderOSSignal.h"
 #include "EReader.h"
+#include "ContractDefs.h"
 
 class EClientSocket;
+
+/////////////////////////////////////////////////////////////
+// Enum class and struct for keeping track of open requests
+/////////////////////////////////////////////////////////////
+
+enum class RequestType {
+    MktData,
+    RealTimeBars,
+    OptionPrice,
+    OptionVol,
+    Inactive
+};
+
+struct OpenRequest {
+    OpenRequest(Contract con, RequestType rqt);
+    OpenRequest();
+
+    std::string getRequestType();
+
+    Contract con{ContractDefs::emptyContract()};
+    RequestType rqt{RequestType::Inactive};
+};
 
 class tWrapper : public EWrapper {
 
@@ -92,7 +115,10 @@ public:
     void cancelMktData(int reqId);
     int reqRealTimeBars(const Contract& con, int barSize, const std::string& whatToShow, bool useRTH);
     void cancelRealTimeBars(int reqId);
+
+    // For keeping track of current requests
     Contract getContractById(int reqId); // Get the contract associated with a tick subscription
+    void showOpenRequests();
 
     // Note for price and volatility calculations: Output will be in tickOptionComputation, only filter for 
     // price and volatility for these, everything else will come out as garbage
@@ -119,7 +145,7 @@ private:
     std::mutex mtx;
     std::atomic<int> subscriptionId{0}; // Atomic counter for subscription IDs
     std::map<int, bool> currentRequests; // Incomplete requests will be false, completed true
-    std::map<int, Contract> tickSubscribers; // This will map all generated IDs to associated contracts to help manage tick data
+    std::map<int, OpenRequest> tickSubscribers; // This will map all generated IDs to associated contracts to help manage tick data
 
     std::map<int, EventContractDetails> contractDetailsSubscribers;
     std::map<int, EventSecDefOptParamns> optParamSubscribers;

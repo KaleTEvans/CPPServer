@@ -15,6 +15,20 @@
 #include "EClientSocket.h"
 #include "EPosixClientSocketPlatform.h"
 
+OpenRequest::OpenRequest(Contract con, RequestType rqt) : con(con), rqt(rqt) {}
+OpenRequest::OpenRequest() {}
+std::string OpenRequest::getRequestType() {
+    switch (rqt)
+    {
+    case RequestType::MktData: return "MktData";
+    case RequestType::RealTimeBars: return "RealTimeBars";
+    case RequestType::OptionPrice: return "OptionPrice";
+    case RequestType::OptionVol: return "OptionVol";
+    
+    default: return "Inactive";
+    }
+}
+
 const int PING_DEADLINE = 2; // seconds
 const int SLEEP_BETWEEN_PINGS = 30; // seconds
 
@@ -205,7 +219,9 @@ void tWrapper::reqHistoricalData(CallbackID cbId, EventHistoricalData event, con
 int tWrapper::reqMktData(const Contract& con, const std::string& genericTicks, bool snapshot, bool regulatorySnapshot) {
     std::lock_guard<std::mutex> lock(mtx);
     int id = subscriptionId++;
-    tickSubscribers[id] = con;
+
+    OpenRequest openReq(con, RequestType::MktData);
+    tickSubscribers[id] = openReq;
     
     m_pClient->reqMktData(id, con, genericTicks, snapshot, regulatorySnapshot, TagValueListSPtr());
     return id;
@@ -219,7 +235,9 @@ void tWrapper::cancelMktData(int reqId) {
 int tWrapper::reqRealTimeBars(const Contract& con, int barSize, const std::string& whatToShow, bool useRTH) {
     std::lock_guard<std::mutex> lock(mtx);
     int id = subscriptionId++;
-    tickSubscribers[id] = con;
+
+    OpenRequest openReq(con, RequestType::RealTimeBars);
+    tickSubscribers[id] = openReq;
     
     m_pClient->reqRealTimeBars(id, con, barSize, whatToShow, useRTH, TagValueListSPtr());
     return id;
@@ -234,17 +252,29 @@ Contract tWrapper::getContractById(int reqId) {
     std::lock_guard<std::mutex> lock(mtx);
     if (tickSubscribers.find(reqId) == tickSubscribers.end()) {
         std::cout << "No Contract with this ID" << std::endl;
-        Contract con;
-        return con; // Return empty contract
+        return ContractDefs::emptyContract(); // Return empty contract
     }
 
-    return tickSubscribers[reqId];
+    return tickSubscribers[reqId].con;
+}
+
+void tWrapper::showOpenRequests() {
+    std::cout << "Current Requests" << std::endl;
+    std::cout << "=====================" << std::endl;
+
+    for (auto& i : tickSubscribers) {
+        std::cout << i.first << " | " << i.second.getRequestType() << std::endl;
+    }
+
+    std::cout << "=====================" << std::endl;
 }
 
 void tWrapper::calculateOptionPrice(const Contract& con, double volatility, double underlyingPrice) {
     std::lock_guard<std::mutex> lock(mtx);
     int id = subscriptionId++;
-    tickSubscribers[id] = con;
+
+    OpenRequest openReq(con, RequestType::OptionPrice);
+    tickSubscribers[id] = openReq;
     
     m_pClient->calculateOptionPrice(id, con, volatility, underlyingPrice, TagValueListSPtr());
 }
@@ -252,7 +282,9 @@ void tWrapper::calculateOptionPrice(const Contract& con, double volatility, doub
 void tWrapper::calculateImpliedVolatility(const Contract& con, double optionPrice, double underlyingPrice) {
     std::lock_guard<std::mutex> lock(mtx);
     int id = subscriptionId++;
-    tickSubscribers[id] = con;
+
+    OpenRequest openReq(con, RequestType::OptionVol);
+    tickSubscribers[id] = openReq;
     
     m_pClient->calculateImpliedVolatility(id, con, optionPrice, underlyingPrice, TagValueListSPtr());
 }

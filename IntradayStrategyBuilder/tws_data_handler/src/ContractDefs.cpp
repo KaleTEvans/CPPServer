@@ -85,3 +85,9 @@ Contract ContractDefs::VIX() {
 	contract.exchange = "SMART";
 	return contract;
 }
+
+Contract ContractDefs::emptyContract() {
+    Contract contract;
+    contract.symbol = "";
+    return contract;
+}

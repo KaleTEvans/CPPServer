@@ -20,6 +20,8 @@ public:
     static Contract SPY();
     static Contract QQQ();
     static Contract VIX();
+
+    static Contract emptyContract();
 };
 
 #endif

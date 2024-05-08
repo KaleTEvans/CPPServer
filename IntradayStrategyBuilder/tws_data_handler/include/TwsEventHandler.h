@@ -106,9 +106,26 @@ class TickNewsEvent : public DataEvent {
         std::string articleId{""};
         std::string headline{""};
         std::string extraData{""};
+        double sentimentScore{0};
         TickNewsEvent(int reqId, time_t dateTime, std::string providerCode, std::string articleId,
             std::string headline, std::string extraData) : DataEvent(reqId), dateTime(dateTime), 
-            providerCode(providerCode), articleId(articleId), headline(headline), extraData(extraData) {}
+            providerCode(providerCode), articleId(articleId), headline(headline), extraData(extraData) {
+
+                // Parse extra data to get sentiment score
+                std::istringstream ss(extraData);
+                std::string token;
+                std::string score;
+                // Need to account for no K in field
+                while (std::getline(ss, token, ':')) {
+                    std::string key = token;
+                    if (!std::getline(ss, token, ':')) break;
+
+                    std::string val = token;
+                    if (key == "K") score = val;
+                }
+                sentimentScore = 0;
+                if (score != "n/a") sentimentScore = std::stod(score);
+            }
 
         virtual EventType getType() const override;
 };

@@ -12,6 +12,17 @@
 using namespace TwsApi;
 using namespace isb_option_tags;
 
+
+/*******************************************
+    Based on data output, should aggregate ask in bid price from ticks
+    Then use RTVolume and compare to current bid/ask to determine
+    whether it is a buy or sell, then create method to verify this against realtime bars
+    - Should just use 5 second snapshots of greeks
+    - Could just monitor ask and bid size for anomalies, such as values over 100
+    - ** Tick volume appears to lag behind RTVolume significantly
+    - ** Real TIme Candles appear to be 5 seconds delayed
+*/
+
 //////////////////////////////////////////////////////
 // Will map all ticks within a five second frame
 // at a milisecond level of granularity
