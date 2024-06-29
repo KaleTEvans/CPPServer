@@ -20,13 +20,13 @@ int main() {
     con1.currency = "USD";
     con1.exchange = "SMART";
     con1.primaryExchange = "CBOE";
-    con1.lastTradeDateOrContractMonth = "20240508";
-    con1.strike = 5190;
+    con1.lastTradeDateOrContractMonth = "20240628";
+    con1.strike = 5480;
     con1.right = "C";
 
     testClient->startMsgProcessingThread();
 
-    int mktDataId = testClient->reqMktData(con1, "100,101,106,104,225,232,233,293,295,411", false, false);
+    int mktDataId = testClient->reqMktData(con1, "100,101,106,104,225,232,233,293,294,295,411", false, false);
     int rtbId = testClient->reqRealTimeBars(con1, 5, "TRADES", true);
 
     ContractData cd(testClient, mktDataId, rtbId, con1, 5);

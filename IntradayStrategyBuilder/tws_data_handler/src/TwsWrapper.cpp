@@ -260,13 +260,15 @@ Contract tWrapper::getContractById(int reqId) {
 
 void tWrapper::showOpenRequests() {
     std::cout << "Current Requests" << std::endl;
-    std::cout << "=====================" << std::endl;
+    std::cout << "===============================" << std::endl;
 
     for (auto& i : tickSubscribers) {
-        std::cout << i.first << " | " << i.second.getRequestType() << std::endl;
+        std::cout << i.first << " | " << i.second.getRequestType() << " | " << i.second.con.symbol << std::endl;
+        if (i.second.con.strike != 0) std::cout << ">> Option Contract | " << i.second.con.right << " | " <<
+            i.second.con.strike << std::endl;
     }
 
-    std::cout << "=====================" << std::endl;
+    std::cout << "===============================" << std::endl;
 }
 
 void tWrapper::calculateOptionPrice(const Contract& con, double volatility, double underlyingPrice) {
@@ -413,7 +415,7 @@ void tWrapper::tickNews(int tickerId, time_t timeStamp, const std::string& provi
 
 void tWrapper::realtimeBar(TickerId reqId, long time, double open, double high, double low, double close,
 	Decimal volume, Decimal wap, int count) {
-    std::cout << "Decimal Volume: " << decimalStringToDisplay(volume).c_str() << std::endl;
+    //std::cout << "Decimal Volume: " << decimalStringToDisplay(volume).c_str() << std::endl;
     std::shared_ptr<Candle> candle = std::make_shared<Candle>(
         reqId, time, open, high, low, close, volume, wap, count
     );

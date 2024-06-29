@@ -89,5 +89,6 @@ Contract ContractDefs::VIX() {
 Contract ContractDefs::emptyContract() {
     Contract contract;
     contract.symbol = "";
+    contract.strike = 0;
     return contract;
 }
