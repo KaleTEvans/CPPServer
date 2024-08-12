@@ -4,6 +4,7 @@
 #include "TwsWrapper.h"
 #include "TwsApiDefs.h"
 #include "OptionEnums.h"
+#include "OptionStatisticTrackers.h"
 
 #include <set>
 #include <map>
@@ -51,12 +52,33 @@ class TimeAndSales {
 struct MarketDataSingleFrame {
     MarketDataSingleFrame(int64_t timestamp);
 
-    std::shared_ptr<TickPriceEvent> tickPrice = nullptr;
-    std::shared_ptr<TickGenericEvent> tickGeneric = nullptr;
-    std::shared_ptr<TickSizeEvent> tickSize = nullptr;
-    std::shared_ptr<TickStringEvent> tickString = nullptr;
-    std::shared_ptr<TickOptionComputationEvent> tickOption = nullptr;
-    std::shared_ptr<TimeAndSales> timeAndSales = nullptr;
+    void inputTickPrice(std::shared_ptr<TickPriceEvent> tickPrice);
+    void inputTickSize(std::shared_ptr<TickSizeEvent> tickSize);
+    void inputTickOption(std::shared_ptr<TickOptionComputationEvent> tickOption);
+    void inputTimeAndSales(std::shared_ptr<TimeAndSales> timeAndSales);
+
+    std::string valueToCSV(double value);
+    std::string formatCSV();
+
+    // Variables to track. Items not present will be set to a -1 value aside from greeks, which will be -100
+    double bidPrice{-1};
+    double bidSize{-1};
+    double askPrice{-1};
+    double askSize{-1};
+    double lastPrice{-1};
+    double markPrice{-1};
+    double volume{-1};
+    double impliedVol{-100};
+    double delta{-100};
+    double gamma{-100};
+    double vega{-100};
+    double theta{-100};
+    double undPrice{-1};
+    double tasPrice{-1};
+    double tasQuantity{-1};
+    double tasTotalVol{-1};
+    double tasVWAP{-1};
+    bool tasFilledBySingleMM{false};
 
     int64_t timestamp{0};
     void printMktData();
@@ -70,7 +92,9 @@ struct MarketDataSingleFrame {
 struct FiveSecondData {
     FiveSecondData(std::shared_ptr<Candle> candle, RelativeToMoney rtm);
 
-    std::map<int64_t, MarketDataSingleFrame> ticks;
+    std::string formatCsv();
+    
+    std::map<int64_t, std::shared_ptr<MarketDataSingleFrame>> ticks;
 
     std::shared_ptr<Candle> candle;
     RelativeToMoney rtm;
@@ -84,7 +108,10 @@ struct FiveSecondData {
 //////////////////////////////////////////////////
 
 struct OneMinuteData {
-    OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candles, std::shared_ptr<TickOptionComputationEvent> optionInfo);
+    OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candles, 
+    std::shared_ptr<MarketDataSingleFrame> optionInfo, std::shared_ptr<MarketDataSingleFrame> tasInfo);
+
+    std::string formatCsv();
 
     RelativeToMoney rtm;
     // Add news ticks from five sec data
@@ -93,11 +120,11 @@ struct OneMinuteData {
 
     double impliedVol{0};
     double delta{0};
-    double optPrice{0};
     double gamma{0};
     double vega{0};
     double theta{0};
     double undPrice{0};
+    long totalVol{0};
 };
 
 ///////////////////////////////////////////////////////////////////
@@ -125,17 +152,20 @@ class ContractData {
 
         // One map will hold all ticks, the other the candles, and the ticks will be dispersed upon
         // creation of each candle
-        std::map<int64_t, MarketDataSingleFrame> ticks;
+        std::map<int64_t, std::shared_ptr<MarketDataSingleFrame>> ticks;
         // Tick news will not be included in single frame data, as many articles can have the same timestamp
         std::vector<std::pair<int64_t, std::shared_ptr<TickNewsEvent>>> newsTicks;
         std::map<int64_t, std::shared_ptr<FiveSecondData>> fiveSecData;
-        
-        std::vector<std::shared_ptr<FiveSecondData>> fiveSecCandles;
         std::vector<std::shared_ptr<OneMinuteData>> oneMinuteCandles;
+
+        // Statistical factors to determine values of interest
+        StandardDeviation tradeSize_timeAndSales;
+        StandardDeviation tradeCount_fiveSecCandles;
+        StandardDeviation priceDelta_fiveSecCandles;
+        StandardDeviation priceDelta_oneMinCandles;
 
         // Event handlers
         void handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event);
-        void handleTickGenericEvent(std::shared_ptr<TickGenericEvent> event);
         void handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event);
         void handleTickStringEvent(std::shared_ptr<TickStringEvent> event);
         void tickOptionInfo(std::shared_ptr<TickOptionComputationEvent> event);

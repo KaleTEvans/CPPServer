@@ -8,10 +8,6 @@ ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, int mktDataId, int
         if (event->getReqId() == this->mktDataId) this->handleTickPriceEvent(std::dynamic_pointer_cast<TickPriceEvent>(event));
     });
 
-    wrapper->getMessageBus()->subscribe(EventType::TickGenericInfo, [this](std::shared_ptr<DataEvent> event) {
-        if (event->getReqId() == this->mktDataId) this->handleTickGenericEvent(std::dynamic_pointer_cast<TickGenericEvent>(event));
-    });
-
     wrapper->getMessageBus()->subscribe(EventType::TickSizeInfo, [this](std::shared_ptr<DataEvent> event) {
         if (event->getReqId() == this->mktDataId) this->handleTickSizeEvent(std::dynamic_pointer_cast<TickSizeEvent>(event));
     });
@@ -40,25 +36,12 @@ void ContractData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
     auto it = ticks.find(event->timeStamp);
     if (it == ticks.end()) {
         // Key does not exist, create a new MarketDataSingleFrame and insert it
-        MarketDataSingleFrame mktData(event->timeStamp);
-        mktData.tickPrice = event;
+        std::shared_ptr<MarketDataSingleFrame> mktData = std::make_shared<MarketDataSingleFrame>(event->timeStamp);
+        mktData->inputTickPrice(event);
         ticks.insert({event->timeStamp, mktData});
     } else {
         // Key exists, update the existing MarketDataSingleFrame
-        it->second.tickPrice = event;
-    }
-}
-
-void ContractData::handleTickGenericEvent(std::shared_ptr<TickGenericEvent> event) {
-    auto it = ticks.find(event->timeStamp);
-    if (it == ticks.end()) {
-        // Key does not exist, create a new MarketDataSingleFrame and insert it
-        MarketDataSingleFrame mktData(event->timeStamp);
-        mktData.tickGeneric = event;
-        ticks.insert({event->timeStamp, mktData});
-    } else {
-        // Key exists, update the existing MarketDataSingleFrame
-        it->second.tickGeneric = event;
+        it->second->inputTickPrice(event);
     }
 }
 
@@ -66,12 +49,12 @@ void ContractData::handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
     auto it = ticks.find(event->timeStamp);
     if (it == ticks.end()) {
         // Key does not exist, create a new MarketDataSingleFrame and insert it
-        MarketDataSingleFrame mktData(event->timeStamp);
-        mktData.tickSize = event;
+        std::shared_ptr<MarketDataSingleFrame> mktData = std::make_shared<MarketDataSingleFrame>(event->timeStamp);
+        mktData->inputTickSize(event);
         ticks.insert({event->timeStamp, mktData});
     } else {
         // Key exists, update the existing MarketDataSingleFrame
-        it->second.tickSize = event;
+        it->second->inputTickSize(event);
     }
 }
 
@@ -79,18 +62,18 @@ void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event)
     // First, parse the string element if it is a RT value
     if (event->tickType == TickType::RT_VOLUME) {
         std::shared_ptr<TimeAndSales> tas = std::make_shared<TimeAndSales>(event->value);
+        tradeSize_timeAndSales.addValue(tas->quantity);
+        long timestamp = tas->timeValue;
 
-        auto it = ticks.find(event->timeStamp);
+        auto it = ticks.find(timestamp);
         if (it == ticks.end()) {
             // Key does not exist, create a new MarketDataSingleFrame and insert it
-            MarketDataSingleFrame mktData(event->timeStamp);
-            mktData.tickString = event;
-            mktData.timeAndSales = tas;
-            ticks.insert({event->timeStamp, mktData});
+            std::shared_ptr<MarketDataSingleFrame> mktData = std::make_shared<MarketDataSingleFrame>(timestamp);
+            mktData->inputTimeAndSales(tas);
+            ticks.insert({timestamp, mktData});
         } else {
             // Key exists, update the existing MarketDataSingleFrame
-            it->second.tickString = event;
-            it->second.timeAndSales = tas;
+            it->second->inputTimeAndSales(tas);
         }
     }
 }
@@ -136,17 +119,19 @@ void TimeAndSales::print() {
 }
 
 void ContractData::tickOptionInfo(std::shared_ptr<TickOptionComputationEvent> event) {
-    lastUnderlyingPrice = event->undPrice;
+    if (event->tickType == TickType::LAST_OPTION_COMPUTATION) {
+        lastUnderlyingPrice = event->undPrice;
 
-    auto it = ticks.find(event->timeStamp);
-    if (it == ticks.end()) {
-        // Key does not exist, create a new MarketDataSingleFrame and insert it
-        MarketDataSingleFrame mktData(event->timeStamp);
-        mktData.tickOption = event;
-        ticks.insert({event->timeStamp, mktData});
-    } else {
-        // Key exists, update the existing MarketDataSingleFrame
-        it->second.tickOption = event;
+        auto it = ticks.find(event->timeStamp);
+        if (it == ticks.end()) {
+            // Key does not exist, create a new MarketDataSingleFrame and insert it
+            std::shared_ptr<MarketDataSingleFrame> mktData = std::make_shared<MarketDataSingleFrame>(event->timeStamp);
+            mktData->inputTickOption(event);
+            ticks.insert({event->timeStamp, mktData});
+        } else {
+            // Key exists, update the existing MarketDataSingleFrame
+            it->second->inputTickOption(event);
+        }
     }
 }
 
@@ -170,6 +155,9 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
     std::shared_ptr<FiveSecondData> fsd = std::make_shared<FiveSecondData>(event->candle, rtm);
     fiveSecData[event->candle->time()] = fsd;
 
+    tradeCount_fiveSecCandles.addValue(event->candle->count());
+    priceDelta_fiveSecCandles.addValue(event->candle->high() - event->candle->low());
+
     // Each time a five sec candle is created, run through ticks to drop into candles if any
     // If any ticks precede first candle, disregard
     int64_t firstCandleTime = fiveSecData.begin()->first; 
@@ -178,7 +166,8 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
     std::vector<int64_t> addedTickTimes;
 
     // Save most recent option data for one minute candles
-    std::shared_ptr<TickOptionComputationEvent> optionInfo = nullptr;
+    std::shared_ptr<MarketDataSingleFrame> recentOptData = nullptr;
+    std::shared_ptr<MarketDataSingleFrame> recentTasData = nullptr;
 
     for (auto const& i : ticks) {
         int64_t tickTime = (i.first / 5000) * 5000;
@@ -194,7 +183,9 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
                 if (itr == it->second->ticks.end()) it->second->ticks.insert({i.first, i.second});
                 
                 // Continuously update option info to get most recent
-                if (i.second.tickOption) optionInfo = i.second.tickOption;
+                if (i.second->impliedVol != -100) recentOptData = i.second;
+                // Do the same with aggregated volume
+                if (i.second->tasPrice != -1) recentTasData = i.second;
             }
         } 
 
@@ -206,15 +197,23 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
     for (auto const& i : addedTickTimes) ticks.erase(i);
 
     // If candle count is a multiple of 12, create one minute candle
-    if (fiveSecCandles.size() % 12 == 0) {
+    if (fiveSecData.size() % 12 == 0) {
         // Create temp vector and send to constructor
         std::vector<std::shared_ptr<FiveSecondData>> temp;
-        int n = fiveSecCandles.size();
-        int start = 0;
-        if (n - 12 > 0) start = n - 12;
-        for (auto i = start; i < fiveSecCandles.size(); i++) temp.push_back(fiveSecCandles[i]);
-        std::shared_ptr<OneMinuteData> c = std::make_shared<OneMinuteData>(temp, optionInfo);
+        int count = 12;
+        if (fiveSecData.size() < count) count = fiveSecData.size();
+
+        auto it = fiveSecData.end();
+        for (size_t i = 0; i < count; ++i) {
+            --it;
+            temp.push_back(it->second);
+        }
+        std::reverse(temp.begin(), temp.end());
+
+        std::shared_ptr<OneMinuteData> c = std::make_shared<OneMinuteData>(temp, recentOptData, recentTasData);
         oneMinuteCandles.push_back(c);
+
+        priceDelta_oneMinCandles.addValue(c->candle->high() - c->candle->low());
     }
 }
 
@@ -224,7 +223,7 @@ void ContractData::printData() {
         i.second->candle->printCandle();
         std::cout << "--------------------------------------------------------------" << std::endl;
         for (auto& j : i.second->ticks) {
-            j.second.printMktData();
+            j.second->printMktData();
         }
     }
 }
@@ -235,7 +234,9 @@ FiveSecondData::FiveSecondData(std::shared_ptr<Candle> candle, RelativeToMoney r
         // std::cout << "Relative To Money: " << tag_to_db_key(rtm) << std::endl;
     }
 
-OneMinuteData::OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candles, std::shared_ptr<TickOptionComputationEvent> optionInfo) {
+OneMinuteData::OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candles, 
+    std::shared_ptr<MarketDataSingleFrame> optionInfo, std::shared_ptr<MarketDataSingleFrame> tasInfo) 
+    {
     int n = candles.size()-1;
     auto& currentCandle = *candles[n];
     rtm = currentCandle.rtm;
@@ -243,13 +244,15 @@ OneMinuteData::OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candle
     auto reqId = candles[0]->candle->reqId();
     auto time = candles[0]->candle->time();
 
-    impliedVol = optionInfo->impliedVol;
-    delta = optionInfo->delta;
-    optPrice = optionInfo->optPrice;
-    gamma = optionInfo->gamma;
-    vega = optionInfo->vega;
-    theta = optionInfo->theta;
-    undPrice = optionInfo->undPrice;
+    if (optionInfo != nullptr) {
+        impliedVol = optionInfo->impliedVol;
+        delta = optionInfo->delta;
+        gamma = optionInfo->gamma;
+        vega = optionInfo->vega;
+        theta = optionInfo->theta;
+        undPrice = optionInfo->undPrice;
+    }
+    if (tasInfo != nullptr) totalVol = tasInfo->tasTotalVol;
 
     // Now loop over 5 sec candles in vector to get olhc and vol
     int vol = 0;
@@ -274,42 +277,97 @@ OneMinuteData::OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candle
 
 MarketDataSingleFrame::MarketDataSingleFrame(int64_t timestamp) : timestamp(timestamp) {}
 
-void MarketDataSingleFrame::printMktData() {
-    if (tickPrice != nullptr) {
-        printf( "%lu | Tick Price. Ticker Id: %d, Field: %s, Price: %f, CanAutoExecute: %d," 
-            "PastLimit: %d, PreOpen: %d\n", 
-            tickPrice->timeStamp, tickPrice->reqId, *(TickTypes::ENUMS)tickPrice->tickType, tickPrice->price, 
-            tickPrice->attrib.canAutoExecute, tickPrice->attrib.pastLimit, tickPrice->attrib.preOpen);
-    }
-
-    if (tickGeneric != nullptr) {
-        printf( "%lu | Tick Generic. Ticker Id: %d, Type: %s, Value: %f\n", 
-            tickGeneric->timeStamp, tickGeneric->reqId, *(TickTypes::ENUMS)tickGeneric->tickType, tickGeneric->value);
-    }
-
-    if (tickSize != nullptr) {
-        printf( "%lu | Tick Size. Ticker Id: %d, Field: %s, Size: %s\n", 
-            tickSize->timeStamp, tickSize->reqId, *(TickTypes::ENUMS)tickSize->tickType, 
-            decimalStringToDisplay(tickSize->size).c_str());
-    }
-
-    if (tickString != nullptr) {
-        printf("%lu | Tick String. Ticker Id: %d, Field: %s, Value: %s\n",
-        tickString->timeStamp, tickString->reqId, *(TickTypes::ENUMS)tickString->tickType, tickString->value.c_str());
+void MarketDataSingleFrame::inputTickPrice(std::shared_ptr<TickPriceEvent> tickPrice) {
+    TickType tickType = tickPrice->tickType;
+    switch (tickType)
+    {
+    case TickType::ASK: 
+        askPrice = tickPrice->price;
+        break;
+    case TickType::BID:
+        bidPrice = tickPrice->price;
+        break;
+    case TickType::LAST:
+        lastPrice = tickPrice->price;
+        break;
+    case TickType::MARK_PRICE:
+        markPrice = tickPrice->price;
+        break;
     
+    default:
+        std::cout << "Issue with inputTickPrice" << std::endl;
+        break;
     }
+}
 
-    if (timeAndSales != nullptr) {
-        timeAndSales->print();
+void MarketDataSingleFrame::inputTickSize(std::shared_ptr<TickSizeEvent> tickSize) {
+    TickType tickType = tickSize->tickType;
+    switch (tickType)
+    {
+    case TickType::ASK_SIZE:
+        askSize = decimalToDouble(tickSize->size);
+        break;
+    case TickType::BID_SIZE:
+        bidSize = decimalToDouble(tickSize->size);
+        break;
+    case TickType::VOLUME:
+        volume = decimalToDouble(tickSize->size);
+        break;
+    
+    default:
+        std::cout << "Issue with inputTickSize" << std::endl;
+        break;
     }
+}
 
-    if (tickOption != nullptr) {
-        printf("%lu | TickOptionComputation. Ticker Id: %d, Type: %s, TickAttrib: %d," 
-        "ImpliedVolatility: %f, Delta: %f, OptionPrice: %f, pvDividend: %f, Gamma: %f," 
-        "Vega: %f, Theta: %f, Underlying Price: %f\n", tickOption->timeStamp, tickOption->reqId, 
-        *(TickTypes::ENUMS)tickOption->tickType, tickOption->tickAttrib, tickOption->impliedVol, tickOption->delta, tickOption->optPrice, tickOption->pvDividend, 
-        tickOption->gamma, tickOption->vega, tickOption->theta, tickOption->undPrice);
-    }
+void MarketDataSingleFrame::inputTickOption(std::shared_ptr<TickOptionComputationEvent> tickOption) {
+    impliedVol = tickOption->impliedVol;
+    delta = tickOption->delta;
+    gamma = tickOption->gamma;
+    vega = tickOption->vega;
+    theta = tickOption->theta;
+    undPrice = tickOption->undPrice;
+    return;
+}
 
-    std::cout << "-------------------------------------------------------------------------" << std::endl;
+void MarketDataSingleFrame::inputTimeAndSales(std::shared_ptr<TimeAndSales> timeAndSales) {
+    tasPrice = timeAndSales->price;
+    tasQuantity = timeAndSales->quantity;
+    tasTotalVol = timeAndSales->totalVol;
+    tasVWAP = timeAndSales->vwap;
+    tasFilledBySingleMM = timeAndSales->filledBySingleMM;
+    return;
+}
+
+std::string MarketDataSingleFrame::valueToCSV(double value) {
+    return (value == -1 || value == -100) ? "" : std::to_string(value);
+}
+
+std::string MarketDataSingleFrame::formatCSV() {
+    std::string filledByMM = "";
+    if (tasFilledBySingleMM) filledByMM = "YES";
+    else tasFilledBySingleMM = "NO";
+    return std::to_string(timestamp) + "," +
+               valueToCSV(bidPrice) + "," +
+               valueToCSV(bidSize) + "," +
+               valueToCSV(askPrice) + "," +
+               valueToCSV(askSize) + "," +
+               valueToCSV(lastPrice) + "," +
+               valueToCSV(markPrice) + "," +
+               valueToCSV(volume) + "," +
+               valueToCSV(impliedVol) + "," +
+               valueToCSV(delta) + "," +
+               valueToCSV(gamma) + "," +
+               valueToCSV(vega) + "," +
+               valueToCSV(theta) + "," +
+               valueToCSV(undPrice) + "," +
+               valueToCSV(tasPrice) + "," +
+               valueToCSV(tasQuantity) + "," +
+               valueToCSV(tasTotalVol) + "," +
+               valueToCSV(tasVWAP) + "," +
+               filledByMM + "\n";
+}
+
+void MarketDataSingleFrame::printMktData() {
+    return;
 }
