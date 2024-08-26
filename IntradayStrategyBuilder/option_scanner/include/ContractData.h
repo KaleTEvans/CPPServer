@@ -5,6 +5,7 @@
 #include "TwsApiDefs.h"
 #include "OptionEnums.h"
 #include "OptionStatisticTrackers.h"
+#include "SaveToCSV.h"
 
 #include <set>
 #include <map>
@@ -58,7 +59,7 @@ struct MarketDataSingleFrame {
     void inputTimeAndSales(std::shared_ptr<TimeAndSales> timeAndSales);
 
     std::string valueToCSV(double value);
-    std::string formatCSV();
+    std::string formatCSV(RelativeToMoney rtm = RelativeToMoney::NoValue);
 
     // Variables to track. Items not present will be set to a -1 value aside from greeks, which will be -100
     double bidPrice{-1};
@@ -92,7 +93,7 @@ struct MarketDataSingleFrame {
 struct FiveSecondData {
     FiveSecondData(std::shared_ptr<Candle> candle, RelativeToMoney rtm);
 
-    std::string formatCsv();
+    std::string formatCSV();
     
     std::map<int64_t, std::shared_ptr<MarketDataSingleFrame>> ticks;
 
@@ -111,11 +112,9 @@ struct OneMinuteData {
     OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candles, 
     std::shared_ptr<MarketDataSingleFrame> optionInfo, std::shared_ptr<MarketDataSingleFrame> tasInfo);
 
-    std::string formatCsv();
+    std::string formatCSV();
 
     RelativeToMoney rtm;
-    // Add news ticks from five sec data
-    std::vector<std::shared_ptr<TickNewsEvent>> tickNews;
     std::shared_ptr<Candle> candle;
 
     double impliedVol{0};
@@ -124,6 +123,7 @@ struct OneMinuteData {
     double vega{0};
     double theta{0};
     double undPrice{0};
+    double tradeCount{0};
     long totalVol{0};
 };
 
@@ -138,9 +138,11 @@ struct OneMinuteData {
 
 class ContractData {
     public:
-        ContractData(std::shared_ptr<tWrapper> wrapper, int mktDataId, int rtbId, Contract contract, double strikeIncrement);
+        ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv, int mktDataId, int rtbId, 
+            Contract contract, double strikeIncrement);
 
         void printData();
+        void saveData();
 
     private:
         int mktDataId;
@@ -149,6 +151,7 @@ class ContractData {
         double strikeIncrement;
         double lastUnderlyingPrice{0};
         std::shared_ptr<tWrapper> wrapper;
+        std::shared_ptr<CSVFileSaver> csv;
 
         // One map will hold all ticks, the other the candles, and the ticks will be dispersed upon
         // creation of each candle

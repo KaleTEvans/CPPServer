@@ -46,6 +46,9 @@ enum class RelativeToMoney {
 // Get RelativeToMoney based on integer input
 RelativeToMoney getRTM(int x);
 
+// Get string output for rtm
+std::string getRTMstr(RelativeToMoney rtm);
+
 // Time of day tagged by hour during stock market operating times
 enum class TimeOfDay { 
 	Hour1,

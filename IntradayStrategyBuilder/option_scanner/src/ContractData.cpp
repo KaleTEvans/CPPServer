@@ -1,7 +1,9 @@
 #include "ContractData.h"
 
-ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, int mktDataId, int rtbId, Contract contract, double strikeIncrement) : 
-    mktDataId(mktDataId), rtbId(rtbId), contract(contract), strikeIncrement(strikeIncrement), wrapper(wrapper) {
+ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv,
+    int mktDataId, int rtbId, Contract contract, double strikeIncrement) : 
+    mktDataId(mktDataId), csv(csv), rtbId(rtbId), contract(contract), 
+    strikeIncrement(strikeIncrement), wrapper(wrapper) {
     // Subscribe to events
     wrapper->getMessageBus()->subscribe(EventType::TickPriceInfo, [this](std::shared_ptr<DataEvent> event) {
         // Use dynamic_pointer_cast to cast Event type to child class type
@@ -28,6 +30,7 @@ ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, int mktDataId, int
         if (event->getReqId() == this->rtbId) this->realTimeCandles(std::dynamic_pointer_cast<CandleDataEvent>(event));
     });
 
+    csv->createDirectoriesAndFiles(contract.symbol, contract.strike, contract.right);
 
     std::cout << "ContractData Request IDs: " << mktDataId << "," << rtbId << std::endl;
 }
@@ -43,6 +46,7 @@ void ContractData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
         // Key exists, update the existing MarketDataSingleFrame
         it->second->inputTickPrice(event);
     }
+    event->print();
 }
 
 void ContractData::handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
@@ -56,6 +60,7 @@ void ContractData::handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
         // Key exists, update the existing MarketDataSingleFrame
         it->second->inputTickSize(event);
     }
+    event->print();
 }
 
 void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event) {
@@ -76,6 +81,7 @@ void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event)
             it->second->inputTimeAndSales(tas);
         }
     }
+    event->print();
 }
 
 TimeAndSales::TimeAndSales(std::string data) : data(data) {
@@ -133,6 +139,7 @@ void ContractData::tickOptionInfo(std::shared_ptr<TickOptionComputationEvent> ev
             it->second->inputTickOption(event);
         }
     }
+    event->print();
 }
 
 void ContractData::tickNewsEvent(std::shared_ptr<TickNewsEvent> event) {
@@ -154,6 +161,9 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
 
     std::shared_ptr<FiveSecondData> fsd = std::make_shared<FiveSecondData>(event->candle, rtm);
     fiveSecData[event->candle->time()] = fsd;
+
+    // Save the five sec candle to csv
+    csv->addFiveSecDataToQueue(contract.symbol, contract.strike, contract.right, fsd->formatCSV());
 
     tradeCount_fiveSecCandles.addValue(event->candle->count());
     priceDelta_fiveSecCandles.addValue(event->candle->high() - event->candle->low());
@@ -189,6 +199,8 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
             }
         } 
 
+        // Save ticks to file
+        csv->addTicksToQueue(contract.symbol, contract.strike, contract.right, i.second->formatCSV(rtm));
         // Save time of tick for removal
         addedTickTimes.push_back(i.first);
     }
@@ -207,6 +219,7 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
         for (size_t i = 0; i < count; ++i) {
             --it;
             temp.push_back(it->second);
+        /* code */
         }
         std::reverse(temp.begin(), temp.end());
 
@@ -214,6 +227,9 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
         oneMinuteCandles.push_back(c);
 
         priceDelta_oneMinCandles.addValue(c->candle->high() - c->candle->low());
+
+        // Save one minute candle to db
+        csv->addOneMinDataToQueue(contract.symbol, contract.strike, contract.right, c->formatCSV());
     }
 }
 
@@ -228,11 +244,29 @@ void ContractData::printData() {
     }
 }
 
+void ContractData::saveData() {
+
+    // for (auto const& i : fiveSecData) {
+    //     for (auto const& j : i.second->ticks) {
+    //         writeDataToFiles(contract.symbol, contract.strike, contract.right, 1, 
+    //         j.second->formatCSV());
+    //     }
+    // }
+}
+
 FiveSecondData::FiveSecondData(std::shared_ptr<Candle> candle, RelativeToMoney rtm) :
-    candle(candle), rtm(rtm) {
-        // candle->printCandle();
-        // std::cout << "Relative To Money: " << tag_to_db_key(rtm) << std::endl;
-    }
+    candle(candle), rtm(rtm) {}
+
+std::string FiveSecondData::formatCSV() {
+    return std::to_string(candle->time()) + "," +
+            std::to_string(candle->open()) + "," +
+            std::to_string(candle->close()) + "," +
+            std::to_string(candle->high()) + "," +
+            std::to_string(candle->low()) + "," +
+            decimalToString(candle->volume()) + "," +
+            std::to_string(candle->count()) + "," +
+            getRTMstr(rtm) + "\n";
+}
 
 OneMinuteData::OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candles, 
     std::shared_ptr<MarketDataSingleFrame> optionInfo, std::shared_ptr<MarketDataSingleFrame> tasInfo) 
@@ -255,9 +289,10 @@ OneMinuteData::OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candle
     if (tasInfo != nullptr) totalVol = tasInfo->tasTotalVol;
 
     // Now loop over 5 sec candles in vector to get olhc and vol
-    int vol = 0;
+    Decimal vol = 0;
     double high = 0;
     double low = 10000;
+    double count = 0; // Count of tradees per candles
     double open = candles[0]->candle->open();
     double close = currentCandle.candle->close();
 
@@ -265,14 +300,29 @@ OneMinuteData::OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candle
         if (candles[i]->candle->high() >= high) high = candles[i]->candle->high();
         if (candles[i]->candle->low() <= low) low = candles[i]->candle->low();
         vol += candles[i]->candle->volume();
-
-        // Fill tick news element
-        for (auto& news : candles[i]->tickNews) {
-            tickNews.push_back(news);
-        }
+        count += candles[i]->candle->count();
     }
 
     candle = std::make_shared<Candle>(reqId, time, open, high, low, close, vol);
+    tradeCount = count;
+}
+
+std::string OneMinuteData::formatCSV() {
+    return std::to_string(candle->time()) + "," +
+            std::to_string(candle->open()) + "," +
+            std::to_string(candle->close()) + "," +
+            std::to_string(candle->high()) + "," +
+            std::to_string(candle->low()) + "," +
+            decimalToString(candle->volume()) + "," +
+            std::to_string(tradeCount) + "," +
+            std::to_string(impliedVol) + "," +
+            std::to_string(delta) + "," +
+            std::to_string(gamma) + "," +
+            std::to_string(vega) + "," +
+            std::to_string(theta) + "," +
+            std::to_string(undPrice) + "," +
+            std::to_string(totalVol) + "," +
+            getRTMstr(rtm) + "\n";
 }
 
 MarketDataSingleFrame::MarketDataSingleFrame(int64_t timestamp) : timestamp(timestamp) {}
@@ -295,7 +345,7 @@ void MarketDataSingleFrame::inputTickPrice(std::shared_ptr<TickPriceEvent> tickP
         break;
     
     default:
-        std::cout << "Issue with inputTickPrice" << std::endl;
+        tickPrice->print();
         break;
     }
 }
@@ -315,7 +365,7 @@ void MarketDataSingleFrame::inputTickSize(std::shared_ptr<TickSizeEvent> tickSiz
         break;
     
     default:
-        std::cout << "Issue with inputTickSize" << std::endl;
+        tickSize->print();
         break;
     }
 }
@@ -343,7 +393,7 @@ std::string MarketDataSingleFrame::valueToCSV(double value) {
     return (value == -1 || value == -100) ? "" : std::to_string(value);
 }
 
-std::string MarketDataSingleFrame::formatCSV() {
+std::string MarketDataSingleFrame::formatCSV(RelativeToMoney rtm) {
     std::string filledByMM = "";
     if (tasFilledBySingleMM) filledByMM = "YES";
     else tasFilledBySingleMM = "NO";
@@ -365,6 +415,7 @@ std::string MarketDataSingleFrame::formatCSV() {
                valueToCSV(tasQuantity) + "," +
                valueToCSV(tasTotalVol) + "," +
                valueToCSV(tasVWAP) + "," +
+               getRTMstr(rtm) + "," +
                filledByMM + "\n";
 }
 

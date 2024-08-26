@@ -13,9 +13,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC include)
 
 find_package(Threads REQUIRED)
 
-target_link_libraries(${PROJECT_NAME} TwsSocketClient tws_data_handler Threads::Threads)
+target_link_libraries(${PROJECT_NAME} TwsSocketClient tws_data_handler isb_database_handler Threads::Threads)
 
 if(BUILD_OPTION_SCANNER_TEST)
     add_executable(option_scanner_test option_scanner_test.cpp)
-    target_link_libraries(option_scanner_test ${PROJECT_NAME} TwsSocketClient tws_data_handler)
+    target_link_libraries(option_scanner_test ${PROJECT_NAME} TwsSocketClient tws_data_handler isb_database_handler)
 endif()

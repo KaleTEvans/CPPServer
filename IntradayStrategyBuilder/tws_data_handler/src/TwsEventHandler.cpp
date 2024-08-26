@@ -13,6 +13,36 @@ EventType TickStringEvent::getType() const { return EventType::TickStringInfo; }
 EventType TickNewsEvent::getType() const { return EventType::TickNewsInfo; }
 EventType TickOptionComputationEvent::getType() const { return EventType::TickOptionInfo; }
 
+void TickPriceEvent::print() const {
+    printf("%lu | Tick Price. Ticker Id: %d, Type: %d, Value: %f\n",
+    timeStamp, reqId, tickType, price);
+}
+
+void TickSizeEvent::print() const {
+    printf("%lu | Tick Size. Ticker Id: %d, Type: %d, Value: %f\n",
+    timeStamp, reqId, tickType, decimalToDouble(size));
+}
+
+void TickGenericEvent::print() const {
+    printf("%lu | Tick Generic. Ticker Id: %d, Type: %d, Value: %f\n",
+    timeStamp, reqId, tickType, value);
+}
+
+void TickStringEvent::print() const {
+    printf("%lu | Tick String. Ticker Id: %d, Type: %d, Value: %s\n",
+    timeStamp, reqId, tickType, value.c_str());
+}
+
+void TickNewsEvent::print() const {
+    printf("%lu | News Id: %d, headline: %s\n",
+    dateTime, reqId, headline.c_str());
+}
+
+void TickOptionComputationEvent::print() const {
+    printf("%lu | Tick Size. Ticker Id: %d, Type: %d, Implied Vol: %f\n",
+    timeStamp, reqId, tickType, impliedVol);
+}
+
 MessageBus::MessageBus() {
     std::cout << "Message bus starting engines" << std::endl;
 }

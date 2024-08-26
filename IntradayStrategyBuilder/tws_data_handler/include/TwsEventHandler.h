@@ -10,7 +10,6 @@
 #include "Candle.h"
 #include "Contract.h"
 
-
 #include <queue>
 #include <functional>
 #include <map>
@@ -70,6 +69,7 @@ class TickPriceEvent : public TickDataEvent {
             TickDataEvent(reqId, timeStamp, tickType), price(price), attrib(attrib) {}
 
         virtual EventType getType() const override;
+        void print() const;
 };
 
 class TickSizeEvent : public TickDataEvent {
@@ -79,6 +79,7 @@ class TickSizeEvent : public TickDataEvent {
             TickDataEvent(reqId, timeStamp, tickType), size(size) {}
 
         virtual EventType getType() const override;
+        void print() const;
 };
 
 class TickGenericEvent : public TickDataEvent {
@@ -88,6 +89,7 @@ class TickGenericEvent : public TickDataEvent {
             TickDataEvent(reqId, timeStamp, tickType), value(value) {}
 
         virtual EventType getType() const override;
+        void print() const;
 };
 
 class TickStringEvent : public TickDataEvent {
@@ -97,6 +99,7 @@ class TickStringEvent : public TickDataEvent {
             TickDataEvent(reqId, timeStamp, tickType), value(value) {}
 
         virtual EventType getType() const override;
+        void print() const;
 };
 
 class TickNewsEvent : public DataEvent {
@@ -128,6 +131,7 @@ class TickNewsEvent : public DataEvent {
             }
 
         virtual EventType getType() const override;
+        void print() const;
 };
 
 class TickOptionComputationEvent : public TickDataEvent {
@@ -147,6 +151,7 @@ class TickOptionComputationEvent : public TickDataEvent {
             optPrice(optPrice), pvDividend(pvDividend), gamma(gamma), vega(vega), theta(theta), undPrice(undPrice) {}
 
         virtual EventType getType() const override;
+        void print() const;
 };
 
 //======================================================================================

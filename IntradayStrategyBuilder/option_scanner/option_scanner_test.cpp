@@ -2,9 +2,11 @@
 #include <set>
 
 #include <ContractData.h>
+#include <SaveToCSV.h>
 
 int main() {
     std::shared_ptr<tWrapper> testClient = std::make_shared<tWrapper>();
+    std::shared_ptr<CSVFileSaver> csv = std::make_shared<CSVFileSaver>();
 
     int clientId = 0;
 
@@ -20,25 +22,27 @@ int main() {
     con1.currency = "USD";
     con1.exchange = "SMART";
     con1.primaryExchange = "CBOE";
-    con1.lastTradeDateOrContractMonth = "20240628";
-    con1.strike = 5480;
+    con1.lastTradeDateOrContractMonth = "20240813";
+    con1.strike = 5420;
     con1.right = "C";
 
     testClient->startMsgProcessingThread();
+    csv->createDirectoriesAndFiles(con1.symbol, con1.strike, con1.right);
+    csv->start();
 
     int mktDataId = testClient->reqMktData(con1, "100,101,106,104,225,232,233,293,294,295,411", false, false);
     int rtbId = testClient->reqRealTimeBars(con1, 5, "TRADES", true);
 
-    ContractData cd(testClient, mktDataId, rtbId, con1, 5);
+    ContractData cd(testClient, csv, mktDataId, rtbId, con1, 5);
 
-    for (int i=0; i < 5000; i++) {
+    for (int i=0; i < 100000; i++) {
         //testSubscriber.getTime();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-
-    cd.printData();
+    //cd.saveData();
 
     testClient->disconnect();
+    csv->stop();
 
     return 0;
 }

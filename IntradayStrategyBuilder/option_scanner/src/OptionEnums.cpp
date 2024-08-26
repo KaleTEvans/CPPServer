@@ -62,6 +62,26 @@ RelativeToMoney getRTM(int x) {
     }
 }
 
+std::string getRTMstr(RelativeToMoney rtm) {
+    switch (rtm)
+    {
+    case RelativeToMoney::ATM: return "ATM";
+    case RelativeToMoney::ITM1: return "ITM1";
+    case RelativeToMoney::ITM2: return "ITM2";
+    case RelativeToMoney::ITM3: return "ITM3";
+    case RelativeToMoney::ITM4: return "ITM4";
+    case RelativeToMoney::ITM5: return "ITM5";
+    
+    case RelativeToMoney::OTM1: return "OTM1";
+    case RelativeToMoney::OTM2: return "OTM2";
+    case RelativeToMoney::OTM3: return "OTM3";
+    case RelativeToMoney::OTM4: return "OTM4";
+    case RelativeToMoney::OTM5: return "OTM5";
+    
+    default: return "NoValue";
+    }
+}
+
 int tag_to_db_key(TimeOfDay val) {
     switch (val)
     {

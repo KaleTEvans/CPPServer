@@ -10,7 +10,7 @@ Contract ContractDefs::SPXInd() {
     contract.currency = "USD";
     contract.exchange = "SMART";
     contract.primaryExchange = "CBOE";
-    //contract.conId = 416904;
+    contract.conId = 416904;
     return contract;
 }
 
