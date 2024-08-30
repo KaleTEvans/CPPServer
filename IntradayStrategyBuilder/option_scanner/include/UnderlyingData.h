@@ -3,6 +3,7 @@
 
 #include "TwsWrapper.h"
 #include "SaveToCSV.h"
+#include "ContractDefs.h"
 
 ///////////////////////////////////////////////////////
 // Underlying Data
@@ -15,6 +16,8 @@
 // Volume of the day
 // Current day call volume (reqId 100)
 // Current day put volume (reqId 100)
+// Implied Volatility 30-day (reqId 106)
+// Historical Volatility 30-day (reqId 104)
 // Index future premium (reqId 162)
 // Trade count for the day (reqId 293)
 // Trade rate per minute (reqId 294)
@@ -28,8 +31,6 @@
 // 52 week low (reqId 165)
 // 52 week high (reqId 165)
 // Average Volume 90-day (reqId 165)
-// Historical Volatility 30-day (reqId 104)
-// Implied Volatility 30-day (reqId 106)
 // Call option Open Interest (reqId 101)
 // Put option Open Interest (reqId 101)
 // Futures open interest (reqId 588)
@@ -38,6 +39,7 @@
 struct UnderlyingOneMinuteData {
     void addFiveSecData(std::vector<std::shared_ptr<Candle>> fiveSecData);
 
+    long time{0};
     double open{0};
     double high{INT_MIN};
     double low{INT_MAX};
@@ -53,6 +55,21 @@ struct UnderlyingOneMinuteData {
     double totalTradeCount{0};
     double oneMinuteTradeRate{0};
     double realTimeHistoricalVolatility{0};
+    double optionImpliedVolatility{0};
+    double optionHistoricalVolatility{0};
+    double callOpenInterest{0};
+    double putOpenInterest{0};
+    double futuresOpenInterest{0};
+
+    std::string formatCSV();
+};
+
+struct ContractNewsData {
+    long time{0};
+    std::string articleId{""};
+    std::string headline{""};
+    double sentimentScore{0};
+    double price{0};
 
     std::string formatCSV();
 };
@@ -62,11 +79,13 @@ class UnderlyingData {
     public:
         UnderlyingData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv, Contract contract);
 
-        int requestOptionsChain();
         int getStrikeIncrement();
         std::pair<std::vector<double>, std::vector<double>> getStrikes(int countITM, double price);
+        std::string formatAveragesCSV();
+        std::string formatNewsCSV();
 
     private:
+        int requestOptionsChain();
         void handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event);
         void handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event);
         void handleTickGenericEvent(std::shared_ptr<TickGenericEvent> event);
@@ -79,6 +98,7 @@ class UnderlyingData {
         std::map<long, std::pair<std::shared_ptr<TickNewsEvent>, double>> newsTicks; // Paired with most recent underlying price
 
         std::vector<double> optionsChain;
+        std::set<double> optionStrikes;
         std::vector<std::shared_ptr<Candle>> fiveSecData;
         std::vector<UnderlyingOneMinuteData> oneMinuteData;
         int mktDataId{0};
@@ -96,9 +116,6 @@ class UnderlyingData {
         double low52Week{0};
         double high52Week{0};
         double averageVolume90Day{0};
-        double callOpenInterest{0};
-        double putOpenInterest{0};
-        double futuresOpenInterest{0};
 };
 
 #endif

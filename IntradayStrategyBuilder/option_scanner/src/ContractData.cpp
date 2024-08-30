@@ -22,10 +22,6 @@ ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CS
         if (event->getReqId() == this->mktDataId) this->tickOptionInfo(std::dynamic_pointer_cast<TickOptionComputationEvent>(event));
     });
 
-    wrapper->getMessageBus()->subscribe(EventType::TickNewsInfo, [this](std::shared_ptr<DataEvent> event) {
-        this->tickNewsEvent(std::dynamic_pointer_cast<TickNewsEvent>(event));
-    });
-
     wrapper->getMessageBus()->subscribe(EventType::RealTimeCandleData, [this](std::shared_ptr<DataEvent> event) {
         if (event->getReqId() == this->rtbId) this->realTimeCandles(std::dynamic_pointer_cast<CandleDataEvent>(event));
     });
@@ -46,7 +42,7 @@ void ContractData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
         // Key exists, update the existing MarketDataSingleFrame
         it->second->inputTickPrice(event);
     }
-    event->print();
+    if (outputData) event->print();
 }
 
 void ContractData::handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
@@ -60,7 +56,7 @@ void ContractData::handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
         // Key exists, update the existing MarketDataSingleFrame
         it->second->inputTickSize(event);
     }
-    event->print();
+    if (outputData) event->print();
 }
 
 void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event) {
@@ -81,7 +77,7 @@ void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event)
             it->second->inputTimeAndSales(tas);
         }
     }
-    event->print();
+    if (outputData) event->print();
 }
 
 TimeAndSales::TimeAndSales(std::string data) : data(data) {
@@ -142,10 +138,6 @@ void ContractData::tickOptionInfo(std::shared_ptr<TickOptionComputationEvent> ev
     event->print();
 }
 
-void ContractData::tickNewsEvent(std::shared_ptr<TickNewsEvent> event) {
-    newsTicks.push_back({event->dateTime, event});
-}
-
 void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
     double priceDiff = contract.strike - lastUnderlyingPrice;
     double multiple = priceDiff / strikeIncrement;
@@ -163,7 +155,7 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
     fiveSecData[event->candle->time()] = fsd;
 
     // Save the five sec candle to csv
-    csv->addFiveSecDataToQueue(contract.symbol, contract.strike, contract.right, fsd->formatCSV());
+    csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::FiveSec, fsd->formatCSV());
 
     tradeCount_fiveSecCandles.addValue(event->candle->count());
     priceDelta_fiveSecCandles.addValue(event->candle->high() - event->candle->low());
@@ -200,7 +192,7 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
         } 
 
         // Save ticks to file
-        csv->addTicksToQueue(contract.symbol, contract.strike, contract.right, i.second->formatCSV(rtm));
+        csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::Tick, i.second->formatCSV(rtm));
         // Save time of tick for removal
         addedTickTimes.push_back(i.first);
     }
@@ -229,30 +221,11 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
         priceDelta_oneMinCandles.addValue(c->candle->high() - c->candle->low());
 
         // Save one minute candle to db
-        csv->addOneMinDataToQueue(contract.symbol, contract.strike, contract.right, c->formatCSV());
+        csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::OneMin, c->formatCSV());
     }
 }
 
-void ContractData::printData() {
-    std::cout << "==============================================================" << std::endl;
-    for (auto& i : fiveSecData) {
-        i.second->candle->printCandle();
-        std::cout << "--------------------------------------------------------------" << std::endl;
-        for (auto& j : i.second->ticks) {
-            j.second->printMktData();
-        }
-    }
-}
-
-void ContractData::saveData() {
-
-    // for (auto const& i : fiveSecData) {
-    //     for (auto const& j : i.second->ticks) {
-    //         writeDataToFiles(contract.symbol, contract.strike, contract.right, 1, 
-    //         j.second->formatCSV());
-    //     }
-    // }
-}
+void ContractData::printData() { outputData = true; }
 
 FiveSecondData::FiveSecondData(std::shared_ptr<Candle> candle, RelativeToMoney rtm) :
     candle(candle), rtm(rtm) {}
@@ -417,8 +390,4 @@ std::string MarketDataSingleFrame::formatCSV(RelativeToMoney rtm) {
                valueToCSV(tasVWAP) + "," +
                getRTMstr(rtm) + "," +
                filledByMM + "\n";
-}
-
-void MarketDataSingleFrame::printMktData() {
-    return;
 }

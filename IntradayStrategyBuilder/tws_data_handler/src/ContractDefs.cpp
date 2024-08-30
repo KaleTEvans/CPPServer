@@ -3,6 +3,17 @@
 #include "Contract.h"
 #include "Enumerations.h"
 
+int ContractDefs::getConId(const std::string& symbol) {
+    if (symbol == "SPX") return 416904;
+    else if (symbol == "SPY") return 756733;
+    else if (symbol == "AAPL") return 265598;
+
+    else {
+        std::cout << "Contract ID not found" << std::endl;
+        return 0;
+    }
+}
+
 Contract ContractDefs::SPXInd() {
     Contract contract;
     contract.symbol = "SPX";
@@ -10,11 +21,9 @@ Contract ContractDefs::SPXInd() {
     contract.currency = "USD";
     contract.exchange = "SMART";
     contract.primaryExchange = "CBOE";
-    contract.conId = 416904;
+    //contract.conId = 416904;
     return contract;
 }
-
-int ContractDefs::SPXConID() { return 416904; }
 
 Contract ContractDefs::BZBroadTape() {
     Contract news;
@@ -50,7 +59,11 @@ Contract ContractDefs::SPXOpt0DTE(const std::string& right, int strike) {
     std::time_t tmNow;
 	tmNow = time(NULL);
 	struct tm t = *localtime(&tmNow);
-    std::string date = std::to_string(t.tm_year + 1900) + std::to_string(t.tm_mon + 1) + std::to_string(t.tm_mday);
+    std::string month = std::to_string(t.tm_mon + 1);
+    if (month.size() == 1) month = "0" + month;
+    std::string day = std::to_string(t.tm_mday);
+    if (day.size() == 1) day = "0" + day;
+    std::string date = std::to_string(t.tm_year + 1900) + month + day;
 	contract.lastTradeDateOrContractMonth = date;
 
     contract.right = right;
@@ -84,6 +97,15 @@ Contract ContractDefs::VIX() {
 	contract.currency = "USD";
 	contract.exchange = "SMART";
 	return contract;
+}
+
+Contract ContractDefs::AAPL() {
+    Contract contract;
+    contract.symbol = "AAPL";
+    contract.secType = "STK";
+    contract.currency = "USD";
+    contract.exchange = "SMART";
+    return contract;
 }
 
 Contract ContractDefs::emptyContract() {

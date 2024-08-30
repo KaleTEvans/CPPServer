@@ -55,14 +55,18 @@ int main() {
 
     //testClient.reqRealTimeBars(con1, 5, "TRADES", true);
     //testClient.reqRealTimeBars(con2, 5, "TRADES", true);
-    testClient->reqMktData(con2, "100,101,106,104,225,233,293,295,411", false, false);
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    // testClient->reqMktData(con2, "100,101,106,104,225,233,293,295,411", false, false);
+    // std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     int chainID = 0;
-    if (testSubscriber.lastPrice != 0) chainID = testSubscriber.getOptionsChain("SPX", "", "IND", ContractDefs::SPXConID());
+    chainID = testSubscriber.getOptionsChain("SPX", "", "IND", ContractDefs::getConId("SPX"));
     while (!testClient->checkEventCompleted(chainID)) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+
+    Contract aapl = ContractDefs::SPY();
+    int sampleId = 0;
+    sampleId = testSubscriber.getContractData(aapl);
 
     Contract news;
     news.symbol = "BZ:BZ_ALL";

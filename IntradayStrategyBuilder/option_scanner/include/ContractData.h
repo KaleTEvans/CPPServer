@@ -82,7 +82,6 @@ struct MarketDataSingleFrame {
     bool tasFilledBySingleMM{false};
 
     int64_t timestamp{0};
-    void printMktData();
 };
 
 /////////////////////////////////////////////////////////
@@ -142,7 +141,6 @@ class ContractData {
             Contract contract, double strikeIncrement);
 
         void printData();
-        void saveData();
 
     private:
         int mktDataId;
@@ -152,12 +150,11 @@ class ContractData {
         double lastUnderlyingPrice{0};
         std::shared_ptr<tWrapper> wrapper;
         std::shared_ptr<CSVFileSaver> csv;
+        bool outputData{false};
 
         // One map will hold all ticks, the other the candles, and the ticks will be dispersed upon
         // creation of each candle
         std::map<int64_t, std::shared_ptr<MarketDataSingleFrame>> ticks;
-        // Tick news will not be included in single frame data, as many articles can have the same timestamp
-        std::vector<std::pair<int64_t, std::shared_ptr<TickNewsEvent>>> newsTicks;
         std::map<int64_t, std::shared_ptr<FiveSecondData>> fiveSecData;
         std::vector<std::shared_ptr<OneMinuteData>> oneMinuteCandles;
 
@@ -172,7 +169,6 @@ class ContractData {
         void handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event);
         void handleTickStringEvent(std::shared_ptr<TickStringEvent> event);
         void tickOptionInfo(std::shared_ptr<TickOptionComputationEvent> event);
-        void tickNewsEvent(std::shared_ptr<TickNewsEvent> event);
         void realTimeCandles(std::shared_ptr<CandleDataEvent> event);
 };
 
