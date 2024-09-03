@@ -78,11 +78,16 @@ struct ContractNewsData {
 class UnderlyingData {
     public:
         UnderlyingData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv, Contract contract);
+        ~UnderlyingData();
 
+        Contract getContract();
+        void startReceivingData();
+        void stopReceivingData();
         int getStrikeIncrement();
-        std::pair<std::vector<double>, std::vector<double>> getStrikes(int countITM, double price);
+        std::pair<std::vector<double>, std::vector<double>> getStrikes(int countITM = 2);
         std::string formatAveragesCSV();
-        std::string formatNewsCSV();
+
+        void printData();
 
     private:
         int requestOptionsChain();
@@ -104,7 +109,7 @@ class UnderlyingData {
         int mktDataId{0};
         int rtbId{0};
         Contract contract;
-        double currentPrice{0};
+        double currentPrice{5646.96};
         double strikeIncrement{0};
         std::shared_ptr<tWrapper> wrapper;
         std::shared_ptr<CSVFileSaver> csv;
@@ -116,6 +121,8 @@ class UnderlyingData {
         double low52Week{0};
         double high52Week{0};
         double averageVolume90Day{0};
+
+        bool outputData{false};
 };
 
 #endif

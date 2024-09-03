@@ -188,7 +188,7 @@ public:
         const std::set<std::string>& expirations, const std::set<double>& strikes) {
             std::vector<double> sortedStrikes;
             for (auto& i : strikes) {
-                std::cout << "Strike: " << i << std::endl;
+                //std::cout << "Strike: " << i << std::endl;
                 sortedStrikes.push_back(i);
             }
 

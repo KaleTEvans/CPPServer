@@ -5,6 +5,7 @@
 #include <SaveToCSV.h>
 #include <ContractDefs.h>
 #include <UnderlyingData.h>
+#include <OptionScanner.h>
 
 int main() {
     std::shared_ptr<tWrapper> testClient = std::make_shared<tWrapper>();
@@ -18,35 +19,40 @@ int main() {
 
     testClient->connect("192.168.12.148", 7496, clientId);
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-    Contract con1 = ContractDefs::SPXOpt0DTE("C", 5630);
-    Contract con2 = ContractDefs::SPXOpt0DTE("P", 5630);
-    std::cout << con1.lastTradeDateOrContractMonth << std::endl;
-    // con1.symbol = "SPX";
-    // con1.secType = "OPT";
-    // con1.currency = "USD";
-    // con1.exchange = "SMART";
-    // con1.primaryExchange = "CBOE";
-    // con1.lastTradeDateOrContractMonth = "20240813";
-    // con1.strike = 5420;
-    // con1.right = "C";
-
-    Contract underlying = ContractDefs::SPXInd();
-
     testClient->startMsgProcessingThread();
-    //csv->createDirectoriesAndFiles(con1.symbol, con1.strike, con1.right);
-    //csv->start();
 
-    int mktDataId1 = testClient->reqMktData(con1, "100,101,106,104,225,232,233,293,294,295,411", false, false);
-    int rtbId1 = testClient->reqRealTimeBars(con1, 5, "TRADES", true);
+    OptionScanner optScanner = OptionScanner(testClient);
+    optScanner.addSecurity(ContractDefs::SPXInd(), ContractDefs::SPXOpt0DTE("C", 1000));
+    optScanner.start();
 
-    ContractData cd(testClient, csv, mktDataId1, rtbId1, con1, 5);
+    // Contract con1 = ContractDefs::SPXOpt0DTE("C", 5630);
+    // Contract con2 = ContractDefs::SPXOpt0DTE("P", 5630);
+    // std::cout << con1.lastTradeDateOrContractMonth << std::endl;
+    // // con1.symbol = "SPX";
+    // // con1.secType = "OPT";
+    // // con1.currency = "USD";
+    // // con1.exchange = "SMART";
+    // // con1.primaryExchange = "CBOE";
+    // // con1.lastTradeDateOrContractMonth = "20240813";
+    // // con1.strike = 5420;
+    // // con1.right = "C";
 
-    int mktDataId2 = testClient->reqMktData(con2, "100,101,106,104,225,232,233,293,294,295,411", false, false);
-    int rtbId2 = testClient->reqRealTimeBars(con2, 5, "TRADES", true);
+    // Contract underlying = ContractDefs::SPXInd();
 
-    ContractData cd2(testClient, csv, 2, rtbId2, con2, 5);
-    UnderlyingData ud(testClient, csv, underlying);
+    // testClient->startMsgProcessingThread();
+    // //csv->createDirectoriesAndFiles(con1.symbol, con1.strike, con1.right);
+    // //csv->start();
+
+    // int mktDataId1 = testClient->reqMktData(con1, "100,101,106,104,225,232,233,293,294,295,411", false, false);
+    // int rtbId1 = testClient->reqRealTimeBars(con1, 5, "TRADES", true);
+
+    // ContractData cd(testClient, csv, mktDataId1, rtbId1, con1, 5);
+
+    // int mktDataId2 = testClient->reqMktData(con2, "100,101,106,104,225,232,233,293,294,295,411", false, false);
+    // int rtbId2 = testClient->reqRealTimeBars(con2, 5, "TRADES", true);
+
+    // ContractData cd2(testClient, csv, 2, rtbId2, con2, 5);
+    // UnderlyingData ud(testClient, csv, underlying);
 
     for (int i=0; i < 100000; i++) {
         //testSubscriber.getTime();
@@ -55,7 +61,7 @@ int main() {
     //cd.saveData();
 
     testClient->disconnect();
-    csv->stop();
+    optScanner.stop();
 
     return 0;
 }

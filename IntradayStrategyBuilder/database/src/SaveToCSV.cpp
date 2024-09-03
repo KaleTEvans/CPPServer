@@ -40,18 +40,15 @@ void CSVFileSaver::createDirectoriesAndFiles(const std::string& equity, int cont
     std::time_t now = std::time(nullptr);
     std::tm* localTime = std::localtime(&now);
 
+    std::string baseDirName = "SavedData";
     std::string parentDirName = std::to_string(1900 + localTime->tm_year) + "_" +
                                 std::to_string(1 + localTime->tm_mon) + "_" + equity;
     std::string dirName = std::to_string(localTime->tm_mday) + "_" + equity;
 
-    fs::path fullPath = fs::path(parentDirName) / dirName;
-
-    if (!fs::exists(parentDirName)) {
-        fs::create_directory(parentDirName);
-    }
+    fs::path fullPath = fs::path(baseDirName) / parentDirName / dirName;
 
     if (!fs::exists(fullPath)) {
-        fs::create_directory(fullPath);
+        fs::create_directories(fullPath);
     }
 
     std::string ticksFile = std::to_string(contractStrike) + "_" + contractType + "_Ticks.csv";
@@ -72,7 +69,7 @@ void CSVFileSaver::createDirectoriesAndFiles(const std::string& equity, int cont
         std::string dailyDataFile = (fullPath / (dailyStats)).string();
         std::string newsDataFile = (fullPath / (newsData)).string();
 
-        std::ofstream underlyingOneMinFileStream(underlyingOneMinFile, std::ios::app);
+        std::ofstream underlyingOneMinFileStream(underlyingOneMinDataFile, std::ios::app);
         if (underlyingOneMinFileStream.is_open()) {
             underlyingOneMinFileStream << underlyingOneMinHeaders;
         }

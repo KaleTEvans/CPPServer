@@ -28,7 +28,17 @@ ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CS
 
     csv->createDirectoriesAndFiles(contract.symbol, contract.strike, contract.right);
 
-    std::cout << "ContractData Request IDs: " << mktDataId << "," << rtbId << std::endl;
+    std::cout << "ContractData Request IDs: " << mktDataId << "," << rtbId << " created for  contract: " <<
+            contract.symbol << " " << contract.strike << contract.right << std::endl;
+}
+
+ContractData::~ContractData() {
+    cancelDataStream();
+}
+
+void ContractData::cancelDataStream() {
+    wrapper->cancelMktData(mktDataId);
+    wrapper->cancelRealTimeBars(rtbId);
 }
 
 void ContractData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {

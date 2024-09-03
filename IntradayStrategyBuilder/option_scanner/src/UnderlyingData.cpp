@@ -49,19 +49,6 @@ UnderlyingData::UnderlyingData(std::shared_ptr<tWrapper> wrapper, std::shared_pt
         // Initialize empty one minute candle prior to receiving data
         UnderlyingOneMinuteData um;
         oneMinuteData.push_back(um);
-        // Begin by sending out appropriate requests to generate data id's
-        // Only some requests will work for a stock vs index type
-        std::string tickRequests;
-        if (contract.secType == "IND") {
-            tickRequests = "100,101,104,106,162,165,293,294,411,588";
-        } else {
-            tickRequests = "100,101,106,165,293,294,411,588";
-        }
-        mktDataId = wrapper->reqMktData(contract, tickRequests, false, false);
-        rtbId = wrapper->reqRealTimeBars(contract, 5, "TRADES", true);
-        // Create news request
-        Contract news = ContractDefs::BZBroadTape();
-        wrapper->reqMktData(news, "mdoff,292", false, false);
 
         // Now set up the callback functions 
         wrapper->getMessageBus()->subscribe(EventType::TickPriceInfo, [this](std::shared_ptr<DataEvent> event) {
@@ -84,15 +71,46 @@ UnderlyingData::UnderlyingData(std::shared_ptr<tWrapper> wrapper, std::shared_pt
         wrapper->getMessageBus()->subscribe(EventType::RealTimeCandleData, [this](std::shared_ptr<DataEvent> event) {
             if (event->getReqId() == this->rtbId) this->handleRealTimeCandles(std::dynamic_pointer_cast<CandleDataEvent>(event));
         });
-
-        // Wait to get the first price tick
-        while (currentPrice <= 1) std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        // Now we should have all the data we need to send back to the option scanner
-        // Send the request to get the options chain
-        int chainReqId = requestOptionsChain();
-        while (!wrapper->checkEventCompleted(chainReqId)) std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        getStrikes(2, currentPrice);
     }
+
+UnderlyingData::~UnderlyingData() {
+    stopReceivingData();
+}
+
+Contract UnderlyingData::getContract() { return contract; }
+
+void UnderlyingData::startReceivingData() {
+    // Begin by sending out appropriate requests to generate data id's
+    // Only some requests will work for a stock vs index type
+    std::string tickRequests;
+    if (contract.secType == "IND") {
+        tickRequests = "100,101,104,106,162,165,293,294,411,588";
+    } else {
+        tickRequests = "100,101,106,165,293,294,411,588";
+    }
+
+    std::cout << "Data request sent for underlying contract: " << contract.symbol << std::endl;
+
+    mktDataId = wrapper->reqMktData(contract, tickRequests, false, false);
+    rtbId = wrapper->reqRealTimeBars(contract, 5, "TRADES", true);
+    // Create news request
+    Contract news = ContractDefs::BZBroadTape();
+    wrapper->reqMktData(news, "mdoff,292", false, false);
+
+    // Wait to get the first price tick
+    while (currentPrice <= 1) std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    // Now we should have all the data we need to send back to the option scanner
+    // Send the request to get the options chain
+    int chainReqId = requestOptionsChain();
+    while (!wrapper->checkEventCompleted(chainReqId)) std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    
+    std::cout << "Data retrieval started for underlying contract: " << contract.symbol << std::endl;
+}
+
+void UnderlyingData::stopReceivingData() {
+    wrapper->cancelMktData(mktDataId);
+    wrapper->cancelRealTimeBars(rtbId);
+}
 
 std::string UnderlyingData::formatAveragesCSV() {
     return CSVFileSaver::valueToCSV(low13Week) + "," + 
@@ -109,13 +127,14 @@ int UnderlyingData::requestOptionsChain() {
     std::string futFopExchange = "";
     std::string underlyingSecType = contract.secType;
     int underlyingConId = ContractDefs::getConId(contract.symbol);
+    std::cout << "Underlying Con ID: " << underlyingConId << std::endl;
     
     int optId = 0;
     wrapper->reqSecDefOptParams(
         [this, &optId](int reqId) {
             optId = reqId;
         },
-        [this](const std::string& exchange, int underlyingConId, const std::string& tradingClass, 
+        [this, &optId](const std::string& exchange, int underlyingConId, const std::string& tradingClass, 
             const std::string& multiplier, const std::set<std::string>& expirations, 
             const std::set<double>& strikes) {
                 this->handleOptionsChainData(exchange, underlyingConId, tradingClass, multiplier,
@@ -128,18 +147,17 @@ int UnderlyingData::requestOptionsChain() {
 
 int UnderlyingData::getStrikeIncrement() { return strikeIncrement; }
 
-std::pair<std::vector<double>, std::vector<double>> UnderlyingData::getStrikes(int countITM, double price) {
+std::pair<std::vector<double>, std::vector<double>> UnderlyingData::getStrikes(int countITM) {
     // Insert set items into vector for easier manipulation
     for (const auto& i : optionStrikes) optionsChain.push_back(i);
     // Get midpoint and find strike increment
     int mid = optionsChain.size() / 2;
     strikeIncrement = optionsChain[mid+1] - optionsChain[mid];
-    std::cout << "Strike Increment: " << strikeIncrement << std::endl; 
     
     // Loop until the first strike out of the money (for calls)
     int firstOTM = 0;
     for (int i=0; i < optionsChain.size(); i++) {
-        if (price < optionsChain[i]) {
+        if (currentPrice < optionsChain[i]) {
             firstOTM = i;
             break;
         }
@@ -157,13 +175,6 @@ std::pair<std::vector<double>, std::vector<double>> UnderlyingData::getStrikes(i
         putStrikes.push_back(optionsChain[putIndex]);
         putIndex--;
     }
-
-    std::cout << "Call Strikes: " << std::endl;
-    for (auto& i: callStrikes) std::cout << i << " ";
-    std::cout << std::endl;
-    std::cout << "Put Strikes: " << std::endl;
-    for (auto& i: putStrikes) std::cout << i << " ";
-    std::cout << std::endl; 
 
     return {callStrikes, putStrikes};
 }
@@ -230,7 +241,7 @@ void UnderlyingData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event)
         }
     }
 
-    event->print();
+    if (outputData) event->print();
 }
 
 void UnderlyingData::handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
@@ -263,7 +274,7 @@ void UnderlyingData::handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
         break;
     }
 
-    event->print();
+    if (outputData) event->print();
 }
 
 void UnderlyingData::handleTickGenericEvent(std::shared_ptr<TickGenericEvent> event) {
@@ -293,7 +304,7 @@ void UnderlyingData::handleTickGenericEvent(std::shared_ptr<TickGenericEvent> ev
         break;
     }
 
-    event->print();
+    if (outputData) event->print();
 }
 
 void UnderlyingData::handleTickNewsEvent(std::shared_ptr<TickNewsEvent> event) {
@@ -317,7 +328,7 @@ void UnderlyingData::handleTickNewsEvent(std::shared_ptr<TickNewsEvent> event) {
     cnd.price = currentPrice;
     csv->addDataToQueue(contract.symbol, 0, "None", DataType::News, cnd.formatCSV());
 
-    event->print();
+    if (outputData) event->print();
 }
 
 void UnderlyingData::handleRealTimeCandles(std::shared_ptr<CandleDataEvent> event) {
@@ -337,5 +348,5 @@ void UnderlyingData::handleRealTimeCandles(std::shared_ptr<CandleDataEvent> even
         oneMinuteData.push_back(oneMinCandle);
     }
 
-    event->candle->printCandle();
+    if (outputData) event->candle->printCandle();
 }

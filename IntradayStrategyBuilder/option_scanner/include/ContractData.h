@@ -139,7 +139,9 @@ class ContractData {
     public:
         ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv, int mktDataId, int rtbId, 
             Contract contract, double strikeIncrement);
+        ~ContractData();
 
+        void cancelDataStream();
         void printData();
 
     private:
