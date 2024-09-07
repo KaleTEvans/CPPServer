@@ -36,5 +36,6 @@ Keys.h
 
 out/build/
 CMakeFiles
+SavedData/
 
 [Bb][Uu][Ii][Ll][Dd]/

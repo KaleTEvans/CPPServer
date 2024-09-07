@@ -10,6 +10,7 @@
 #include <memory>
 #include <thread>
 #include <queue>
+#include <mutex>
 
 namespace fs = std::filesystem;
 
@@ -50,6 +51,7 @@ class CSVFileSaver {
 
     private:
         std::thread dataQueueThread;
+        std::mutex csvMtx;
         std::queue<DataPoint> dataQueue;
 
         bool endQueue = false;

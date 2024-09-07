@@ -34,6 +34,8 @@ class OptionScanner {
         std::thread optionScannerThread;
         bool quitOptionScanner{false};
 
+        std::mutex mtx;
+
         std::shared_ptr<tWrapper> wrapper;
         std::map<std::string, Contract> optionBaseContracts;
         std::vector<std::pair<std::shared_ptr<UnderlyingData>, ScannerNotifications>> trackedTickers;

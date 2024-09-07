@@ -9,8 +9,7 @@
 
 int main() {
     std::shared_ptr<tWrapper> testClient = std::make_shared<tWrapper>();
-    std::shared_ptr<CSVFileSaver> csv = std::make_shared<CSVFileSaver>();
-    csv->start();
+    //std::shared_ptr<CSVFileSaver> csv = std::make_shared<CSVFileSaver>();
 
     int clientId = 0;
 
@@ -54,14 +53,14 @@ int main() {
     // ContractData cd2(testClient, csv, 2, rtbId2, con2, 5);
     // UnderlyingData ud(testClient, csv, underlying);
 
-    for (int i=0; i < 100000; i++) {
+    for (int i=0; i < 3000000; i++) {
         //testSubscriber.getTime();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     //cd.saveData();
-
-    testClient->disconnect();
     optScanner.stop();
+    testClient->disconnect();
+    
 
     return 0;
 }

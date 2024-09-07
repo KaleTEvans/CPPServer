@@ -35,11 +35,19 @@ enum class RelativeToMoney {
 	OTM3, 
 	OTM4, 
 	OTM5,
+	OTM6,
+	OTM7,
+	OTM8,
+	OTM9,
+	OTM10,
+	OTM11,
+	OTM12,
 	ITM1, 
 	ITM2, 
 	ITM3, 
 	ITM4, 
 	ITM5,
+	ITM6,
 	NoValue
 };
 

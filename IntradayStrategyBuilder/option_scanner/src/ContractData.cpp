@@ -33,12 +33,13 @@ ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CS
 }
 
 ContractData::~ContractData() {
-    cancelDataStream();
+    //cancelDataStream();
 }
 
 void ContractData::cancelDataStream() {
     wrapper->cancelMktData(mktDataId);
     wrapper->cancelRealTimeBars(rtbId);
+    std::cout << "Market data and RTB streams have ended for Contract: " << contract.strike << contract.right << std::endl;
 }
 
 void ContractData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
@@ -145,7 +146,7 @@ void ContractData::tickOptionInfo(std::shared_ptr<TickOptionComputationEvent> ev
             it->second->inputTickOption(event);
         }
     }
-    event->print();
+    if (outputData) event->print();
 }
 
 void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
@@ -221,17 +222,19 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
         for (size_t i = 0; i < count; ++i) {
             --it;
             temp.push_back(it->second);
-        /* code */
         }
         std::reverse(temp.begin(), temp.end());
 
-        std::shared_ptr<OneMinuteData> c = std::make_shared<OneMinuteData>(temp, recentOptData, recentTasData);
-        oneMinuteCandles.push_back(c);
+        // Wait for a five second candle that starts on an even minute before creating
+        if (temp[0]->candle->time() % 60 == 0) {
+            std::shared_ptr<OneMinuteData> c = std::make_shared<OneMinuteData>(temp, recentOptData, recentTasData);
+            oneMinuteCandles.push_back(c);
 
-        priceDelta_oneMinCandles.addValue(c->candle->high() - c->candle->low());
+            priceDelta_oneMinCandles.addValue(c->candle->high() - c->candle->low());
 
-        // Save one minute candle to db
-        csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::OneMin, c->formatCSV());
+            // Save one minute candle to db
+            csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::OneMin, c->formatCSV());
+        }
     }
 }
 
@@ -328,7 +331,7 @@ void MarketDataSingleFrame::inputTickPrice(std::shared_ptr<TickPriceEvent> tickP
         break;
     
     default:
-        tickPrice->print();
+        //tickPrice->print();
         break;
     }
 }
@@ -348,7 +351,7 @@ void MarketDataSingleFrame::inputTickSize(std::shared_ptr<TickSizeEvent> tickSiz
         break;
     
     default:
-        tickSize->print();
+        //tickSize->print();
         break;
     }
 }

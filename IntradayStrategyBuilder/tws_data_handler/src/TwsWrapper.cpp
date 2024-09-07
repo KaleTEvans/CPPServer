@@ -84,7 +84,7 @@ void tWrapper::disconnect() {
 	m_pClient->eDisconnect();
     if (msgProcessingThread.joinable()) msgProcessingThread.join();
 
-	printf ( "Disconnected\n");
+	printf ( "IBKR Client Disconnected\n");
 }
 
 bool tWrapper::isConnected() const {

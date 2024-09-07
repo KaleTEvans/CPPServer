@@ -12,12 +12,12 @@ CSVFileSaver::CSVFileSaver() {
 
     underlyingOneMinHeaders = "TimeStamp,Open,High,Low,Close,Volume,DailyHigh,DailyLow,DailyVolume,"
                                 "TotalCallVolume,TotalPutVolume,IndexFuturePremium,TotalTradeCount,"
-                                "OneMinuteTradeRate,RealTimeVol_30Day,OptionIV_30Day,OptionVol_30Day"
-                                "CallOpenInterest,PutOpenInterest,FuturesOpenInterest";
+                                "OneMinuteTradeRate,RealTimeVol_30Day,OptionIV_30Day,OptionVol_30Day,"
+                                "CallOpenInterest,PutOpenInterest,FuturesOpenInterest\n";
 
-    underlyingAvgHeaders = "13WeekLow,13WeekHigh,26WeekLow,26WeekHigh,52WeekLow,52WeekHigh,AverageVolume_90Day";
+    underlyingAvgHeaders = "13WeekLow,13WeekHigh,26WeekLow,26WeekHigh,52WeekLow,52WeekHigh,AverageVolume_90Day\n";
 
-    contractNewsHeaders = "TimeStamp,ArticleId,Headline,SentimentScore,Price";
+    contractNewsHeaders = "TimeStamp,ArticleId,Headline,SentimentScore,Price\n";
 }
 
 void CSVFileSaver::start() {
@@ -29,7 +29,9 @@ void CSVFileSaver::start() {
 
 void CSVFileSaver::stop() {
     endQueue = true;
+
     if (dataQueueThread.joinable()) dataQueueThread.join();
+    std::cout << "CSV File Saver has stopped" << std::endl;
 }
 
 std::string CSVFileSaver::valueToCSV(double value) {
@@ -69,23 +71,28 @@ void CSVFileSaver::createDirectoriesAndFiles(const std::string& equity, int cont
         std::string dailyDataFile = (fullPath / (dailyStats)).string();
         std::string newsDataFile = (fullPath / (newsData)).string();
 
-        std::ofstream underlyingOneMinFileStream(underlyingOneMinDataFile, std::ios::app);
-        if (underlyingOneMinFileStream.is_open()) {
-            underlyingOneMinFileStream << underlyingOneMinHeaders;
+        if (!fs::exists(underlyingOneMinFile)) {
+            std::ofstream underlyingOneMinFileStream(underlyingOneMinDataFile, std::ios::app);
+            if (underlyingOneMinFileStream.is_open()) {
+                underlyingOneMinFileStream << underlyingOneMinHeaders;
+            }
+            underlyingOneMinFileStream.close();
         }
-        underlyingOneMinFileStream.close();
+        if (!fs::exists(dailyDataFile)) {
+            std::ofstream dailyStatsFileStream(dailyDataFile, std::ios::app);
+            if (dailyStatsFileStream.is_open()) {
+                dailyStatsFileStream << underlyingAvgHeaders;
+            }
+            dailyStatsFileStream.close();
+        }
+        if (!fs::exists(newsDataFile)) {
+            std::ofstream newsDataFileStream(newsDataFile, std::ios::app);
+            if (newsDataFileStream.is_open()) {
+                newsDataFileStream << contractNewsHeaders;
+            }
+            newsDataFileStream.close();
+        }
 
-        std::ofstream dailyStatsFileStream(dailyDataFile, std::ios::app);
-        if (dailyStatsFileStream.is_open()) {
-            dailyStatsFileStream << underlyingAvgHeaders;
-        }
-        dailyStatsFileStream.close();
-
-        std::ofstream newsDataFileStream(newsDataFile, std::ios::app);
-        if (newsDataFileStream.is_open()) {
-            newsDataFileStream << contractNewsHeaders;
-        }
-        newsDataFileStream.close();
     } else {
         std::ofstream(fullPath / ticksFile);
         std::ofstream(fullPath / fiveSecFile);
@@ -93,27 +100,33 @@ void CSVFileSaver::createDirectoriesAndFiles(const std::string& equity, int cont
 
         std::string tickDataFile = (fullPath / (std::to_string(contractStrike) + "_" + contractType + "_Ticks.csv")).string();
 
-        std::ofstream tickFileStream(tickDataFile, std::ios::app);
-        if (tickFileStream.is_open()) {
-            tickFileStream << tickHeaders;
+        if (!fs::exists(ticksFile)) {
+            std::ofstream tickFileStream(tickDataFile, std::ios::app);
+            if (tickFileStream.is_open()) {
+                tickFileStream << tickHeaders;
+            }
+            tickFileStream.close();
         }
-        tickFileStream.close();
 
         std::string fiveSecDataFile = (fullPath / (std::to_string(contractStrike) + "_" + contractType + "_Five_Sec.csv")).string();
 
-        std::ofstream fiveSecFileStream(fiveSecDataFile, std::ios::app);
-        if (fiveSecFileStream.is_open()) {
-            fiveSecFileStream << fiveSecHeaders;
+        if (!fs::exists(fiveSecFile)) {
+            std::ofstream fiveSecFileStream(fiveSecDataFile, std::ios::app);
+            if (fiveSecFileStream.is_open()) {
+                fiveSecFileStream << fiveSecHeaders;
+            }
+            fiveSecFileStream.close();
         }
-        fiveSecFileStream.close();
 
         std::string oneMinDataFile = (fullPath / (std::to_string(contractStrike) + "_" + contractType + "_One_Min.csv")).string();
 
-        std::ofstream oneMinFileStream(oneMinDataFile, std::ios::app);
-        if (oneMinFileStream.is_open()) {
-            oneMinFileStream << oneMinHeaders;
+        if (!fs::exists(oneMinFile)) {
+            std::ofstream oneMinFileStream(oneMinDataFile, std::ios::app);
+            if (oneMinFileStream.is_open()) {
+                oneMinFileStream << oneMinHeaders;
+            }
+            oneMinFileStream.close();
         }
-        oneMinFileStream.close();
     }
 
     std::cout << "Directory and files created at: " << fullPath << std::endl;
@@ -124,11 +137,13 @@ void CSVFileSaver::writeDataToFiles(const std::string& equity, int contractId, c
     std::time_t now = std::time(nullptr);
     std::tm* localTime = std::localtime(&now);
 
+    std::string baseDirName = "SavedData";
     std::string parentDirName = std::to_string(1900 + localTime->tm_year) + "_" +
                                 std::to_string(1 + localTime->tm_mon) + "_" + equity;
     std::string dirName = std::to_string(localTime->tm_mday) + "_" + equity;
 
-    fs::path fullPath = fs::path(parentDirName) / dirName;
+    fs::path fullPath = fs::path(baseDirName) / parentDirName / dirName;
+
     std::string dataFile;
     std::string headers;
 
@@ -155,6 +170,7 @@ void CSVFileSaver::writeDataToFiles(const std::string& equity, int contractId, c
     
     default:
         std::cout << "Invalid datatype given to writeCsv" << std::endl;
+        std::cout << data << std::endl;
         break;
     }
 
@@ -166,8 +182,9 @@ void CSVFileSaver::writeDataToFiles(const std::string& equity, int contractId, c
 }
 
 void CSVFileSaver::checkDataQueues() {
-    while (!endQueue) {
+    while (true) {
         while (!dataQueue.empty()) {
+            std::lock_guard<std::mutex> lock(csvMtx);
             writeDataToFiles(
                 dataQueue.front().equity,
                 dataQueue.front().contractId,
@@ -175,13 +192,20 @@ void CSVFileSaver::checkDataQueues() {
                 dataQueue.front().dataType,
                 dataQueue.front().data
             );
+
             dataQueue.pop();
+        }
+
+        if (endQueue) {
+            std::unique_lock<std::mutex> relock(csvMtx);
+            if (dataQueue.empty()) break;
         }
     }
 }
 
 void CSVFileSaver::addDataToQueue(const std::string& equity, int contractId, const std::string& contractType, 
     DataType dataType, const std::string& data) {
+    std::lock_guard<std::mutex> lock(csvMtx);
     DataPoint dp;
     dp.equity = equity;
     dp.contractId = contractId;

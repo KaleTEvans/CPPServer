@@ -1,5 +1,6 @@
 #include <iostream>
 #include "CacheSever.h"
+#include "WebSocket.h"
 
 int main(int argc, char** argv)
 {
@@ -8,13 +9,13 @@ int main(int argc, char** argv)
     if (argc > 1)
         port = std::atoi(argv[1]);
     // HTTPS server content path
-    std::string www = "../www/api";
+    std::string www = "/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/CppServer/www/wss";
     if (argc > 2)
         www = argv[2];
 
-    std::cout << "HTTPS server port: " << port << std::endl;
-    std::cout << "HTTPS server static content path: " << www << std::endl;
-    std::cout << "HTTPS server website: " << "https://localhost:" << port << "/api/index.html" << std::endl;
+    std::cout << "WebSocket secure server port: " << port << std::endl;
+    std::cout << "Websocket secure server static content path: " << www << std::endl;
+    std::cout << "Websocket secure server website: " << "https://localhost:" << port << "/chat/index.html" << std::endl;
 
     std::cout << std::endl;
 
@@ -33,9 +34,9 @@ int main(int argc, char** argv)
     context->use_private_key_file("/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/CppServer/tools/certificates/server.pem", asio::ssl::context::pem);
     context->use_tmp_dh_file("/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/CppServer/tools/certificates/dh4096.pem");
 
-    // Create a new HTTPS server
-    auto server = std::make_shared<HTTPSCacheServer>(service, context, port);
-    server->AddStaticContent(www, "/api");
+    // Create a new WebSocket server
+    auto server = std::make_shared<TWSStrategyServer>(service, context, port);
+    server->AddStaticContent(www, "/chat");
 
     // Start the server
     std::cout << "Server starting...";

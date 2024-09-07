@@ -8,15 +8,16 @@ void UnderlyingOneMinuteData::addFiveSecData(std::vector<std::shared_ptr<Candle>
         }
         low = std::min(low, fiveSecData[i]->low());
         high = std::max(high, fiveSecData[i]->high());
-        volume += fiveSecData[i]->volume();
+        volume += decimalToDouble(fiveSecData[i]->volume());
+        close = fiveSecData[i]->close();
     }
-    close = fiveSecData.back()->close();
 }
 
 std::string UnderlyingOneMinuteData::formatCSV() {
     return std::to_string(time) + "," +
             CSVFileSaver::valueToCSV(open) + "," +
             CSVFileSaver::valueToCSV(high) + "," +
+            CSVFileSaver::valueToCSV(low) + "," +
             CSVFileSaver::valueToCSV(close) + "," +
             CSVFileSaver::valueToCSV(volume) + "," +
             CSVFileSaver::valueToCSV(dailyHigh) + "," +
@@ -74,7 +75,7 @@ UnderlyingData::UnderlyingData(std::shared_ptr<tWrapper> wrapper, std::shared_pt
     }
 
 UnderlyingData::~UnderlyingData() {
-    stopReceivingData();
+    //stopReceivingData();
 }
 
 Contract UnderlyingData::getContract() { return contract; }
@@ -108,6 +109,8 @@ void UnderlyingData::startReceivingData() {
 }
 
 void UnderlyingData::stopReceivingData() {
+    // Save daily data at the end
+    csv->addDataToQueue(contract.symbol, 0, "None", DataType::UnderlyingAverages, formatAveragesCSV());
     wrapper->cancelMktData(mktDataId);
     wrapper->cancelRealTimeBars(rtbId);
 }
@@ -236,7 +239,7 @@ void UnderlyingData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event)
             break;
         
         default:
-            std::cout << "Tick Price type not used" << std::endl;
+            //std::cout << "Tick Price type not used" << std::endl;
             break;
         }
     }
@@ -270,7 +273,7 @@ void UnderlyingData::handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
         break;
     
     default:
-        std::cout << "Tick Size type not used" << std::endl;
+        //std::cout << "Tick Size type not used" << std::endl;
         break;
     }
 
@@ -300,7 +303,7 @@ void UnderlyingData::handleTickGenericEvent(std::shared_ptr<TickGenericEvent> ev
         break;
     
     default:
-        std::cout << "Tick Generic type not used" << std::endl;
+        //std::cout << "Tick Generic type not used" << std::endl;
         break;
     }
 
@@ -348,5 +351,5 @@ void UnderlyingData::handleRealTimeCandles(std::shared_ptr<CandleDataEvent> even
         oneMinuteData.push_back(oneMinCandle);
     }
 
-    if (outputData) event->candle->printCandle();
+    event->candle->printCandle();
 }

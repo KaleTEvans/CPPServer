@@ -39,27 +39,27 @@
 struct UnderlyingOneMinuteData {
     void addFiveSecData(std::vector<std::shared_ptr<Candle>> fiveSecData);
 
-    long time{0};
-    double open{0};
+    long time{-1};
+    double open{-1};
     double high{INT_MIN};
     double low{INT_MAX};
-    double close{0};
-    double volume{0};
+    double close{-1};
+    double volume{-1};
 
-    double dailyHigh{0};
-    double dailyLow{0};
-    double dailyVolume{0};
-    double totalCallVolume{0};
-    double totalPutVolume{0};
-    double indexFuturePremium{0};
-    double totalTradeCount{0};
-    double oneMinuteTradeRate{0};
-    double realTimeHistoricalVolatility{0};
-    double optionImpliedVolatility{0};
-    double optionHistoricalVolatility{0};
-    double callOpenInterest{0};
-    double putOpenInterest{0};
-    double futuresOpenInterest{0};
+    double dailyHigh{-1};
+    double dailyLow{-1};
+    double dailyVolume{-1};
+    double totalCallVolume{-1};
+    double totalPutVolume{-1};
+    double indexFuturePremium{-1};
+    double totalTradeCount{-1};
+    double oneMinuteTradeRate{-1};
+    double realTimeHistoricalVolatility{-100};
+    double optionImpliedVolatility{-100};
+    double optionHistoricalVolatility{-100};
+    double callOpenInterest{-1};
+    double putOpenInterest{-1};
+    double futuresOpenInterest{-1};
 
     std::string formatCSV();
 };
@@ -109,18 +109,18 @@ class UnderlyingData {
         int mktDataId{0};
         int rtbId{0};
         Contract contract;
-        double currentPrice{5646.96};
+        double currentPrice{0};
         double strikeIncrement{0};
         std::shared_ptr<tWrapper> wrapper;
         std::shared_ptr<CSVFileSaver> csv;
 
-        double low13Week{0};
-        double high13Week{0};
-        double low26week{0};
-        double high26Week{0};
-        double low52Week{0};
-        double high52Week{0};
-        double averageVolume90Day{0};
+        double low13Week{-1};
+        double high13Week{-1};
+        double low26week{-1};
+        double high26Week{-1};
+        double low52Week{-1};
+        double high52Week{-1};
+        double averageVolume90Day{-1};
 
         bool outputData{false};
 };

@@ -39,7 +39,7 @@ void TickNewsEvent::print() const {
 }
 
 void TickOptionComputationEvent::print() const {
-    printf("%lu | Tick Size. Ticker Id: %d, Type: %d, Implied Vol: %f\n",
+    printf("%lu | Tick Option. Ticker Id: %d, Type: %d, Implied Vol: %f\n",
     timeStamp, reqId, tickType, impliedVol);
 }
 

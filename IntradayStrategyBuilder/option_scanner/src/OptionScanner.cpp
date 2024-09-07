@@ -24,13 +24,13 @@ void OptionScanner::stop() {
     quitOptionScanner = true;
     if (optionScannerThread.joinable()) optionScannerThread.join();
     // Cancel all open requests
-    for (const auto& underlying : trackedTickers) underlying.first->stopReceivingData();
     for (const auto& call : trackedCalls) call.second->cancelDataStream();
     for (const auto& put : trackedPuts) put.second->cancelDataStream();
+    for (const auto& underlying : trackedTickers) underlying.first->stopReceivingData();
     // Clear containers to drop items out of scope and delete
-    trackedTickers.clear();
     trackedCalls.clear();
     trackedPuts.clear();
+    trackedTickers.clear();
     // End csv collection
     csv->stop();
 }
@@ -89,9 +89,11 @@ void OptionScanner::updateOptionStrikes(std::pair<std::shared_ptr<UnderlyingData
 
 void OptionScanner::monitorOptionChains() {
     while (!quitOptionScanner) {
+        std::unique_lock<std::mutex> lock(mtx);
         for (const auto& underlying : trackedTickers) {
             updateOptionStrikes(underlying);
         }
+        lock.unlock();
 
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
