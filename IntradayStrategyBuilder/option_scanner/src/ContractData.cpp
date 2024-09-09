@@ -1,8 +1,9 @@
 #include "ContractData.h"
 
 ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv,
+    std::shared_ptr<ScannerNotificationBus> notifications,
     int mktDataId, int rtbId, Contract contract, double strikeIncrement) : 
-    mktDataId(mktDataId), csv(csv), rtbId(rtbId), contract(contract), 
+    mktDataId(mktDataId), csv(csv), notifications(notifications), rtbId(rtbId), contract(contract), 
     strikeIncrement(strikeIncrement), wrapper(wrapper) {
     // Subscribe to events
     wrapper->getMessageBus()->subscribe(EventType::TickPriceInfo, [this](std::shared_ptr<DataEvent> event) {
@@ -54,6 +55,10 @@ void ContractData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
         it->second->inputTickPrice(event);
     }
     if (outputData) event->print();
+
+    // Update current bid and ask
+    if (event->tickType == TickType::ASK) currentAsk = event->price;
+    if (event->tickType == TickType::BID) currentBid = event->price;
 }
 
 void ContractData::handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
@@ -76,6 +81,18 @@ void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event)
         std::shared_ptr<TimeAndSales> tas = std::make_shared<TimeAndSales>(event->value);
         tradeSize_timeAndSales.addValue(tas->quantity);
         long timestamp = tas->timeValue;
+
+        // Now, if trade size is over $10k, create a notification
+        double priceInDollars = tas->price * 100;
+        double totalTradePrice = priceInDollars * tas->quantity;
+        if (totalTradePrice >= 10000) {
+            auto largeOrder = std::make_shared<LargeOrderEvent>(contract, tas->timeValue, tas->price,
+                tas->quantity, priceInDollars, tas->totalVol, tas->vwap, currentAsk, currentBid, currentRtm);
+            notifications->publish(largeOrder);
+            csv->addDataToQueue(contract.symbol, contract.strike, 
+                contract.right, DataType::LargeOrderAlert, largeOrder->formatCSV());
+            std::cout << largeOrder->formatCSV() << std::endl;
+        }
 
         auto it = ticks.find(timestamp);
         if (it == ticks.end()) {
@@ -145,6 +162,9 @@ void ContractData::tickOptionInfo(std::shared_ptr<TickOptionComputationEvent> ev
             // Key exists, update the existing MarketDataSingleFrame
             it->second->inputTickOption(event);
         }
+
+        // Update IV 
+        currentIV = event->impliedVol;
     }
     if (outputData) event->print();
 }
@@ -161,6 +181,7 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
     RelativeToMoney rtm = RelativeToMoney::NoValue;
     if (contract.right == "C") rtm = getRTM(strike * -1);
     else rtm = getRTM(strike);
+    currentRtm = rtm;
 
     std::shared_ptr<FiveSecondData> fsd = std::make_shared<FiveSecondData>(event->candle, rtm);
     fiveSecData[event->candle->time()] = fsd;
@@ -275,7 +296,7 @@ OneMinuteData::OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candle
     if (tasInfo != nullptr) totalVol = tasInfo->tasTotalVol;
 
     // Now loop over 5 sec candles in vector to get olhc and vol
-    Decimal vol = 0;
+    double vol = 0;
     double high = 0;
     double low = 10000;
     double count = 0; // Count of tradees per candles
@@ -285,11 +306,12 @@ OneMinuteData::OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candle
     for (auto i = 0; i < candles.size()-1; i++) {
         if (candles[i]->candle->high() >= high) high = candles[i]->candle->high();
         if (candles[i]->candle->low() <= low) low = candles[i]->candle->low();
-        vol += candles[i]->candle->volume();
+        vol += decimalToDouble(candles[i]->candle->volume());
         count += candles[i]->candle->count();
     }
 
-    candle = std::make_shared<Candle>(reqId, time, open, high, low, close, vol);
+    candle = std::make_shared<Candle>(reqId, time, open, high, low, close, 0);
+    candleVol = vol;
     tradeCount = count;
 }
 
@@ -299,7 +321,7 @@ std::string OneMinuteData::formatCSV() {
             std::to_string(candle->close()) + "," +
             std::to_string(candle->high()) + "," +
             std::to_string(candle->low()) + "," +
-            decimalToString(candle->volume()) + "," +
+            std::to_string(candleVol) + "," +
             std::to_string(tradeCount) + "," +
             std::to_string(impliedVol) + "," +
             std::to_string(delta) + "," +

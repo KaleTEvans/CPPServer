@@ -21,7 +21,8 @@ enum class DataType {
     UnderlyingOneMinute,
     UnderlyingAverages,
     DailyAverages,
-    News
+    News,
+    LargeOrderAlert
 };
 
 struct DataPoint {
@@ -63,6 +64,7 @@ class CSVFileSaver {
         std::string underlyingOneMinHeaders{""};
         std::string underlyingAvgHeaders{""};
         std::string contractNewsHeaders{""};
+        std::string largeOrderAlertHeaders{""};
 
 };
 

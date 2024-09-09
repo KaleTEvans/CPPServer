@@ -3,7 +3,7 @@
 CSVFileSaver::CSVFileSaver() {
     tickHeaders = "Timestamp,BidPrice,BidSize,AskPrice,AskSize,LastPrice,MarkPrice,Volume,ImpliedVol,"
                     "Delta,Gamma,Vega,Theta,UnderlyingPrice,PriceOfSale,QuantityOfSale,TotalVol,VWAP,"
-                    "FilledBySingleMM,RTM\n";
+                    "RTM,FilledBySingleMM\n";
 
     fiveSecHeaders = "TimeStamp,Open,Close,High,Low,Volume,Count,RTM\n";
 
@@ -18,6 +18,9 @@ CSVFileSaver::CSVFileSaver() {
     underlyingAvgHeaders = "13WeekLow,13WeekHigh,26WeekLow,26WeekHigh,52WeekLow,52WeekHigh,AverageVolume_90Day\n";
 
     contractNewsHeaders = "TimeStamp,ArticleId,Headline,SentimentScore,Price\n";
+
+    largeOrderAlertHeaders = "TimeStamp,Equity,ContractStrike,Right,PriceOfSale,QuantityOfSale,TotalSale,"
+                                "TotalOptionVolume,VWAP,CurrentAsk,CurrentBid\n";
 }
 
 void CSVFileSaver::start() {
@@ -62,14 +65,17 @@ void CSVFileSaver::createDirectoriesAndFiles(const std::string& equity, int cont
         std::string underlyingOneMinFile = equity + "_One_Min.csv";
         std::string dailyStats = equity + "_Daily_Data.csv";
         std::string newsData = equity + "_News_Data.csv";
+        std::string largeOrderData = equity + "_Large_Orders.csv";
 
         std::ofstream(fullPath / underlyingOneMinFile);
         std::ofstream(fullPath / dailyStats);
         std::ofstream(fullPath / newsData);
+        std::ofstream(fullPath / largeOrderData);
 
         std::string underlyingOneMinDataFile = (fullPath / (underlyingOneMinFile)).string();
         std::string dailyDataFile = (fullPath / (dailyStats)).string();
         std::string newsDataFile = (fullPath / (newsData)).string();
+        std::string largeOrderDataFile = (fullPath / (largeOrderData)).string();
 
         if (!fs::exists(underlyingOneMinFile)) {
             std::ofstream underlyingOneMinFileStream(underlyingOneMinDataFile, std::ios::app);
@@ -91,6 +97,13 @@ void CSVFileSaver::createDirectoriesAndFiles(const std::string& equity, int cont
                 newsDataFileStream << contractNewsHeaders;
             }
             newsDataFileStream.close();
+        }
+        if (!fs::exists(largeOrderDataFile)) {
+            std::ofstream largeOrderDataFileStream(largeOrderDataFile, std::ios::app);
+            if (largeOrderDataFileStream.is_open()) {
+                largeOrderDataFileStream << largeOrderAlertHeaders;
+            }
+            largeOrderDataFileStream.close();
         }
 
     } else {
@@ -166,6 +179,9 @@ void CSVFileSaver::writeDataToFiles(const std::string& equity, int contractId, c
         break;
     case DataType::News:
         dataFile = (fullPath / (equity + "_News_Data.csv")).string();
+        break;
+    case DataType::LargeOrderAlert:
+        dataFile = (fullPath / (equity + "_Large_Orders.csv")).string();
         break;
     
     default:

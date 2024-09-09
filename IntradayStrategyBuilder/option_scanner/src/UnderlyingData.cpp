@@ -351,5 +351,5 @@ void UnderlyingData::handleRealTimeCandles(std::shared_ptr<CandleDataEvent> even
         oneMinuteData.push_back(oneMinCandle);
     }
 
-    event->candle->printCandle();
+    if (outputData) event->candle->printCandle();
 }

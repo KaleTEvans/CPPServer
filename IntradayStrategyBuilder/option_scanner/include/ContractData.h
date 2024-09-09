@@ -6,6 +6,7 @@
 #include "OptionEnums.h"
 #include "OptionStatisticTrackers.h"
 #include "SaveToCSV.h"
+#include "ScannerNotificationHandler.h"
 
 #include <set>
 #include <map>
@@ -116,6 +117,7 @@ struct OneMinuteData {
     RelativeToMoney rtm;
     std::shared_ptr<Candle> candle;
 
+    double candleVol{0};
     double impliedVol{0};
     double delta{0};
     double gamma{0};
@@ -123,7 +125,7 @@ struct OneMinuteData {
     double theta{0};
     double undPrice{0};
     double tradeCount{0};
-    long totalVol{0};
+    long totalVol{-1};
 };
 
 ///////////////////////////////////////////////////////////////////
@@ -137,8 +139,9 @@ struct OneMinuteData {
 
 class ContractData {
     public:
-        ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv, int mktDataId, int rtbId, 
-            Contract contract, double strikeIncrement);
+        ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv,
+            std::shared_ptr<ScannerNotificationBus> notifications,
+            int mktDataId, int rtbId, Contract contract, double strikeIncrement);
         ~ContractData();
 
         void cancelDataStream();
@@ -153,6 +156,14 @@ class ContractData {
         std::shared_ptr<tWrapper> wrapper;
         std::shared_ptr<CSVFileSaver> csv;
         bool outputData{false};
+
+        double currentBid{0};
+        double currentAsk{0};
+        double currentIV{0};
+        RelativeToMoney currentRtm{RelativeToMoney::NoValue};
+        
+        // Send any notifications via the bus
+        std::shared_ptr<ScannerNotificationBus> notifications;
 
         // One map will hold all ticks, the other the candles, and the ticks will be dispersed upon
         // creation of each candle

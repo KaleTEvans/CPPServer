@@ -6,6 +6,7 @@
 #include <ContractDefs.h>
 #include <UnderlyingData.h>
 #include <OptionScanner.h>
+#include <ScannerNotificationHandler.h>
 
 int main() {
     std::shared_ptr<tWrapper> testClient = std::make_shared<tWrapper>();
@@ -20,7 +21,8 @@ int main() {
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     testClient->startMsgProcessingThread();
 
-    OptionScanner optScanner = OptionScanner(testClient);
+    auto scannerNotifications = std::make_shared<ScannerNotificationBus>();
+    OptionScanner optScanner = OptionScanner(testClient, scannerNotifications);
     optScanner.addSecurity(ContractDefs::SPXInd(), ContractDefs::SPXOpt0DTE("C", 1000));
     optScanner.start();
 
