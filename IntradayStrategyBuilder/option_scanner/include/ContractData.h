@@ -171,6 +171,10 @@ class ContractData {
         std::map<int64_t, std::shared_ptr<FiveSecondData>> fiveSecData;
         std::vector<std::shared_ptr<OneMinuteData>> oneMinuteCandles;
 
+        // For accumulating one minute candles
+        std::vector<std::shared_ptr<FiveSecondData>> tempCandles;
+        bool isEvenMinute{false};
+
         // Statistical factors to determine values of interest
         StandardDeviation tradeSize_timeAndSales;
         StandardDeviation tradeCount_fiveSecCandles;

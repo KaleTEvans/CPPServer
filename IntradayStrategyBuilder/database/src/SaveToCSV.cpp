@@ -19,8 +19,8 @@ CSVFileSaver::CSVFileSaver() {
 
     contractNewsHeaders = "TimeStamp,ArticleId,Headline,SentimentScore,Price\n";
 
-    largeOrderAlertHeaders = "TimeStamp,Equity,ContractStrike,Right,PriceOfSale,QuantityOfSale,TotalSale,"
-                                "TotalOptionVolume,VWAP,CurrentAsk,CurrentBid\n";
+    largeOrderAlertHeaders = "TimeStamp,ContractStrike,Right,PriceOfSale,QuantityOfSale,TotalSale,"
+                                "TotalOptionVolume,VWAP,CurrentAsk,CurrentBid,RTM\n";
 }
 
 void CSVFileSaver::start() {
@@ -81,27 +81,31 @@ void CSVFileSaver::createDirectoriesAndFiles(const std::string& equity, int cont
             std::ofstream underlyingOneMinFileStream(underlyingOneMinDataFile, std::ios::app);
             if (underlyingOneMinFileStream.is_open()) {
                 underlyingOneMinFileStream << underlyingOneMinHeaders;
+                std::cout << "Headers written for UnderlyingOneMinute" << std::endl;
             }
             underlyingOneMinFileStream.close();
         }
-        if (!fs::exists(dailyDataFile)) {
+        if (!fs::exists(dailyStats)) {
             std::ofstream dailyStatsFileStream(dailyDataFile, std::ios::app);
             if (dailyStatsFileStream.is_open()) {
                 dailyStatsFileStream << underlyingAvgHeaders;
+                std::cout << "Headers written for Daily Stats" << std::endl;
             }
             dailyStatsFileStream.close();
         }
-        if (!fs::exists(newsDataFile)) {
+        if (!fs::exists(newsData)) {
             std::ofstream newsDataFileStream(newsDataFile, std::ios::app);
             if (newsDataFileStream.is_open()) {
                 newsDataFileStream << contractNewsHeaders;
+                std::cout << "Headers written for News" << std::endl;
             }
             newsDataFileStream.close();
         }
-        if (!fs::exists(largeOrderDataFile)) {
+        if (!fs::exists(largeOrderData)) {
             std::ofstream largeOrderDataFileStream(largeOrderDataFile, std::ios::app);
             if (largeOrderDataFileStream.is_open()) {
                 largeOrderDataFileStream << largeOrderAlertHeaders;
+                std::cout << "Headers written for Large Orders" << std::endl;
             }
             largeOrderDataFileStream.close();
         }

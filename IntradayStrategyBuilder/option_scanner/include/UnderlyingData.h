@@ -5,6 +5,8 @@
 #include "SaveToCSV.h"
 #include "ContractDefs.h"
 
+#include <fstream>
+
 ///////////////////////////////////////////////////////
 // Underlying Data
 // Will save news separately by tick, only will save
@@ -68,10 +70,12 @@ struct ContractNewsData {
     long time{0};
     std::string articleId{""};
     std::string headline{""};
-    double sentimentScore{0};
+    double sentimentScore{-100};
     double price{0};
 
     std::string formatCSV();
+    // Use to ignore commas in headlines to prevent column separation
+    std::string escapeCommas(const std::string& value);
 };
 
 

@@ -8,7 +8,7 @@ ScannerNotifications HighVolumeEvent::getNotificationType() const { return Scann
 ScannerNotifications LargeOrderEvent::getNotificationType() const { return ScannerNotifications::LargeOrder; }
 
 std::string LargeOrderEvent::formatCSV() {
-    return con.symbol + "," +
+    return std::to_string(timeStamp) + "," +
             std::to_string(con.strike) + "," +
             con.right + "," +
             std::to_string(priceOfSale) + "," +
@@ -19,6 +19,12 @@ std::string LargeOrderEvent::formatCSV() {
             std::to_string(currentAsk) + "," +
             std::to_string(currentBid) + "," +
             getRTMstr(rtm) + "\n";
+}
+
+void LargeOrderEvent::printLargeOrder() {
+    std::cout << timeStamp << " | Option: " << con.strike << con.right << " | Purchase Price: $" << priceOfSale <<
+        " | Quantity: " << quantityOfSale << " | Total Sale: $" << totalSaleValue <<
+        " | Bid: $" << currentBid << " | Ask: $" << currentAsk << " | " << getRTMstr(rtm) << std::endl; 
 }
 
 void ScannerNotificationBus::subscribe(ScannerNotifications scnType, std::function<void(std::shared_ptr<ScannerEvent>)> listener) {

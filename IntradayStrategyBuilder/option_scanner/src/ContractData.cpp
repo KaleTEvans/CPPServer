@@ -87,11 +87,12 @@ void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event)
         double totalTradePrice = priceInDollars * tas->quantity;
         if (totalTradePrice >= 10000) {
             auto largeOrder = std::make_shared<LargeOrderEvent>(contract, tas->timeValue, tas->price,
-                tas->quantity, priceInDollars, tas->totalVol, tas->vwap, currentAsk, currentBid, currentRtm);
+                tas->quantity, totalTradePrice, tas->totalVol, tas->vwap, currentAsk, currentBid, currentRtm);
             notifications->publish(largeOrder);
             csv->addDataToQueue(contract.symbol, contract.strike, 
                 contract.right, DataType::LargeOrderAlert, largeOrder->formatCSV());
-            std::cout << largeOrder->formatCSV() << std::endl;
+            
+            if (tas->price >= currentAsk) largeOrder->printLargeOrder();
         }
 
         auto it = ticks.find(timestamp);
@@ -186,6 +187,9 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
     std::shared_ptr<FiveSecondData> fsd = std::make_shared<FiveSecondData>(event->candle, rtm);
     fiveSecData[event->candle->time()] = fsd;
 
+    // Check if candle falls on an even minute
+    if (event->candle->time() % 60 == 0) isEvenMinute = true;
+
     // Save the five sec candle to csv
     csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::FiveSec, fsd->formatCSV());
 
@@ -232,30 +236,23 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
     // Next, we need to loop back through the ticks and remove them from the tick map to save space
     for (auto const& i : addedTickTimes) ticks.erase(i);
 
-    // If candle count is a multiple of 12, create one minute candle
-    if (fiveSecData.size() % 12 == 0) {
-        // Create temp vector and send to constructor
-        std::vector<std::shared_ptr<FiveSecondData>> temp;
-        int count = 12;
-        if (fiveSecData.size() < count) count = fiveSecData.size();
+    // If an even minute has been accounted for, start adding candles to temp vector for one minute creation
+    if (isEvenMinute) tempCandles.push_back(fsd);
 
-        auto it = fiveSecData.end();
-        for (size_t i = 0; i < count; ++i) {
-            --it;
-            temp.push_back(it->second);
-        }
-        std::reverse(temp.begin(), temp.end());
+    // If temp candle count is 12, create one minute candle
+    if (tempCandles.size() == 12) {
+        // Send to constructor
+        std::shared_ptr<OneMinuteData> c = std::make_shared<OneMinuteData>(tempCandles, recentOptData, recentTasData);
+        oneMinuteCandles.push_back(c);
 
-        // Wait for a five second candle that starts on an even minute before creating
-        if (temp[0]->candle->time() % 60 == 0) {
-            std::shared_ptr<OneMinuteData> c = std::make_shared<OneMinuteData>(temp, recentOptData, recentTasData);
-            oneMinuteCandles.push_back(c);
+        priceDelta_oneMinCandles.addValue(c->candle->high() - c->candle->low());
 
-            priceDelta_oneMinCandles.addValue(c->candle->high() - c->candle->low());
+        // Save one minute candle to db
+        csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::OneMin, c->formatCSV());
 
-            // Save one minute candle to db
-            csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::OneMin, c->formatCSV());
-        }
+        // Clear temp candles and reset even minute flag
+        tempCandles.clear();
+        isEvenMinute = false;
     }
 }
 

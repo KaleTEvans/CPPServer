@@ -38,9 +38,16 @@ std::string UnderlyingOneMinuteData::formatCSV() {
 std::string ContractNewsData::formatCSV() {
     return std::to_string(time) + "," +
             articleId + "," +
-            headline + "," +
+            escapeCommas(headline) + "," +
             CSVFileSaver::valueToCSV(sentimentScore) + "," +
             CSVFileSaver::valueToCSV(price) + "\n";
+}
+
+std::string ContractNewsData::escapeCommas(const std::string& value) {
+    if (value.find(',') != std::string::npos) {
+        return "\"" + value + "\"";
+    }
+    return value;
 }
 
 UnderlyingData::UnderlyingData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv, Contract contract):
@@ -329,9 +336,9 @@ void UnderlyingData::handleTickNewsEvent(std::shared_ptr<TickNewsEvent> event) {
     cnd.headline = event->headline;
     cnd.sentimentScore = event->sentimentScore;
     cnd.price = currentPrice;
-    csv->addDataToQueue(contract.symbol, 0, "None", DataType::News, cnd.formatCSV());
+    if (event->hasFullExtraData) csv->addDataToQueue(contract.symbol, 0, "None", DataType::News, cnd.formatCSV());
 
-    if (outputData) event->print();
+    event->print();
 }
 
 void UnderlyingData::handleRealTimeCandles(std::shared_ptr<CandleDataEvent> event) {

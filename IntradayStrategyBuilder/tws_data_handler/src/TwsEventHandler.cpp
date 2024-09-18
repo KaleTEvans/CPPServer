@@ -34,8 +34,8 @@ void TickStringEvent::print() const {
 }
 
 void TickNewsEvent::print() const {
-    printf("%lu | News Id: %d, headline: %s\n",
-    dateTime, reqId, headline.c_str());
+    printf("%lu | News Id: %d, headline: %s, extra data: %s\n",
+    dateTime, reqId, headline.c_str(), extraData.c_str());
 }
 
 void TickOptionComputationEvent::print() const {

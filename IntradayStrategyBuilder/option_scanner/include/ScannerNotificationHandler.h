@@ -109,6 +109,7 @@ class LargeOrderEvent : public ScannerEvent {
         
         virtual ScannerNotifications getNotificationType() const override;
         std::string formatCSV();
+        void printLargeOrder();
 };
 
 class ScannerNotificationBus {
