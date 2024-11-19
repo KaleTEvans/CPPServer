@@ -12,6 +12,7 @@ class OptionScanner {
 
         void start();
         void stop();
+        bool checkScannerRunning();
 
         // Add UnderlyingData items to be tracked
         void addSecurity(Contract contract, Contract optionBase);
@@ -27,6 +28,7 @@ class OptionScanner {
         void monitorOptionChains();
 
         std::thread optionScannerThread;
+        bool optScannerRunning{false};
         bool quitOptionScanner{false};
 
         std::mutex mtx;

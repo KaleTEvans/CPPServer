@@ -85,7 +85,7 @@ void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event)
         // Now, if trade size is over $10k, create a notification
         double priceInDollars = tas->price * 100;
         double totalTradePrice = priceInDollars * tas->quantity;
-        if (totalTradePrice >= 10000) {
+        if (totalTradePrice >= 25000) {
             auto largeOrder = std::make_shared<LargeOrderEvent>(contract, tas->timeValue, tas->price,
                 tas->quantity, totalTradePrice, tas->totalVol, tas->vwap, currentAsk, currentBid, currentRtm);
             notifications->publish(largeOrder);
@@ -189,6 +189,7 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
 
     // Check if candle falls on an even minute
     if (event->candle->time() % 60 == 0) isEvenMinute = true;
+    //if (isEvenMinute) std::cout << "Even minute found for " << contract.strike << contract.right << std::endl;
 
     // Save the five sec candle to csv
     csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::FiveSec, fsd->formatCSV());

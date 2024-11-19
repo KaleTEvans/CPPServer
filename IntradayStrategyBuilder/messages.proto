@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+// Root Protobuf file for shared messages
+
+message Message {
+    string type = 1;  // Message type (e.g., "confirmation", "option_data")
+    oneof payload {
+        BasicMessage basic_message = 2;
+        ISBAction isb_action = 3;
+        Confirmation confirmation = 4;
+        OptionData option_data = 5;
+    }
+}
+
+message BasicMessage {
+    string message = 1;
+}
+
+message ISBAction {
+    string action = 1;
+    string type = 2;
+}
+
+message Confirmation {
+    string action = 1;
+    string status = 2;
+}
+
+message OptionData {
+    string data = 1;  // Example: CSV string
+}

@@ -19,6 +19,8 @@ void OptionScanner::start() {
     optionScannerThread = std::thread([this]() {
         monitorOptionChains();
     });
+
+    optScannerRunning = true;
 }
 
 void OptionScanner::stop() {
@@ -35,6 +37,8 @@ void OptionScanner::stop() {
     // End csv collection
     csv->stop();
 }
+
+bool OptionScanner::checkScannerRunning() { return optScannerRunning; }
 
 void OptionScanner::addSecurity(Contract contract, Contract optionBase) {
     std::shared_ptr<UnderlyingData> underlying = std::make_shared<UnderlyingData>(wrapper, csv, contract);

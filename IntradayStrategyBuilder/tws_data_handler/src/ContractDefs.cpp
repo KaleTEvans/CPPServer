@@ -55,6 +55,7 @@ Contract ContractDefs::SPXOpt0DTE(const std::string& right, int strike) {
     contract.currency = "USD";
     contract.exchange = "SMART";
     contract.primaryExchange = "CBOE";
+    contract.tradingClass = "SPXW";
 
     std::time_t tmNow;
 	tmNow = time(NULL);

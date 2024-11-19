@@ -125,7 +125,7 @@ struct OneMinuteData {
     double theta{0};
     double undPrice{0};
     double tradeCount{0};
-    long totalVol{-1};
+    long totalVol{0};
 };
 
 ///////////////////////////////////////////////////////////////////

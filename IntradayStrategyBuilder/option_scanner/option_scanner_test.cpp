@@ -21,6 +21,10 @@ int main() {
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     testClient->startMsgProcessingThread();
 
+    if (testClient->isConnected()) {
+        std::cout << "Test client is connected" << std::endl;
+    }
+
     auto scannerNotifications = std::make_shared<ScannerNotificationBus>();
     OptionScanner optScanner = OptionScanner(testClient, scannerNotifications);
     optScanner.addSecurity(ContractDefs::SPXInd(), ContractDefs::SPXOpt0DTE("C", 1000));
