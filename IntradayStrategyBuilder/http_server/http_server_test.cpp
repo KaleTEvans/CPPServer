@@ -44,6 +44,7 @@ int main(int argc, char** argv)
     std::cout << "Done!" << std::endl;
 
     std::cout << "Press Enter to stop the server or '!' to restart the server..." << std::endl;
+    std::cout << std::endl;
 
     // Perform text input
     std::string line;

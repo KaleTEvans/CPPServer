@@ -76,6 +76,8 @@
         "cuchar": "cpp",
         "forward_list": "cpp",
         "scoped_allocator": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp"
     }
 }

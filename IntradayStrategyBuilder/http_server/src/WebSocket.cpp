@@ -44,6 +44,9 @@ void TWSStrategySession::onWSDisconnected() {
 void TWSStrategySession::sendSerializedMessage(const std::string& serialized) {
     std::cout << "Sending serialized message of size: " << serialized.size() << std::endl;
     SendBinaryAsync(serialized.data(), serialized.size());
+
+    // Simulate the server receiving its own messages for debugging purposes
+    onWSReceived(serialized.data(), serialized.size());
 }
 
 void TWSStrategySession::onWSReceived(const void* buffer, size_t size) {
@@ -68,6 +71,7 @@ void TWSStrategySession::onWSReceived(const void* buffer, size_t size) {
     }
  
     // Multicast message to all connected sessions
+    std::cout << "Message to multicast: " << messageString << std::endl;
     std::dynamic_pointer_cast<CppServer::WS::WSSServer>(server())->MulticastText(messageString);
 
     // If the buffer starts with '!' the disconnect the current session
@@ -84,8 +88,11 @@ void TWSStrategySession::onError(int error, const std::string& category, const s
         << error << " and category '" << category << "': " << message << std::endl;
 }
 
-std::shared_ptr<CppServer::Asio::SSLSession> TWSStrategyServer::CreateSession(std::shared_ptr<CppServer::Asio::SSLServer> server) {
-    return std::make_shared<TWSStrategySession>(std::dynamic_pointer_cast<CppServer::WS::WSSServer>(server));
+std::shared_ptr<CppServer::Asio::SSLSession> TWSStrategyServer::CreateSession(
+    const std::shared_ptr<CppServer::Asio::SSLServer>& server) {
+    std::cout << "Creating new WebSocket session..." << std::endl;
+    return std::make_shared<TWSStrategySession>(
+        std::dynamic_pointer_cast<CppServer::WS::WSSServer>(server));
 }
 
 void TWSStrategyServer::onError(int error, const std::string& category, const std::string& message) {

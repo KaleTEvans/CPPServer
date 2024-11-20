@@ -33,7 +33,7 @@ class TWSStrategyServer : public CppServer::WS::WSSServer {
         using CppServer::WS::WSSServer::WSSServer;
 
     protected:
-        std::shared_ptr<CppServer::Asio::SSLSession> CreateSession(std::shared_ptr<CppServer::Asio::SSLServer> server);
+        std::shared_ptr<CppServer::Asio::SSLSession> CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer>& server) override; 
         void onError(int error, const std::string& category, const std::string& message) override;
 };
 
