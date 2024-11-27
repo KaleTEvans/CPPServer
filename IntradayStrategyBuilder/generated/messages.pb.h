@@ -38,7 +38,7 @@ namespace protobuf_messages_2eproto {
 struct TableStruct {
   static const ::google::protobuf::internal::ParseTableField entries[];
   static const ::google::protobuf::internal::AuxillaryParseTableField aux[];
-  static const ::google::protobuf::internal::ParseTable schema[5];
+  static const ::google::protobuf::internal::ParseTable schema[9];
   static const ::google::protobuf::internal::FieldMetadata field_metadata[];
   static const ::google::protobuf::internal::SerializationTable serialization_table[];
   static const ::google::protobuf::uint32 offsets[];
@@ -57,16 +57,32 @@ extern ISBActionDefaultTypeInternal _ISBAction_default_instance_;
 class Message;
 class MessageDefaultTypeInternal;
 extern MessageDefaultTypeInternal _Message_default_instance_;
+class NewsEvent;
+class NewsEventDefaultTypeInternal;
+extern NewsEventDefaultTypeInternal _NewsEvent_default_instance_;
 class OptionData;
 class OptionDataDefaultTypeInternal;
 extern OptionDataDefaultTypeInternal _OptionData_default_instance_;
+class UnderlyingAverages;
+class UnderlyingAveragesDefaultTypeInternal;
+extern UnderlyingAveragesDefaultTypeInternal _UnderlyingAverages_default_instance_;
+class UnderlyingContract;
+class UnderlyingContractDefaultTypeInternal;
+extern UnderlyingContractDefaultTypeInternal _UnderlyingContract_default_instance_;
+class UnderlyingOneMinData;
+class UnderlyingOneMinDataDefaultTypeInternal;
+extern UnderlyingOneMinDataDefaultTypeInternal _UnderlyingOneMinData_default_instance_;
 namespace google {
 namespace protobuf {
 template<> ::BasicMessage* Arena::CreateMaybeMessage<::BasicMessage>(Arena*);
 template<> ::Confirmation* Arena::CreateMaybeMessage<::Confirmation>(Arena*);
 template<> ::ISBAction* Arena::CreateMaybeMessage<::ISBAction>(Arena*);
 template<> ::Message* Arena::CreateMaybeMessage<::Message>(Arena*);
+template<> ::NewsEvent* Arena::CreateMaybeMessage<::NewsEvent>(Arena*);
 template<> ::OptionData* Arena::CreateMaybeMessage<::OptionData>(Arena*);
+template<> ::UnderlyingAverages* Arena::CreateMaybeMessage<::UnderlyingAverages>(Arena*);
+template<> ::UnderlyingContract* Arena::CreateMaybeMessage<::UnderlyingContract>(Arena*);
+template<> ::UnderlyingOneMinData* Arena::CreateMaybeMessage<::UnderlyingOneMinData>(Arena*);
 }  // namespace protobuf
 }  // namespace google
 
@@ -103,9 +119,11 @@ class Message : public ::google::protobuf::Message /* @@protoc_insertion_point(c
 
   enum PayloadCase {
     kBasicMessage = 2,
-    kIsbAction = 3,
-    kConfirmation = 4,
+    kConfirmation = 3,
+    kIsbAction = 4,
     kOptionData = 5,
+    kUnderlyingContract = 6,
+    kNews = 7,
     PAYLOAD_NOT_SET = 0,
   };
 
@@ -193,22 +211,10 @@ class Message : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::BasicMessage* mutable_basic_message();
   void set_allocated_basic_message(::BasicMessage* basic_message);
 
-  // .ISBAction isb_action = 3;
-  bool has_isb_action() const;
-  void clear_isb_action();
-  static const int kIsbActionFieldNumber = 3;
-  private:
-  const ::ISBAction& _internal_isb_action() const;
-  public:
-  const ::ISBAction& isb_action() const;
-  ::ISBAction* release_isb_action();
-  ::ISBAction* mutable_isb_action();
-  void set_allocated_isb_action(::ISBAction* isb_action);
-
-  // .Confirmation confirmation = 4;
+  // .Confirmation confirmation = 3;
   bool has_confirmation() const;
   void clear_confirmation();
-  static const int kConfirmationFieldNumber = 4;
+  static const int kConfirmationFieldNumber = 3;
   private:
   const ::Confirmation& _internal_confirmation() const;
   public:
@@ -216,6 +222,18 @@ class Message : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::Confirmation* release_confirmation();
   ::Confirmation* mutable_confirmation();
   void set_allocated_confirmation(::Confirmation* confirmation);
+
+  // .ISBAction isb_action = 4;
+  bool has_isb_action() const;
+  void clear_isb_action();
+  static const int kIsbActionFieldNumber = 4;
+  private:
+  const ::ISBAction& _internal_isb_action() const;
+  public:
+  const ::ISBAction& isb_action() const;
+  ::ISBAction* release_isb_action();
+  ::ISBAction* mutable_isb_action();
+  void set_allocated_isb_action(::ISBAction* isb_action);
 
   // .OptionData option_data = 5;
   bool has_option_data() const;
@@ -229,14 +247,40 @@ class Message : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   ::OptionData* mutable_option_data();
   void set_allocated_option_data(::OptionData* option_data);
 
+  // .UnderlyingContract underlying_contract = 6;
+  bool has_underlying_contract() const;
+  void clear_underlying_contract();
+  static const int kUnderlyingContractFieldNumber = 6;
+  private:
+  const ::UnderlyingContract& _internal_underlying_contract() const;
+  public:
+  const ::UnderlyingContract& underlying_contract() const;
+  ::UnderlyingContract* release_underlying_contract();
+  ::UnderlyingContract* mutable_underlying_contract();
+  void set_allocated_underlying_contract(::UnderlyingContract* underlying_contract);
+
+  // .NewsEvent news = 7;
+  bool has_news() const;
+  void clear_news();
+  static const int kNewsFieldNumber = 7;
+  private:
+  const ::NewsEvent& _internal_news() const;
+  public:
+  const ::NewsEvent& news() const;
+  ::NewsEvent* release_news();
+  ::NewsEvent* mutable_news();
+  void set_allocated_news(::NewsEvent* news);
+
   void clear_payload();
   PayloadCase payload_case() const;
   // @@protoc_insertion_point(class_scope:Message)
  private:
   void set_has_basic_message();
-  void set_has_isb_action();
   void set_has_confirmation();
+  void set_has_isb_action();
   void set_has_option_data();
+  void set_has_underlying_contract();
+  void set_has_news();
 
   inline bool has_payload() const;
   inline void clear_has_payload();
@@ -246,9 +290,11 @@ class Message : public ::google::protobuf::Message /* @@protoc_insertion_point(c
   union PayloadUnion {
     PayloadUnion() {}
     ::BasicMessage* basic_message_;
-    ::ISBAction* isb_action_;
     ::Confirmation* confirmation_;
+    ::ISBAction* isb_action_;
     ::OptionData* option_data_;
+    ::UnderlyingContract* underlying_contract_;
+    ::NewsEvent* news_;
   } payload_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   ::google::protobuf::uint32 _oneof_case_[1];
@@ -368,132 +414,6 @@ class BasicMessage : public ::google::protobuf::Message /* @@protoc_insertion_po
 };
 // -------------------------------------------------------------------
 
-class ISBAction : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:ISBAction) */ {
- public:
-  ISBAction();
-  virtual ~ISBAction();
-
-  ISBAction(const ISBAction& from);
-
-  inline ISBAction& operator=(const ISBAction& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  #if LANG_CXX11
-  ISBAction(ISBAction&& from) noexcept
-    : ISBAction() {
-    *this = ::std::move(from);
-  }
-
-  inline ISBAction& operator=(ISBAction&& from) noexcept {
-    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
-      if (this != &from) InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-  #endif
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const ISBAction& default_instance();
-
-  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
-  static inline const ISBAction* internal_default_instance() {
-    return reinterpret_cast<const ISBAction*>(
-               &_ISBAction_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    2;
-
-  void Swap(ISBAction* other);
-  friend void swap(ISBAction& a, ISBAction& b) {
-    a.Swap(&b);
-  }
-
-  // implements Message ----------------------------------------------
-
-  inline ISBAction* New() const final {
-    return CreateMaybeMessage<ISBAction>(NULL);
-  }
-
-  ISBAction* New(::google::protobuf::Arena* arena) const final {
-    return CreateMaybeMessage<ISBAction>(arena);
-  }
-  void CopyFrom(const ::google::protobuf::Message& from) final;
-  void MergeFrom(const ::google::protobuf::Message& from) final;
-  void CopyFrom(const ISBAction& from);
-  void MergeFrom(const ISBAction& from);
-  void Clear() final;
-  bool IsInitialized() const final;
-
-  size_t ByteSizeLong() const final;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input) final;
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const final;
-  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
-      bool deterministic, ::google::protobuf::uint8* target) const final;
-  int GetCachedSize() const final { return _cached_size_.Get(); }
-
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(ISBAction* other);
-  private:
-  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
-    return NULL;
-  }
-  inline void* MaybeArenaPtr() const {
-    return NULL;
-  }
-  public:
-
-  ::google::protobuf::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // string action = 1;
-  void clear_action();
-  static const int kActionFieldNumber = 1;
-  const ::std::string& action() const;
-  void set_action(const ::std::string& value);
-  #if LANG_CXX11
-  void set_action(::std::string&& value);
-  #endif
-  void set_action(const char* value);
-  void set_action(const char* value, size_t size);
-  ::std::string* mutable_action();
-  ::std::string* release_action();
-  void set_allocated_action(::std::string* action);
-
-  // string type = 2;
-  void clear_type();
-  static const int kTypeFieldNumber = 2;
-  const ::std::string& type() const;
-  void set_type(const ::std::string& value);
-  #if LANG_CXX11
-  void set_type(::std::string&& value);
-  #endif
-  void set_type(const char* value);
-  void set_type(const char* value, size_t size);
-  ::std::string* mutable_type();
-  ::std::string* release_type();
-  void set_allocated_type(::std::string* type);
-
-  // @@protoc_insertion_point(class_scope:ISBAction)
- private:
-
-  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::internal::ArenaStringPtr action_;
-  ::google::protobuf::internal::ArenaStringPtr type_;
-  mutable ::google::protobuf::internal::CachedSize _cached_size_;
-  friend struct ::protobuf_messages_2eproto::TableStruct;
-};
-// -------------------------------------------------------------------
-
 class Confirmation : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Confirmation) */ {
  public:
   Confirmation();
@@ -529,7 +449,7 @@ class Confirmation : public ::google::protobuf::Message /* @@protoc_insertion_po
                &_Confirmation_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    2;
 
   void Swap(Confirmation* other);
   friend void swap(Confirmation& a, Confirmation& b) {
@@ -615,6 +535,147 @@ class Confirmation : public ::google::protobuf::Message /* @@protoc_insertion_po
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::internal::ArenaStringPtr action_;
   ::google::protobuf::internal::ArenaStringPtr status_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_messages_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class ISBAction : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:ISBAction) */ {
+ public:
+  ISBAction();
+  virtual ~ISBAction();
+
+  ISBAction(const ISBAction& from);
+
+  inline ISBAction& operator=(const ISBAction& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  ISBAction(ISBAction&& from) noexcept
+    : ISBAction() {
+    *this = ::std::move(from);
+  }
+
+  inline ISBAction& operator=(ISBAction&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const ISBAction& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const ISBAction* internal_default_instance() {
+    return reinterpret_cast<const ISBAction*>(
+               &_ISBAction_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  void Swap(ISBAction* other);
+  friend void swap(ISBAction& a, ISBAction& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline ISBAction* New() const final {
+    return CreateMaybeMessage<ISBAction>(NULL);
+  }
+
+  ISBAction* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<ISBAction>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const ISBAction& from);
+  void MergeFrom(const ISBAction& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ISBAction* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string component = 1;
+  void clear_component();
+  static const int kComponentFieldNumber = 1;
+  const ::std::string& component() const;
+  void set_component(const ::std::string& value);
+  #if LANG_CXX11
+  void set_component(::std::string&& value);
+  #endif
+  void set_component(const char* value);
+  void set_component(const char* value, size_t size);
+  ::std::string* mutable_component();
+  ::std::string* release_component();
+  void set_allocated_component(::std::string* component);
+
+  // string action = 2;
+  void clear_action();
+  static const int kActionFieldNumber = 2;
+  const ::std::string& action() const;
+  void set_action(const ::std::string& value);
+  #if LANG_CXX11
+  void set_action(::std::string&& value);
+  #endif
+  void set_action(const char* value);
+  void set_action(const char* value, size_t size);
+  ::std::string* mutable_action();
+  ::std::string* release_action();
+  void set_allocated_action(::std::string* action);
+
+  // string data = 3;
+  void clear_data();
+  static const int kDataFieldNumber = 3;
+  const ::std::string& data() const;
+  void set_data(const ::std::string& value);
+  #if LANG_CXX11
+  void set_data(::std::string&& value);
+  #endif
+  void set_data(const char* value);
+  void set_data(const char* value, size_t size);
+  ::std::string* mutable_data();
+  ::std::string* release_data();
+  void set_allocated_data(::std::string* data);
+
+  // @@protoc_insertion_point(class_scope:ISBAction)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr component_;
+  ::google::protobuf::internal::ArenaStringPtr action_;
+  ::google::protobuf::internal::ArenaStringPtr data_;
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_messages_2eproto::TableStruct;
 };
@@ -729,6 +790,657 @@ class OptionData : public ::google::protobuf::Message /* @@protoc_insertion_poin
   mutable ::google::protobuf::internal::CachedSize _cached_size_;
   friend struct ::protobuf_messages_2eproto::TableStruct;
 };
+// -------------------------------------------------------------------
+
+class UnderlyingOneMinData : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:UnderlyingOneMinData) */ {
+ public:
+  UnderlyingOneMinData();
+  virtual ~UnderlyingOneMinData();
+
+  UnderlyingOneMinData(const UnderlyingOneMinData& from);
+
+  inline UnderlyingOneMinData& operator=(const UnderlyingOneMinData& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  UnderlyingOneMinData(UnderlyingOneMinData&& from) noexcept
+    : UnderlyingOneMinData() {
+    *this = ::std::move(from);
+  }
+
+  inline UnderlyingOneMinData& operator=(UnderlyingOneMinData&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const UnderlyingOneMinData& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const UnderlyingOneMinData* internal_default_instance() {
+    return reinterpret_cast<const UnderlyingOneMinData*>(
+               &_UnderlyingOneMinData_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  void Swap(UnderlyingOneMinData* other);
+  friend void swap(UnderlyingOneMinData& a, UnderlyingOneMinData& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline UnderlyingOneMinData* New() const final {
+    return CreateMaybeMessage<UnderlyingOneMinData>(NULL);
+  }
+
+  UnderlyingOneMinData* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<UnderlyingOneMinData>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const UnderlyingOneMinData& from);
+  void MergeFrom(const UnderlyingOneMinData& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(UnderlyingOneMinData* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // int64 time = 1;
+  void clear_time();
+  static const int kTimeFieldNumber = 1;
+  ::google::protobuf::int64 time() const;
+  void set_time(::google::protobuf::int64 value);
+
+  // double open = 2;
+  void clear_open();
+  static const int kOpenFieldNumber = 2;
+  double open() const;
+  void set_open(double value);
+
+  // double high = 3;
+  void clear_high();
+  static const int kHighFieldNumber = 3;
+  double high() const;
+  void set_high(double value);
+
+  // double low = 4;
+  void clear_low();
+  static const int kLowFieldNumber = 4;
+  double low() const;
+  void set_low(double value);
+
+  // double close = 5;
+  void clear_close();
+  static const int kCloseFieldNumber = 5;
+  double close() const;
+  void set_close(double value);
+
+  // double volume = 6;
+  void clear_volume();
+  static const int kVolumeFieldNumber = 6;
+  double volume() const;
+  void set_volume(double value);
+
+  // double dailyHigh = 7;
+  void clear_dailyhigh();
+  static const int kDailyHighFieldNumber = 7;
+  double dailyhigh() const;
+  void set_dailyhigh(double value);
+
+  // double dailyLow = 8;
+  void clear_dailylow();
+  static const int kDailyLowFieldNumber = 8;
+  double dailylow() const;
+  void set_dailylow(double value);
+
+  // double dailyVolume = 9;
+  void clear_dailyvolume();
+  static const int kDailyVolumeFieldNumber = 9;
+  double dailyvolume() const;
+  void set_dailyvolume(double value);
+
+  // double totalCallVolume = 10;
+  void clear_totalcallvolume();
+  static const int kTotalCallVolumeFieldNumber = 10;
+  double totalcallvolume() const;
+  void set_totalcallvolume(double value);
+
+  // double totalPutVolume = 11;
+  void clear_totalputvolume();
+  static const int kTotalPutVolumeFieldNumber = 11;
+  double totalputvolume() const;
+  void set_totalputvolume(double value);
+
+  // double indexFuturePremium = 12;
+  void clear_indexfuturepremium();
+  static const int kIndexFuturePremiumFieldNumber = 12;
+  double indexfuturepremium() const;
+  void set_indexfuturepremium(double value);
+
+  // double totalTradeCount = 13;
+  void clear_totaltradecount();
+  static const int kTotalTradeCountFieldNumber = 13;
+  double totaltradecount() const;
+  void set_totaltradecount(double value);
+
+  // double oneMinuteTradeRate = 14;
+  void clear_oneminutetraderate();
+  static const int kOneMinuteTradeRateFieldNumber = 14;
+  double oneminutetraderate() const;
+  void set_oneminutetraderate(double value);
+
+  // double realTimeHistoricalVolatility = 15;
+  void clear_realtimehistoricalvolatility();
+  static const int kRealTimeHistoricalVolatilityFieldNumber = 15;
+  double realtimehistoricalvolatility() const;
+  void set_realtimehistoricalvolatility(double value);
+
+  // double optionImpliedVolatility = 16;
+  void clear_optionimpliedvolatility();
+  static const int kOptionImpliedVolatilityFieldNumber = 16;
+  double optionimpliedvolatility() const;
+  void set_optionimpliedvolatility(double value);
+
+  // double callOpenInterest = 17;
+  void clear_callopeninterest();
+  static const int kCallOpenInterestFieldNumber = 17;
+  double callopeninterest() const;
+  void set_callopeninterest(double value);
+
+  // double putOpenInterest = 18;
+  void clear_putopeninterest();
+  static const int kPutOpenInterestFieldNumber = 18;
+  double putopeninterest() const;
+  void set_putopeninterest(double value);
+
+  // double futuresOpenInterest = 19;
+  void clear_futuresopeninterest();
+  static const int kFuturesOpenInterestFieldNumber = 19;
+  double futuresopeninterest() const;
+  void set_futuresopeninterest(double value);
+
+  // @@protoc_insertion_point(class_scope:UnderlyingOneMinData)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::int64 time_;
+  double open_;
+  double high_;
+  double low_;
+  double close_;
+  double volume_;
+  double dailyhigh_;
+  double dailylow_;
+  double dailyvolume_;
+  double totalcallvolume_;
+  double totalputvolume_;
+  double indexfuturepremium_;
+  double totaltradecount_;
+  double oneminutetraderate_;
+  double realtimehistoricalvolatility_;
+  double optionimpliedvolatility_;
+  double callopeninterest_;
+  double putopeninterest_;
+  double futuresopeninterest_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_messages_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class UnderlyingAverages : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:UnderlyingAverages) */ {
+ public:
+  UnderlyingAverages();
+  virtual ~UnderlyingAverages();
+
+  UnderlyingAverages(const UnderlyingAverages& from);
+
+  inline UnderlyingAverages& operator=(const UnderlyingAverages& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  UnderlyingAverages(UnderlyingAverages&& from) noexcept
+    : UnderlyingAverages() {
+    *this = ::std::move(from);
+  }
+
+  inline UnderlyingAverages& operator=(UnderlyingAverages&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const UnderlyingAverages& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const UnderlyingAverages* internal_default_instance() {
+    return reinterpret_cast<const UnderlyingAverages*>(
+               &_UnderlyingAverages_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  void Swap(UnderlyingAverages* other);
+  friend void swap(UnderlyingAverages& a, UnderlyingAverages& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline UnderlyingAverages* New() const final {
+    return CreateMaybeMessage<UnderlyingAverages>(NULL);
+  }
+
+  UnderlyingAverages* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<UnderlyingAverages>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const UnderlyingAverages& from);
+  void MergeFrom(const UnderlyingAverages& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(UnderlyingAverages* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // double low13Week = 1;
+  void clear_low13week();
+  static const int kLow13WeekFieldNumber = 1;
+  double low13week() const;
+  void set_low13week(double value);
+
+  // double high13Week = 2;
+  void clear_high13week();
+  static const int kHigh13WeekFieldNumber = 2;
+  double high13week() const;
+  void set_high13week(double value);
+
+  // double low26week = 3;
+  void clear_low26week();
+  static const int kLow26WeekFieldNumber = 3;
+  double low26week() const;
+  void set_low26week(double value);
+
+  // double high26Week = 4;
+  void clear_high26week();
+  static const int kHigh26WeekFieldNumber = 4;
+  double high26week() const;
+  void set_high26week(double value);
+
+  // double low52Week = 5;
+  void clear_low52week();
+  static const int kLow52WeekFieldNumber = 5;
+  double low52week() const;
+  void set_low52week(double value);
+
+  // double high52Week = 6;
+  void clear_high52week();
+  static const int kHigh52WeekFieldNumber = 6;
+  double high52week() const;
+  void set_high52week(double value);
+
+  // double averageVolume90Day = 7;
+  void clear_averagevolume90day();
+  static const int kAverageVolume90DayFieldNumber = 7;
+  double averagevolume90day() const;
+  void set_averagevolume90day(double value);
+
+  // @@protoc_insertion_point(class_scope:UnderlyingAverages)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  double low13week_;
+  double high13week_;
+  double low26week_;
+  double high26week_;
+  double low52week_;
+  double high52week_;
+  double averagevolume90day_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_messages_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class UnderlyingContract : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:UnderlyingContract) */ {
+ public:
+  UnderlyingContract();
+  virtual ~UnderlyingContract();
+
+  UnderlyingContract(const UnderlyingContract& from);
+
+  inline UnderlyingContract& operator=(const UnderlyingContract& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  UnderlyingContract(UnderlyingContract&& from) noexcept
+    : UnderlyingContract() {
+    *this = ::std::move(from);
+  }
+
+  inline UnderlyingContract& operator=(UnderlyingContract&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const UnderlyingContract& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const UnderlyingContract* internal_default_instance() {
+    return reinterpret_cast<const UnderlyingContract*>(
+               &_UnderlyingContract_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    7;
+
+  void Swap(UnderlyingContract* other);
+  friend void swap(UnderlyingContract& a, UnderlyingContract& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline UnderlyingContract* New() const final {
+    return CreateMaybeMessage<UnderlyingContract>(NULL);
+  }
+
+  UnderlyingContract* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<UnderlyingContract>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const UnderlyingContract& from);
+  void MergeFrom(const UnderlyingContract& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(UnderlyingContract* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated .UnderlyingOneMinData underlying_one_min = 2;
+  int underlying_one_min_size() const;
+  void clear_underlying_one_min();
+  static const int kUnderlyingOneMinFieldNumber = 2;
+  ::UnderlyingOneMinData* mutable_underlying_one_min(int index);
+  ::google::protobuf::RepeatedPtrField< ::UnderlyingOneMinData >*
+      mutable_underlying_one_min();
+  const ::UnderlyingOneMinData& underlying_one_min(int index) const;
+  ::UnderlyingOneMinData* add_underlying_one_min();
+  const ::google::protobuf::RepeatedPtrField< ::UnderlyingOneMinData >&
+      underlying_one_min() const;
+
+  // repeated .UnderlyingAverages underlying_averages = 3;
+  int underlying_averages_size() const;
+  void clear_underlying_averages();
+  static const int kUnderlyingAveragesFieldNumber = 3;
+  ::UnderlyingAverages* mutable_underlying_averages(int index);
+  ::google::protobuf::RepeatedPtrField< ::UnderlyingAverages >*
+      mutable_underlying_averages();
+  const ::UnderlyingAverages& underlying_averages(int index) const;
+  ::UnderlyingAverages* add_underlying_averages();
+  const ::google::protobuf::RepeatedPtrField< ::UnderlyingAverages >&
+      underlying_averages() const;
+
+  // string symbol = 1;
+  void clear_symbol();
+  static const int kSymbolFieldNumber = 1;
+  const ::std::string& symbol() const;
+  void set_symbol(const ::std::string& value);
+  #if LANG_CXX11
+  void set_symbol(::std::string&& value);
+  #endif
+  void set_symbol(const char* value);
+  void set_symbol(const char* value, size_t size);
+  ::std::string* mutable_symbol();
+  ::std::string* release_symbol();
+  void set_allocated_symbol(::std::string* symbol);
+
+  // @@protoc_insertion_point(class_scope:UnderlyingContract)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::UnderlyingOneMinData > underlying_one_min_;
+  ::google::protobuf::RepeatedPtrField< ::UnderlyingAverages > underlying_averages_;
+  ::google::protobuf::internal::ArenaStringPtr symbol_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_messages_2eproto::TableStruct;
+};
+// -------------------------------------------------------------------
+
+class NewsEvent : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:NewsEvent) */ {
+ public:
+  NewsEvent();
+  virtual ~NewsEvent();
+
+  NewsEvent(const NewsEvent& from);
+
+  inline NewsEvent& operator=(const NewsEvent& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  #if LANG_CXX11
+  NewsEvent(NewsEvent&& from) noexcept
+    : NewsEvent() {
+    *this = ::std::move(from);
+  }
+
+  inline NewsEvent& operator=(NewsEvent&& from) noexcept {
+    if (GetArenaNoVirtual() == from.GetArenaNoVirtual()) {
+      if (this != &from) InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+  #endif
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const NewsEvent& default_instance();
+
+  static void InitAsDefaultInstance();  // FOR INTERNAL USE ONLY
+  static inline const NewsEvent* internal_default_instance() {
+    return reinterpret_cast<const NewsEvent*>(
+               &_NewsEvent_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    8;
+
+  void Swap(NewsEvent* other);
+  friend void swap(NewsEvent& a, NewsEvent& b) {
+    a.Swap(&b);
+  }
+
+  // implements Message ----------------------------------------------
+
+  inline NewsEvent* New() const final {
+    return CreateMaybeMessage<NewsEvent>(NULL);
+  }
+
+  NewsEvent* New(::google::protobuf::Arena* arena) const final {
+    return CreateMaybeMessage<NewsEvent>(arena);
+  }
+  void CopyFrom(const ::google::protobuf::Message& from) final;
+  void MergeFrom(const ::google::protobuf::Message& from) final;
+  void CopyFrom(const NewsEvent& from);
+  void MergeFrom(const NewsEvent& from);
+  void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input) final;
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const final;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* target) const final;
+  int GetCachedSize() const final { return _cached_size_.Get(); }
+
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(NewsEvent* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return NULL;
+  }
+  inline void* MaybeArenaPtr() const {
+    return NULL;
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // string articleId = 2;
+  void clear_articleid();
+  static const int kArticleIdFieldNumber = 2;
+  const ::std::string& articleid() const;
+  void set_articleid(const ::std::string& value);
+  #if LANG_CXX11
+  void set_articleid(::std::string&& value);
+  #endif
+  void set_articleid(const char* value);
+  void set_articleid(const char* value, size_t size);
+  ::std::string* mutable_articleid();
+  ::std::string* release_articleid();
+  void set_allocated_articleid(::std::string* articleid);
+
+  // string headline = 3;
+  void clear_headline();
+  static const int kHeadlineFieldNumber = 3;
+  const ::std::string& headline() const;
+  void set_headline(const ::std::string& value);
+  #if LANG_CXX11
+  void set_headline(::std::string&& value);
+  #endif
+  void set_headline(const char* value);
+  void set_headline(const char* value, size_t size);
+  ::std::string* mutable_headline();
+  ::std::string* release_headline();
+  void set_allocated_headline(::std::string* headline);
+
+  // int64 time = 1;
+  void clear_time();
+  static const int kTimeFieldNumber = 1;
+  ::google::protobuf::int64 time() const;
+  void set_time(::google::protobuf::int64 value);
+
+  // double sentimentScore = 4;
+  void clear_sentimentscore();
+  static const int kSentimentScoreFieldNumber = 4;
+  double sentimentscore() const;
+  void set_sentimentscore(double value);
+
+  // @@protoc_insertion_point(class_scope:NewsEvent)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::internal::ArenaStringPtr articleid_;
+  ::google::protobuf::internal::ArenaStringPtr headline_;
+  ::google::protobuf::int64 time_;
+  double sentimentscore_;
+  mutable ::google::protobuf::internal::CachedSize _cached_size_;
+  friend struct ::protobuf_messages_2eproto::TableStruct;
+};
 // ===================================================================
 
 
@@ -837,51 +1549,7 @@ inline ::BasicMessage* Message::mutable_basic_message() {
   return payload_.basic_message_;
 }
 
-// .ISBAction isb_action = 3;
-inline bool Message::has_isb_action() const {
-  return payload_case() == kIsbAction;
-}
-inline void Message::set_has_isb_action() {
-  _oneof_case_[0] = kIsbAction;
-}
-inline void Message::clear_isb_action() {
-  if (has_isb_action()) {
-    delete payload_.isb_action_;
-    clear_has_payload();
-  }
-}
-inline const ::ISBAction& Message::_internal_isb_action() const {
-  return *payload_.isb_action_;
-}
-inline ::ISBAction* Message::release_isb_action() {
-  // @@protoc_insertion_point(field_release:Message.isb_action)
-  if (has_isb_action()) {
-    clear_has_payload();
-      ::ISBAction* temp = payload_.isb_action_;
-    payload_.isb_action_ = NULL;
-    return temp;
-  } else {
-    return NULL;
-  }
-}
-inline const ::ISBAction& Message::isb_action() const {
-  // @@protoc_insertion_point(field_get:Message.isb_action)
-  return has_isb_action()
-      ? *payload_.isb_action_
-      : *reinterpret_cast< ::ISBAction*>(&::_ISBAction_default_instance_);
-}
-inline ::ISBAction* Message::mutable_isb_action() {
-  if (!has_isb_action()) {
-    clear_payload();
-    set_has_isb_action();
-    payload_.isb_action_ = CreateMaybeMessage< ::ISBAction >(
-        GetArenaNoVirtual());
-  }
-  // @@protoc_insertion_point(field_mutable:Message.isb_action)
-  return payload_.isb_action_;
-}
-
-// .Confirmation confirmation = 4;
+// .Confirmation confirmation = 3;
 inline bool Message::has_confirmation() const {
   return payload_case() == kConfirmation;
 }
@@ -923,6 +1591,50 @@ inline ::Confirmation* Message::mutable_confirmation() {
   }
   // @@protoc_insertion_point(field_mutable:Message.confirmation)
   return payload_.confirmation_;
+}
+
+// .ISBAction isb_action = 4;
+inline bool Message::has_isb_action() const {
+  return payload_case() == kIsbAction;
+}
+inline void Message::set_has_isb_action() {
+  _oneof_case_[0] = kIsbAction;
+}
+inline void Message::clear_isb_action() {
+  if (has_isb_action()) {
+    delete payload_.isb_action_;
+    clear_has_payload();
+  }
+}
+inline const ::ISBAction& Message::_internal_isb_action() const {
+  return *payload_.isb_action_;
+}
+inline ::ISBAction* Message::release_isb_action() {
+  // @@protoc_insertion_point(field_release:Message.isb_action)
+  if (has_isb_action()) {
+    clear_has_payload();
+      ::ISBAction* temp = payload_.isb_action_;
+    payload_.isb_action_ = NULL;
+    return temp;
+  } else {
+    return NULL;
+  }
+}
+inline const ::ISBAction& Message::isb_action() const {
+  // @@protoc_insertion_point(field_get:Message.isb_action)
+  return has_isb_action()
+      ? *payload_.isb_action_
+      : *reinterpret_cast< ::ISBAction*>(&::_ISBAction_default_instance_);
+}
+inline ::ISBAction* Message::mutable_isb_action() {
+  if (!has_isb_action()) {
+    clear_payload();
+    set_has_isb_action();
+    payload_.isb_action_ = CreateMaybeMessage< ::ISBAction >(
+        GetArenaNoVirtual());
+  }
+  // @@protoc_insertion_point(field_mutable:Message.isb_action)
+  return payload_.isb_action_;
 }
 
 // .OptionData option_data = 5;
@@ -967,6 +1679,94 @@ inline ::OptionData* Message::mutable_option_data() {
   }
   // @@protoc_insertion_point(field_mutable:Message.option_data)
   return payload_.option_data_;
+}
+
+// .UnderlyingContract underlying_contract = 6;
+inline bool Message::has_underlying_contract() const {
+  return payload_case() == kUnderlyingContract;
+}
+inline void Message::set_has_underlying_contract() {
+  _oneof_case_[0] = kUnderlyingContract;
+}
+inline void Message::clear_underlying_contract() {
+  if (has_underlying_contract()) {
+    delete payload_.underlying_contract_;
+    clear_has_payload();
+  }
+}
+inline const ::UnderlyingContract& Message::_internal_underlying_contract() const {
+  return *payload_.underlying_contract_;
+}
+inline ::UnderlyingContract* Message::release_underlying_contract() {
+  // @@protoc_insertion_point(field_release:Message.underlying_contract)
+  if (has_underlying_contract()) {
+    clear_has_payload();
+      ::UnderlyingContract* temp = payload_.underlying_contract_;
+    payload_.underlying_contract_ = NULL;
+    return temp;
+  } else {
+    return NULL;
+  }
+}
+inline const ::UnderlyingContract& Message::underlying_contract() const {
+  // @@protoc_insertion_point(field_get:Message.underlying_contract)
+  return has_underlying_contract()
+      ? *payload_.underlying_contract_
+      : *reinterpret_cast< ::UnderlyingContract*>(&::_UnderlyingContract_default_instance_);
+}
+inline ::UnderlyingContract* Message::mutable_underlying_contract() {
+  if (!has_underlying_contract()) {
+    clear_payload();
+    set_has_underlying_contract();
+    payload_.underlying_contract_ = CreateMaybeMessage< ::UnderlyingContract >(
+        GetArenaNoVirtual());
+  }
+  // @@protoc_insertion_point(field_mutable:Message.underlying_contract)
+  return payload_.underlying_contract_;
+}
+
+// .NewsEvent news = 7;
+inline bool Message::has_news() const {
+  return payload_case() == kNews;
+}
+inline void Message::set_has_news() {
+  _oneof_case_[0] = kNews;
+}
+inline void Message::clear_news() {
+  if (has_news()) {
+    delete payload_.news_;
+    clear_has_payload();
+  }
+}
+inline const ::NewsEvent& Message::_internal_news() const {
+  return *payload_.news_;
+}
+inline ::NewsEvent* Message::release_news() {
+  // @@protoc_insertion_point(field_release:Message.news)
+  if (has_news()) {
+    clear_has_payload();
+      ::NewsEvent* temp = payload_.news_;
+    payload_.news_ = NULL;
+    return temp;
+  } else {
+    return NULL;
+  }
+}
+inline const ::NewsEvent& Message::news() const {
+  // @@protoc_insertion_point(field_get:Message.news)
+  return has_news()
+      ? *payload_.news_
+      : *reinterpret_cast< ::NewsEvent*>(&::_NewsEvent_default_instance_);
+}
+inline ::NewsEvent* Message::mutable_news() {
+  if (!has_news()) {
+    clear_payload();
+    set_has_news();
+    payload_.news_ = CreateMaybeMessage< ::NewsEvent >(
+        GetArenaNoVirtual());
+  }
+  // @@protoc_insertion_point(field_mutable:Message.news)
+  return payload_.news_;
 }
 
 inline bool Message::has_payload() const {
@@ -1033,116 +1833,6 @@ inline void BasicMessage::set_allocated_message(::std::string* message) {
   }
   message_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), message);
   // @@protoc_insertion_point(field_set_allocated:BasicMessage.message)
-}
-
-// -------------------------------------------------------------------
-
-// ISBAction
-
-// string action = 1;
-inline void ISBAction::clear_action() {
-  action_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& ISBAction::action() const {
-  // @@protoc_insertion_point(field_get:ISBAction.action)
-  return action_.GetNoArena();
-}
-inline void ISBAction::set_action(const ::std::string& value) {
-  
-  action_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:ISBAction.action)
-}
-#if LANG_CXX11
-inline void ISBAction::set_action(::std::string&& value) {
-  
-  action_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:ISBAction.action)
-}
-#endif
-inline void ISBAction::set_action(const char* value) {
-  GOOGLE_DCHECK(value != NULL);
-  
-  action_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:ISBAction.action)
-}
-inline void ISBAction::set_action(const char* value, size_t size) {
-  
-  action_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:ISBAction.action)
-}
-inline ::std::string* ISBAction::mutable_action() {
-  
-  // @@protoc_insertion_point(field_mutable:ISBAction.action)
-  return action_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* ISBAction::release_action() {
-  // @@protoc_insertion_point(field_release:ISBAction.action)
-  
-  return action_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void ISBAction::set_allocated_action(::std::string* action) {
-  if (action != NULL) {
-    
-  } else {
-    
-  }
-  action_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), action);
-  // @@protoc_insertion_point(field_set_allocated:ISBAction.action)
-}
-
-// string type = 2;
-inline void ISBAction::clear_type() {
-  type_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline const ::std::string& ISBAction::type() const {
-  // @@protoc_insertion_point(field_get:ISBAction.type)
-  return type_.GetNoArena();
-}
-inline void ISBAction::set_type(const ::std::string& value) {
-  
-  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:ISBAction.type)
-}
-#if LANG_CXX11
-inline void ISBAction::set_type(::std::string&& value) {
-  
-  type_.SetNoArena(
-    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:ISBAction.type)
-}
-#endif
-inline void ISBAction::set_type(const char* value) {
-  GOOGLE_DCHECK(value != NULL);
-  
-  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:ISBAction.type)
-}
-inline void ISBAction::set_type(const char* value, size_t size) {
-  
-  type_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:ISBAction.type)
-}
-inline ::std::string* ISBAction::mutable_type() {
-  
-  // @@protoc_insertion_point(field_mutable:ISBAction.type)
-  return type_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline ::std::string* ISBAction::release_type() {
-  // @@protoc_insertion_point(field_release:ISBAction.type)
-  
-  return type_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-}
-inline void ISBAction::set_allocated_type(::std::string* type) {
-  if (type != NULL) {
-    
-  } else {
-    
-  }
-  type_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), type);
-  // @@protoc_insertion_point(field_set_allocated:ISBAction.type)
 }
 
 // -------------------------------------------------------------------
@@ -1257,6 +1947,169 @@ inline void Confirmation::set_allocated_status(::std::string* status) {
 
 // -------------------------------------------------------------------
 
+// ISBAction
+
+// string component = 1;
+inline void ISBAction::clear_component() {
+  component_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ISBAction::component() const {
+  // @@protoc_insertion_point(field_get:ISBAction.component)
+  return component_.GetNoArena();
+}
+inline void ISBAction::set_component(const ::std::string& value) {
+  
+  component_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:ISBAction.component)
+}
+#if LANG_CXX11
+inline void ISBAction::set_component(::std::string&& value) {
+  
+  component_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:ISBAction.component)
+}
+#endif
+inline void ISBAction::set_component(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  component_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ISBAction.component)
+}
+inline void ISBAction::set_component(const char* value, size_t size) {
+  
+  component_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:ISBAction.component)
+}
+inline ::std::string* ISBAction::mutable_component() {
+  
+  // @@protoc_insertion_point(field_mutable:ISBAction.component)
+  return component_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ISBAction::release_component() {
+  // @@protoc_insertion_point(field_release:ISBAction.component)
+  
+  return component_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ISBAction::set_allocated_component(::std::string* component) {
+  if (component != NULL) {
+    
+  } else {
+    
+  }
+  component_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), component);
+  // @@protoc_insertion_point(field_set_allocated:ISBAction.component)
+}
+
+// string action = 2;
+inline void ISBAction::clear_action() {
+  action_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ISBAction::action() const {
+  // @@protoc_insertion_point(field_get:ISBAction.action)
+  return action_.GetNoArena();
+}
+inline void ISBAction::set_action(const ::std::string& value) {
+  
+  action_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:ISBAction.action)
+}
+#if LANG_CXX11
+inline void ISBAction::set_action(::std::string&& value) {
+  
+  action_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:ISBAction.action)
+}
+#endif
+inline void ISBAction::set_action(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  action_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ISBAction.action)
+}
+inline void ISBAction::set_action(const char* value, size_t size) {
+  
+  action_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:ISBAction.action)
+}
+inline ::std::string* ISBAction::mutable_action() {
+  
+  // @@protoc_insertion_point(field_mutable:ISBAction.action)
+  return action_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ISBAction::release_action() {
+  // @@protoc_insertion_point(field_release:ISBAction.action)
+  
+  return action_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ISBAction::set_allocated_action(::std::string* action) {
+  if (action != NULL) {
+    
+  } else {
+    
+  }
+  action_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), action);
+  // @@protoc_insertion_point(field_set_allocated:ISBAction.action)
+}
+
+// string data = 3;
+inline void ISBAction::clear_data() {
+  data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& ISBAction::data() const {
+  // @@protoc_insertion_point(field_get:ISBAction.data)
+  return data_.GetNoArena();
+}
+inline void ISBAction::set_data(const ::std::string& value) {
+  
+  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:ISBAction.data)
+}
+#if LANG_CXX11
+inline void ISBAction::set_data(::std::string&& value) {
+  
+  data_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:ISBAction.data)
+}
+#endif
+inline void ISBAction::set_data(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:ISBAction.data)
+}
+inline void ISBAction::set_data(const char* value, size_t size) {
+  
+  data_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:ISBAction.data)
+}
+inline ::std::string* ISBAction::mutable_data() {
+  
+  // @@protoc_insertion_point(field_mutable:ISBAction.data)
+  return data_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* ISBAction::release_data() {
+  // @@protoc_insertion_point(field_release:ISBAction.data)
+  
+  return data_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void ISBAction::set_allocated_data(::std::string* data) {
+  if (data != NULL) {
+    
+  } else {
+    
+  }
+  data_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), data);
+  // @@protoc_insertion_point(field_set_allocated:ISBAction.data)
+}
+
+// -------------------------------------------------------------------
+
 // OptionData
 
 // string data = 1;
@@ -1312,9 +2165,644 @@ inline void OptionData::set_allocated_data(::std::string* data) {
   // @@protoc_insertion_point(field_set_allocated:OptionData.data)
 }
 
+// -------------------------------------------------------------------
+
+// UnderlyingOneMinData
+
+// int64 time = 1;
+inline void UnderlyingOneMinData::clear_time() {
+  time_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 UnderlyingOneMinData::time() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.time)
+  return time_;
+}
+inline void UnderlyingOneMinData::set_time(::google::protobuf::int64 value) {
+  
+  time_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.time)
+}
+
+// double open = 2;
+inline void UnderlyingOneMinData::clear_open() {
+  open_ = 0;
+}
+inline double UnderlyingOneMinData::open() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.open)
+  return open_;
+}
+inline void UnderlyingOneMinData::set_open(double value) {
+  
+  open_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.open)
+}
+
+// double high = 3;
+inline void UnderlyingOneMinData::clear_high() {
+  high_ = 0;
+}
+inline double UnderlyingOneMinData::high() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.high)
+  return high_;
+}
+inline void UnderlyingOneMinData::set_high(double value) {
+  
+  high_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.high)
+}
+
+// double low = 4;
+inline void UnderlyingOneMinData::clear_low() {
+  low_ = 0;
+}
+inline double UnderlyingOneMinData::low() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.low)
+  return low_;
+}
+inline void UnderlyingOneMinData::set_low(double value) {
+  
+  low_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.low)
+}
+
+// double close = 5;
+inline void UnderlyingOneMinData::clear_close() {
+  close_ = 0;
+}
+inline double UnderlyingOneMinData::close() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.close)
+  return close_;
+}
+inline void UnderlyingOneMinData::set_close(double value) {
+  
+  close_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.close)
+}
+
+// double volume = 6;
+inline void UnderlyingOneMinData::clear_volume() {
+  volume_ = 0;
+}
+inline double UnderlyingOneMinData::volume() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.volume)
+  return volume_;
+}
+inline void UnderlyingOneMinData::set_volume(double value) {
+  
+  volume_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.volume)
+}
+
+// double dailyHigh = 7;
+inline void UnderlyingOneMinData::clear_dailyhigh() {
+  dailyhigh_ = 0;
+}
+inline double UnderlyingOneMinData::dailyhigh() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.dailyHigh)
+  return dailyhigh_;
+}
+inline void UnderlyingOneMinData::set_dailyhigh(double value) {
+  
+  dailyhigh_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.dailyHigh)
+}
+
+// double dailyLow = 8;
+inline void UnderlyingOneMinData::clear_dailylow() {
+  dailylow_ = 0;
+}
+inline double UnderlyingOneMinData::dailylow() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.dailyLow)
+  return dailylow_;
+}
+inline void UnderlyingOneMinData::set_dailylow(double value) {
+  
+  dailylow_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.dailyLow)
+}
+
+// double dailyVolume = 9;
+inline void UnderlyingOneMinData::clear_dailyvolume() {
+  dailyvolume_ = 0;
+}
+inline double UnderlyingOneMinData::dailyvolume() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.dailyVolume)
+  return dailyvolume_;
+}
+inline void UnderlyingOneMinData::set_dailyvolume(double value) {
+  
+  dailyvolume_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.dailyVolume)
+}
+
+// double totalCallVolume = 10;
+inline void UnderlyingOneMinData::clear_totalcallvolume() {
+  totalcallvolume_ = 0;
+}
+inline double UnderlyingOneMinData::totalcallvolume() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.totalCallVolume)
+  return totalcallvolume_;
+}
+inline void UnderlyingOneMinData::set_totalcallvolume(double value) {
+  
+  totalcallvolume_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.totalCallVolume)
+}
+
+// double totalPutVolume = 11;
+inline void UnderlyingOneMinData::clear_totalputvolume() {
+  totalputvolume_ = 0;
+}
+inline double UnderlyingOneMinData::totalputvolume() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.totalPutVolume)
+  return totalputvolume_;
+}
+inline void UnderlyingOneMinData::set_totalputvolume(double value) {
+  
+  totalputvolume_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.totalPutVolume)
+}
+
+// double indexFuturePremium = 12;
+inline void UnderlyingOneMinData::clear_indexfuturepremium() {
+  indexfuturepremium_ = 0;
+}
+inline double UnderlyingOneMinData::indexfuturepremium() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.indexFuturePremium)
+  return indexfuturepremium_;
+}
+inline void UnderlyingOneMinData::set_indexfuturepremium(double value) {
+  
+  indexfuturepremium_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.indexFuturePremium)
+}
+
+// double totalTradeCount = 13;
+inline void UnderlyingOneMinData::clear_totaltradecount() {
+  totaltradecount_ = 0;
+}
+inline double UnderlyingOneMinData::totaltradecount() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.totalTradeCount)
+  return totaltradecount_;
+}
+inline void UnderlyingOneMinData::set_totaltradecount(double value) {
+  
+  totaltradecount_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.totalTradeCount)
+}
+
+// double oneMinuteTradeRate = 14;
+inline void UnderlyingOneMinData::clear_oneminutetraderate() {
+  oneminutetraderate_ = 0;
+}
+inline double UnderlyingOneMinData::oneminutetraderate() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.oneMinuteTradeRate)
+  return oneminutetraderate_;
+}
+inline void UnderlyingOneMinData::set_oneminutetraderate(double value) {
+  
+  oneminutetraderate_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.oneMinuteTradeRate)
+}
+
+// double realTimeHistoricalVolatility = 15;
+inline void UnderlyingOneMinData::clear_realtimehistoricalvolatility() {
+  realtimehistoricalvolatility_ = 0;
+}
+inline double UnderlyingOneMinData::realtimehistoricalvolatility() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.realTimeHistoricalVolatility)
+  return realtimehistoricalvolatility_;
+}
+inline void UnderlyingOneMinData::set_realtimehistoricalvolatility(double value) {
+  
+  realtimehistoricalvolatility_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.realTimeHistoricalVolatility)
+}
+
+// double optionImpliedVolatility = 16;
+inline void UnderlyingOneMinData::clear_optionimpliedvolatility() {
+  optionimpliedvolatility_ = 0;
+}
+inline double UnderlyingOneMinData::optionimpliedvolatility() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.optionImpliedVolatility)
+  return optionimpliedvolatility_;
+}
+inline void UnderlyingOneMinData::set_optionimpliedvolatility(double value) {
+  
+  optionimpliedvolatility_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.optionImpliedVolatility)
+}
+
+// double callOpenInterest = 17;
+inline void UnderlyingOneMinData::clear_callopeninterest() {
+  callopeninterest_ = 0;
+}
+inline double UnderlyingOneMinData::callopeninterest() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.callOpenInterest)
+  return callopeninterest_;
+}
+inline void UnderlyingOneMinData::set_callopeninterest(double value) {
+  
+  callopeninterest_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.callOpenInterest)
+}
+
+// double putOpenInterest = 18;
+inline void UnderlyingOneMinData::clear_putopeninterest() {
+  putopeninterest_ = 0;
+}
+inline double UnderlyingOneMinData::putopeninterest() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.putOpenInterest)
+  return putopeninterest_;
+}
+inline void UnderlyingOneMinData::set_putopeninterest(double value) {
+  
+  putopeninterest_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.putOpenInterest)
+}
+
+// double futuresOpenInterest = 19;
+inline void UnderlyingOneMinData::clear_futuresopeninterest() {
+  futuresopeninterest_ = 0;
+}
+inline double UnderlyingOneMinData::futuresopeninterest() const {
+  // @@protoc_insertion_point(field_get:UnderlyingOneMinData.futuresOpenInterest)
+  return futuresopeninterest_;
+}
+inline void UnderlyingOneMinData::set_futuresopeninterest(double value) {
+  
+  futuresopeninterest_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingOneMinData.futuresOpenInterest)
+}
+
+// -------------------------------------------------------------------
+
+// UnderlyingAverages
+
+// double low13Week = 1;
+inline void UnderlyingAverages::clear_low13week() {
+  low13week_ = 0;
+}
+inline double UnderlyingAverages::low13week() const {
+  // @@protoc_insertion_point(field_get:UnderlyingAverages.low13Week)
+  return low13week_;
+}
+inline void UnderlyingAverages::set_low13week(double value) {
+  
+  low13week_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingAverages.low13Week)
+}
+
+// double high13Week = 2;
+inline void UnderlyingAverages::clear_high13week() {
+  high13week_ = 0;
+}
+inline double UnderlyingAverages::high13week() const {
+  // @@protoc_insertion_point(field_get:UnderlyingAverages.high13Week)
+  return high13week_;
+}
+inline void UnderlyingAverages::set_high13week(double value) {
+  
+  high13week_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingAverages.high13Week)
+}
+
+// double low26week = 3;
+inline void UnderlyingAverages::clear_low26week() {
+  low26week_ = 0;
+}
+inline double UnderlyingAverages::low26week() const {
+  // @@protoc_insertion_point(field_get:UnderlyingAverages.low26week)
+  return low26week_;
+}
+inline void UnderlyingAverages::set_low26week(double value) {
+  
+  low26week_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingAverages.low26week)
+}
+
+// double high26Week = 4;
+inline void UnderlyingAverages::clear_high26week() {
+  high26week_ = 0;
+}
+inline double UnderlyingAverages::high26week() const {
+  // @@protoc_insertion_point(field_get:UnderlyingAverages.high26Week)
+  return high26week_;
+}
+inline void UnderlyingAverages::set_high26week(double value) {
+  
+  high26week_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingAverages.high26Week)
+}
+
+// double low52Week = 5;
+inline void UnderlyingAverages::clear_low52week() {
+  low52week_ = 0;
+}
+inline double UnderlyingAverages::low52week() const {
+  // @@protoc_insertion_point(field_get:UnderlyingAverages.low52Week)
+  return low52week_;
+}
+inline void UnderlyingAverages::set_low52week(double value) {
+  
+  low52week_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingAverages.low52Week)
+}
+
+// double high52Week = 6;
+inline void UnderlyingAverages::clear_high52week() {
+  high52week_ = 0;
+}
+inline double UnderlyingAverages::high52week() const {
+  // @@protoc_insertion_point(field_get:UnderlyingAverages.high52Week)
+  return high52week_;
+}
+inline void UnderlyingAverages::set_high52week(double value) {
+  
+  high52week_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingAverages.high52Week)
+}
+
+// double averageVolume90Day = 7;
+inline void UnderlyingAverages::clear_averagevolume90day() {
+  averagevolume90day_ = 0;
+}
+inline double UnderlyingAverages::averagevolume90day() const {
+  // @@protoc_insertion_point(field_get:UnderlyingAverages.averageVolume90Day)
+  return averagevolume90day_;
+}
+inline void UnderlyingAverages::set_averagevolume90day(double value) {
+  
+  averagevolume90day_ = value;
+  // @@protoc_insertion_point(field_set:UnderlyingAverages.averageVolume90Day)
+}
+
+// -------------------------------------------------------------------
+
+// UnderlyingContract
+
+// string symbol = 1;
+inline void UnderlyingContract::clear_symbol() {
+  symbol_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& UnderlyingContract::symbol() const {
+  // @@protoc_insertion_point(field_get:UnderlyingContract.symbol)
+  return symbol_.GetNoArena();
+}
+inline void UnderlyingContract::set_symbol(const ::std::string& value) {
+  
+  symbol_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:UnderlyingContract.symbol)
+}
+#if LANG_CXX11
+inline void UnderlyingContract::set_symbol(::std::string&& value) {
+  
+  symbol_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:UnderlyingContract.symbol)
+}
+#endif
+inline void UnderlyingContract::set_symbol(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  symbol_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:UnderlyingContract.symbol)
+}
+inline void UnderlyingContract::set_symbol(const char* value, size_t size) {
+  
+  symbol_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:UnderlyingContract.symbol)
+}
+inline ::std::string* UnderlyingContract::mutable_symbol() {
+  
+  // @@protoc_insertion_point(field_mutable:UnderlyingContract.symbol)
+  return symbol_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* UnderlyingContract::release_symbol() {
+  // @@protoc_insertion_point(field_release:UnderlyingContract.symbol)
+  
+  return symbol_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void UnderlyingContract::set_allocated_symbol(::std::string* symbol) {
+  if (symbol != NULL) {
+    
+  } else {
+    
+  }
+  symbol_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), symbol);
+  // @@protoc_insertion_point(field_set_allocated:UnderlyingContract.symbol)
+}
+
+// repeated .UnderlyingOneMinData underlying_one_min = 2;
+inline int UnderlyingContract::underlying_one_min_size() const {
+  return underlying_one_min_.size();
+}
+inline void UnderlyingContract::clear_underlying_one_min() {
+  underlying_one_min_.Clear();
+}
+inline ::UnderlyingOneMinData* UnderlyingContract::mutable_underlying_one_min(int index) {
+  // @@protoc_insertion_point(field_mutable:UnderlyingContract.underlying_one_min)
+  return underlying_one_min_.Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::UnderlyingOneMinData >*
+UnderlyingContract::mutable_underlying_one_min() {
+  // @@protoc_insertion_point(field_mutable_list:UnderlyingContract.underlying_one_min)
+  return &underlying_one_min_;
+}
+inline const ::UnderlyingOneMinData& UnderlyingContract::underlying_one_min(int index) const {
+  // @@protoc_insertion_point(field_get:UnderlyingContract.underlying_one_min)
+  return underlying_one_min_.Get(index);
+}
+inline ::UnderlyingOneMinData* UnderlyingContract::add_underlying_one_min() {
+  // @@protoc_insertion_point(field_add:UnderlyingContract.underlying_one_min)
+  return underlying_one_min_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::UnderlyingOneMinData >&
+UnderlyingContract::underlying_one_min() const {
+  // @@protoc_insertion_point(field_list:UnderlyingContract.underlying_one_min)
+  return underlying_one_min_;
+}
+
+// repeated .UnderlyingAverages underlying_averages = 3;
+inline int UnderlyingContract::underlying_averages_size() const {
+  return underlying_averages_.size();
+}
+inline void UnderlyingContract::clear_underlying_averages() {
+  underlying_averages_.Clear();
+}
+inline ::UnderlyingAverages* UnderlyingContract::mutable_underlying_averages(int index) {
+  // @@protoc_insertion_point(field_mutable:UnderlyingContract.underlying_averages)
+  return underlying_averages_.Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::UnderlyingAverages >*
+UnderlyingContract::mutable_underlying_averages() {
+  // @@protoc_insertion_point(field_mutable_list:UnderlyingContract.underlying_averages)
+  return &underlying_averages_;
+}
+inline const ::UnderlyingAverages& UnderlyingContract::underlying_averages(int index) const {
+  // @@protoc_insertion_point(field_get:UnderlyingContract.underlying_averages)
+  return underlying_averages_.Get(index);
+}
+inline ::UnderlyingAverages* UnderlyingContract::add_underlying_averages() {
+  // @@protoc_insertion_point(field_add:UnderlyingContract.underlying_averages)
+  return underlying_averages_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::UnderlyingAverages >&
+UnderlyingContract::underlying_averages() const {
+  // @@protoc_insertion_point(field_list:UnderlyingContract.underlying_averages)
+  return underlying_averages_;
+}
+
+// -------------------------------------------------------------------
+
+// NewsEvent
+
+// int64 time = 1;
+inline void NewsEvent::clear_time() {
+  time_ = GOOGLE_LONGLONG(0);
+}
+inline ::google::protobuf::int64 NewsEvent::time() const {
+  // @@protoc_insertion_point(field_get:NewsEvent.time)
+  return time_;
+}
+inline void NewsEvent::set_time(::google::protobuf::int64 value) {
+  
+  time_ = value;
+  // @@protoc_insertion_point(field_set:NewsEvent.time)
+}
+
+// string articleId = 2;
+inline void NewsEvent::clear_articleid() {
+  articleid_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& NewsEvent::articleid() const {
+  // @@protoc_insertion_point(field_get:NewsEvent.articleId)
+  return articleid_.GetNoArena();
+}
+inline void NewsEvent::set_articleid(const ::std::string& value) {
+  
+  articleid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:NewsEvent.articleId)
+}
+#if LANG_CXX11
+inline void NewsEvent::set_articleid(::std::string&& value) {
+  
+  articleid_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:NewsEvent.articleId)
+}
+#endif
+inline void NewsEvent::set_articleid(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  articleid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:NewsEvent.articleId)
+}
+inline void NewsEvent::set_articleid(const char* value, size_t size) {
+  
+  articleid_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:NewsEvent.articleId)
+}
+inline ::std::string* NewsEvent::mutable_articleid() {
+  
+  // @@protoc_insertion_point(field_mutable:NewsEvent.articleId)
+  return articleid_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* NewsEvent::release_articleid() {
+  // @@protoc_insertion_point(field_release:NewsEvent.articleId)
+  
+  return articleid_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void NewsEvent::set_allocated_articleid(::std::string* articleid) {
+  if (articleid != NULL) {
+    
+  } else {
+    
+  }
+  articleid_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), articleid);
+  // @@protoc_insertion_point(field_set_allocated:NewsEvent.articleId)
+}
+
+// string headline = 3;
+inline void NewsEvent::clear_headline() {
+  headline_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& NewsEvent::headline() const {
+  // @@protoc_insertion_point(field_get:NewsEvent.headline)
+  return headline_.GetNoArena();
+}
+inline void NewsEvent::set_headline(const ::std::string& value) {
+  
+  headline_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:NewsEvent.headline)
+}
+#if LANG_CXX11
+inline void NewsEvent::set_headline(::std::string&& value) {
+  
+  headline_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:NewsEvent.headline)
+}
+#endif
+inline void NewsEvent::set_headline(const char* value) {
+  GOOGLE_DCHECK(value != NULL);
+  
+  headline_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:NewsEvent.headline)
+}
+inline void NewsEvent::set_headline(const char* value, size_t size) {
+  
+  headline_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:NewsEvent.headline)
+}
+inline ::std::string* NewsEvent::mutable_headline() {
+  
+  // @@protoc_insertion_point(field_mutable:NewsEvent.headline)
+  return headline_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* NewsEvent::release_headline() {
+  // @@protoc_insertion_point(field_release:NewsEvent.headline)
+  
+  return headline_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void NewsEvent::set_allocated_headline(::std::string* headline) {
+  if (headline != NULL) {
+    
+  } else {
+    
+  }
+  headline_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), headline);
+  // @@protoc_insertion_point(field_set_allocated:NewsEvent.headline)
+}
+
+// double sentimentScore = 4;
+inline void NewsEvent::clear_sentimentscore() {
+  sentimentscore_ = 0;
+}
+inline double NewsEvent::sentimentscore() const {
+  // @@protoc_insertion_point(field_get:NewsEvent.sentimentScore)
+  return sentimentscore_;
+}
+inline void NewsEvent::set_sentimentscore(double value) {
+  
+  sentimentscore_ = value;
+  // @@protoc_insertion_point(field_set:NewsEvent.sentimentScore)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

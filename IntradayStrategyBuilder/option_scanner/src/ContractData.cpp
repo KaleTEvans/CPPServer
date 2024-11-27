@@ -27,7 +27,7 @@ ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CS
         if (event->getReqId() == this->rtbId) this->realTimeCandles(std::dynamic_pointer_cast<CandleDataEvent>(event));
     });
 
-    csv->createDirectoriesAndFiles(contract.symbol, contract.strike, contract.right);
+    //csv->createDirectoriesAndFiles(contract.symbol, contract.strike, contract.right);
 
     std::cout << "ContractData Request IDs: " << mktDataId << "," << rtbId << " created for  contract: " <<
             contract.symbol << " " << contract.strike << contract.right << std::endl;
@@ -89,8 +89,8 @@ void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event)
             auto largeOrder = std::make_shared<LargeOrderEvent>(contract, tas->timeValue, tas->price,
                 tas->quantity, totalTradePrice, tas->totalVol, tas->vwap, currentAsk, currentBid, currentRtm);
             notifications->publish(largeOrder);
-            csv->addDataToQueue(contract.symbol, contract.strike, 
-                contract.right, DataType::LargeOrderAlert, largeOrder->formatCSV());
+            //csv->addDataToQueue(contract.symbol, contract.strike, 
+                //contract.right, DataType::LargeOrderAlert, largeOrder->formatCSV());
             
             if (tas->price >= currentAsk) largeOrder->printLargeOrder();
         }
@@ -192,7 +192,7 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
     //if (isEvenMinute) std::cout << "Even minute found for " << contract.strike << contract.right << std::endl;
 
     // Save the five sec candle to csv
-    csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::FiveSec, fsd->formatCSV());
+    //csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::FiveSec, fsd->formatCSV());
 
     tradeCount_fiveSecCandles.addValue(event->candle->count());
     priceDelta_fiveSecCandles.addValue(event->candle->high() - event->candle->low());
@@ -229,7 +229,7 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
         } 
 
         // Save ticks to file
-        csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::Tick, i.second->formatCSV(rtm));
+        //csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::Tick, i.second->formatCSV(rtm));
         // Save time of tick for removal
         addedTickTimes.push_back(i.first);
     }
@@ -249,7 +249,7 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
         priceDelta_oneMinCandles.addValue(c->candle->high() - c->candle->low());
 
         // Save one minute candle to db
-        csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::OneMin, c->formatCSV());
+        //csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::OneMin, c->formatCSV());
 
         // Clear temp candles and reset even minute flag
         tempCandles.clear();

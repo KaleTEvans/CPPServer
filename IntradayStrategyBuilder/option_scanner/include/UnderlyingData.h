@@ -4,6 +4,8 @@
 #include "TwsWrapper.h"
 #include "SaveToCSV.h"
 #include "ContractDefs.h"
+#include "SocketDataCollector.h"
+#include "../generated/messages.pb.h"
 
 #include <fstream>
 
@@ -64,6 +66,7 @@ struct UnderlyingOneMinuteData {
     double futuresOpenInterest{-1};
 
     std::string formatCSV();
+    std::string serializeOneMinData(UnderlyingContract& underlyingContract);
 };
 
 struct ContractNewsData {
@@ -74,6 +77,7 @@ struct ContractNewsData {
     double price{0};
 
     std::string formatCSV();
+    std::string serializeNewsObject();
     // Use to ignore commas in headlines to prevent column separation
     std::string escapeCommas(const std::string& value);
 };
@@ -81,7 +85,7 @@ struct ContractNewsData {
 
 class UnderlyingData {
     public:
-        UnderlyingData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv, Contract contract);
+        UnderlyingData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<SocketDataCollector> sdc, Contract contract);
         ~UnderlyingData();
 
         Contract getContract();
@@ -116,7 +120,8 @@ class UnderlyingData {
         double currentPrice{0};
         double strikeIncrement{0};
         std::shared_ptr<tWrapper> wrapper;
-        std::shared_ptr<CSVFileSaver> csv;
+        //std::shared_ptr<CSVFileSaver> csv;
+        std::shared_ptr<SocketDataCollector> sdc;
 
         double low13Week{-1};
         double high13Week{-1};

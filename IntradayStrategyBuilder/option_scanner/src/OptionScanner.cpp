@@ -1,7 +1,9 @@
 #include "OptionScanner.h"
 
-OptionScanner::OptionScanner(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<ScannerNotificationBus> notifications) : 
-    wrapper(wrapper), notifications(notifications) {
+OptionScanner::OptionScanner(std::shared_ptr<tWrapper> wrapper, 
+    std::shared_ptr<ScannerNotificationBus> notifications,
+    std::shared_ptr<SocketDataCollector> sdc) : 
+    wrapper(wrapper), notifications(notifications), sdc(sdc) {
     // Create CSV instance
     csv = std::make_shared<CSVFileSaver>();
 }
@@ -13,7 +15,7 @@ void OptionScanner::start() {
     }
 
     // Start csv collection
-    csv->start();
+    //csv->start();
 
     // Now start the thread to run monitorOptionChains
     optionScannerThread = std::thread([this]() {
@@ -35,13 +37,13 @@ void OptionScanner::stop() {
     trackedPuts.clear();
     trackedTickers.clear();
     // End csv collection
-    csv->stop();
+    //csv->stop();
 }
 
 bool OptionScanner::checkScannerRunning() { return optScannerRunning; }
 
 void OptionScanner::addSecurity(Contract contract, Contract optionBase) {
-    std::shared_ptr<UnderlyingData> underlying = std::make_shared<UnderlyingData>(wrapper, csv, contract);
+    std::shared_ptr<UnderlyingData> underlying = std::make_shared<UnderlyingData>(wrapper, sdc, contract);
 
     trackedTickers.push_back(underlying);
 

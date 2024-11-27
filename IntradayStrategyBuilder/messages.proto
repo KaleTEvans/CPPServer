@@ -6,9 +6,11 @@ message Message {
     string type = 1;  // Message type (e.g., "confirmation", "option_data")
     oneof payload {
         BasicMessage basic_message = 2;
-        ISBAction isb_action = 3;
-        Confirmation confirmation = 4;
+        Confirmation confirmation = 3;
+        ISBAction isb_action = 4;
         OptionData option_data = 5;
+        UnderlyingContract underlying_contract = 6;
+        NewsEvent news = 7;
     }
 }
 
@@ -16,16 +18,62 @@ message BasicMessage {
     string message = 1;
 }
 
-message ISBAction {
-    string action = 1;
-    string type = 2;
-}
-
 message Confirmation {
     string action = 1;
     string status = 2;
 }
 
+message ISBAction {
+    string component = 1;
+    string action = 2;
+    string data = 3;
+}
+
 message OptionData {
     string data = 1;  // Example: CSV string
+}
+
+message UnderlyingOneMinData {
+    int64 time = 1;
+    double open = 2;
+    double high = 3;
+    double low = 4;
+    double close = 5;
+    double volume = 6;
+    double dailyHigh = 7;
+    double dailyLow = 8;
+    double dailyVolume = 9;
+    double totalCallVolume = 10;
+    double totalPutVolume = 11;
+    double indexFuturePremium = 12;
+    double totalTradeCount = 13;
+    double oneMinuteTradeRate = 14;
+    double realTimeHistoricalVolatility = 15;
+    double optionImpliedVolatility = 16;
+    double callOpenInterest = 17;
+    double putOpenInterest = 18;
+    double futuresOpenInterest = 19;
+}
+
+message UnderlyingAverages {
+    double low13Week = 1;
+    double high13Week = 2;
+    double low26week = 3;
+    double high26Week = 4;
+    double low52Week = 5;
+    double high52Week = 6;
+    double averageVolume90Day = 7;
+}
+
+message UnderlyingContract {
+    string symbol = 1;
+    repeated UnderlyingOneMinData underlying_one_min = 2;
+    repeated UnderlyingAverages underlying_averages = 3;
+}
+
+message NewsEvent {
+    int64 time = 1;
+    string articleId = 2;
+    string headline = 3;
+    double sentimentScore = 4;
 }

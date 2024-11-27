@@ -35,12 +35,53 @@ std::string UnderlyingOneMinuteData::formatCSV() {
             CSVFileSaver::valueToCSV(futuresOpenInterest) + "\n";
 }
 
+std::string UnderlyingOneMinuteData::serializeOneMinData(UnderlyingContract& underlyingContract) {
+    UnderlyingOneMinData* oneMin = underlyingContract.add_underlying_one_min();
+    oneMin->set_time(time);
+    oneMin->set_open(open);
+    oneMin->set_high(high);
+    oneMin->set_low(low);
+    oneMin->set_close(close);
+    oneMin->set_volume(volume);
+    oneMin->set_dailyhigh(dailyHigh);
+    oneMin->set_dailylow(dailyLow);
+    oneMin->set_dailyvolume(dailyVolume);
+    oneMin->set_totalcallvolume(totalCallVolume);
+    oneMin->set_totalputvolume(totalPutVolume);
+    oneMin->set_indexfuturepremium(indexFuturePremium);
+    oneMin->set_totaltradecount(totalTradeCount);
+    oneMin->set_oneminutetraderate(oneMinuteTradeRate);
+    oneMin->set_realtimehistoricalvolatility(realTimeHistoricalVolatility);
+    oneMin->set_optionimpliedvolatility(optionImpliedVolatility);
+    oneMin->set_callopeninterest(callOpenInterest);
+    oneMin->set_putopeninterest(putOpenInterest);
+    oneMin->set_futuresopeninterest(futuresOpenInterest);
+
+    std::string serialized;
+    underlyingContract.SerializeToString(&serialized);
+}
+
 std::string ContractNewsData::formatCSV() {
     return std::to_string(time) + "," +
             articleId + "," +
             escapeCommas(headline) + "," +
             CSVFileSaver::valueToCSV(sentimentScore) + "," +
             CSVFileSaver::valueToCSV(price) + "\n";
+}
+
+std::string ContractNewsData::serializeNewsObject() {
+    Message message;
+    message.set_type("news");
+    NewsEvent* news = message.mutable_news();
+    news->set_time(time);
+    news->set_articleid(articleId);
+    news->set_headline(headline);
+    news->set_sentimentscore(sentimentScore);
+
+    std::string serialized;
+    message.SerializeToString(&serialized);
+
+    return serialized;
 }
 
 std::string ContractNewsData::escapeCommas(const std::string& value) {
@@ -50,10 +91,10 @@ std::string ContractNewsData::escapeCommas(const std::string& value) {
     return value;
 }
 
-UnderlyingData::UnderlyingData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv, Contract contract):
-    wrapper(wrapper), csv(csv), contract(contract) {
+UnderlyingData::UnderlyingData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<SocketDataCollector> sdc, Contract contract):
+    wrapper(wrapper), sdc(sdc), contract(contract) {
         // Create files for filesaver
-        csv->createDirectoriesAndFiles(contract.symbol, 0, "None");
+        //csv->createDirectoriesAndFiles(contract.symbol, 0, "None");
         // Initialize empty one minute candle prior to receiving data
         UnderlyingOneMinuteData um;
         oneMinuteData.push_back(um);
@@ -117,7 +158,7 @@ void UnderlyingData::startReceivingData() {
 
 void UnderlyingData::stopReceivingData() {
     // Save daily data at the end
-    csv->addDataToQueue(contract.symbol, 0, "None", DataType::UnderlyingAverages, formatAveragesCSV());
+    //csv->addDataToQueue(contract.symbol, 0, "None", DataType::UnderlyingAverages, formatAveragesCSV());
     wrapper->cancelMktData(mktDataId);
     wrapper->cancelRealTimeBars(rtbId);
 }
@@ -215,7 +256,7 @@ void UnderlyingData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event)
             ContractNewsData cnd;
             cnd.time = event->timeStamp;
             cnd.price = currentPrice;
-            csv->addDataToQueue(contract.symbol, 0, "None", DataType::News, cnd.formatCSV());
+            //csv->addDataToQueue(contract.symbol, 0, "None", DataType::News, cnd.formatCSV());
         } 
     } else {
         switch (event->tickType)
@@ -336,7 +377,8 @@ void UnderlyingData::handleTickNewsEvent(std::shared_ptr<TickNewsEvent> event) {
     cnd.headline = event->headline;
     cnd.sentimentScore = event->sentimentScore;
     cnd.price = currentPrice;
-    if (event->hasFullExtraData) csv->addDataToQueue(contract.symbol, 0, "None", DataType::News, cnd.formatCSV());
+    if (event->hasFullExtraData) sdc->sendNewsData(cnd.serializeNewsObject());
+    //if (event->hasFullExtraData) csv->addDataToQueue(contract.symbol, 0, "None", DataType::News, cnd.formatCSV());
 
     event->print();
 }
@@ -351,7 +393,7 @@ void UnderlyingData::handleRealTimeCandles(std::shared_ptr<CandleDataEvent> even
         fiveSecData.clear();
 
         // Save new candle data
-        csv->addDataToQueue(contract.symbol, 0, "None", DataType::UnderlyingOneMinute, oneMinuteData.back().formatCSV());
+        //csv->addDataToQueue(contract.symbol, 0, "None", DataType::UnderlyingOneMinute, oneMinuteData.back().formatCSV());
 
         // Now add an empty one min candle to back of vector
         UnderlyingOneMinuteData oneMinCandle;

@@ -7,10 +7,32 @@
 #include <UnderlyingData.h>
 #include <OptionScanner.h>
 #include <ScannerNotificationHandler.h>
+#include <SocketDataCollector.h>
+#include <WebSocket.h>
+
+#include "server/ws/wss_server.h"
 
 int main() {
     std::shared_ptr<tWrapper> testClient = std::make_shared<tWrapper>();
     //std::shared_ptr<CSVFileSaver> csv = std::make_shared<CSVFileSaver>();
+
+    int port = 8443;
+    // HTTPS server content path
+    std::string www = "/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/CppServer/www/wss";
+
+    // Create a new Asio service
+    auto service = std::make_shared<CppServer::Asio::Service>();
+    service->Start();
+
+    // Create and prepare a new SSL server context
+    auto context = std::make_shared<CppServer::Asio::SSLContext>(asio::ssl::context::tlsv12);
+    context->set_password_callback([](size_t max_length, asio::ssl::context::password_purpose purpose) -> std::string { return "qwerty"; });
+    context->use_certificate_chain_file("/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/CppServer/tools/certificates/server.pem");
+    context->use_private_key_file("/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/CppServer/tools/certificates/server.pem", asio::ssl::context::pem);
+    context->use_tmp_dh_file("/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/CppServer/tools/certificates/dh4096.pem");
+
+    // Create a new WebSocket server
+    auto server = std::make_shared<TWSStrategyServer>(service, context, port);
 
     int clientId = 0;
 
@@ -26,7 +48,8 @@ int main() {
     }
 
     auto scannerNotifications = std::make_shared<ScannerNotificationBus>();
-    OptionScanner optScanner = OptionScanner(testClient, scannerNotifications);
+    auto sdc = std::make_shared<SocketDataCollector>(server);
+    OptionScanner optScanner(testClient, scannerNotifications, sdc);
     optScanner.addSecurity(ContractDefs::SPXInd(), ContractDefs::SPXOpt0DTE("C", 1000));
     optScanner.start();
 

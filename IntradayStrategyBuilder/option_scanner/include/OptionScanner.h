@@ -5,10 +5,13 @@
 #include "UnderlyingData.h"
 #include "ContractData.h"
 #include "ScannerNotificationHandler.h"
+#include "SocketDataCollector.h"
 
 class OptionScanner {
     public:
-        OptionScanner(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<ScannerNotificationBus> notifications);
+        OptionScanner(std::shared_ptr<tWrapper> wrapper, 
+        std::shared_ptr<ScannerNotificationBus> notifications,
+        std::shared_ptr<SocketDataCollector> sdc);
 
         void start();
         void stop();
@@ -40,6 +43,7 @@ class OptionScanner {
         std::map<int, std::shared_ptr<ContractData>> trackedCalls;
         std::map<int, std::shared_ptr<ContractData>> trackedPuts;
         std::shared_ptr<CSVFileSaver> csv;
+        std::shared_ptr<SocketDataCollector> sdc;
 };
 
 #endif
