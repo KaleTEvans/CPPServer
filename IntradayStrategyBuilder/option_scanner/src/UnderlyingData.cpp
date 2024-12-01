@@ -35,8 +35,11 @@ std::string UnderlyingOneMinuteData::formatCSV() {
             CSVFileSaver::valueToCSV(futuresOpenInterest) + "\n";
 }
 
-std::string UnderlyingOneMinuteData::serializeOneMinData(UnderlyingContract& underlyingContract) {
-    UnderlyingOneMinData* oneMin = underlyingContract.add_underlying_one_min();
+std::string UnderlyingOneMinuteData::serializeOneMinData(const std::string& symbol) {
+    UnderlyingContract underlyingContract;
+    underlyingContract.set_symbol(symbol);
+
+    UnderlyingOneMinData* oneMin = underlyingContract.mutable_underlying_one_min()->Add();
     oneMin->set_time(time);
     oneMin->set_open(open);
     oneMin->set_high(high);
@@ -59,6 +62,8 @@ std::string UnderlyingOneMinuteData::serializeOneMinData(UnderlyingContract& und
 
     std::string serialized;
     underlyingContract.SerializeToString(&serialized);
+
+    return serialized;
 }
 
 std::string ContractNewsData::formatCSV() {
@@ -171,6 +176,31 @@ std::string UnderlyingData::formatAveragesCSV() {
             CSVFileSaver::valueToCSV(low52Week) + "," +
             CSVFileSaver::valueToCSV(high52Week) + "," +
             CSVFileSaver::valueToCSV(averageVolume90Day) + "\n";
+}
+
+std::string UnderlyingData::serializeKeyPricePoints() {
+    UnderlyingContract underlyingContract;
+    underlyingContract.set_symbol(contract.symbol);
+
+    UnderlyingAverages* underlyingAverages = underlyingContract.mutable_underlying_averages()->Add();
+    underlyingAverages->set_low13week(low13Week);
+    underlyingAverages->set_high13week(high13Week);
+    underlyingAverages->set_low26week(low26week);
+    underlyingAverages->set_high26week(high26Week);
+    underlyingAverages->set_low52week(low52Week);
+    underlyingAverages->set_high52week(high52Week);
+    underlyingAverages->set_averagevolume90day(averageVolume90Day);
+
+    std::string serialized;
+    underlyingContract.SerializeToString(&serialized);
+
+    return serialized;
+}
+
+// Check if all or most of the key price points have reeceived tick data
+bool UnderlyingData::verifyAveragesRecveived() {
+    if (low13Week != -1 && high13Week != -1 && low26week != -1 && high26Week != -1 && low52Week != -1 && high52Week != -1) return true;
+    else return false;
 }
 
 int UnderlyingData::requestOptionsChain() {
@@ -392,9 +422,11 @@ void UnderlyingData::handleRealTimeCandles(std::shared_ptr<CandleDataEvent> even
 
         fiveSecData.clear();
 
-        // Save new candle data
-        //csv->addDataToQueue(contract.symbol, 0, "None", DataType::UnderlyingOneMinute, oneMinuteData.back().formatCSV());
-
+        // Serialize and send one minute candle to SocketDataCollector
+        sdc->sendUnderlyingContractData(oneMinuteData.back().serializeOneMinData(contract.symbol));
+        // If key price points have all been received, serialize and send that data as well
+        if (verifyAveragesRecveived()) sdc->sendUnderlyingContractData(serializeKeyPricePoints());
+        
         // Now add an empty one min candle to back of vector
         UnderlyingOneMinuteData oneMinCandle;
         oneMinuteData.push_back(oneMinCandle);

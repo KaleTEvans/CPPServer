@@ -6,3 +6,7 @@ SocketDataCollector::SocketDataCollector(const std::shared_ptr<CppServer::WS::WS
 void SocketDataCollector::sendNewsData(const std::string& news) {
     server->MulticastBinary(news.data(), news.size());
 }
+
+void SocketDataCollector::sendUnderlyingContractData(const std::string& cd) {
+    server->MulticastBinary(cd.data(), cd.size());
+}

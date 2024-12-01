@@ -66,7 +66,7 @@ struct UnderlyingOneMinuteData {
     double futuresOpenInterest{-1};
 
     std::string formatCSV();
-    std::string serializeOneMinData(UnderlyingContract& underlyingContract);
+    std::string serializeOneMinData(const std::string& symbol);
 };
 
 struct ContractNewsData {
@@ -95,8 +95,6 @@ class UnderlyingData {
         std::pair<std::vector<double>, std::vector<double>> getStrikes(int countITM = 2);
         std::string formatAveragesCSV();
 
-        void printData();
-
     private:
         int requestOptionsChain();
         void handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event);
@@ -107,6 +105,8 @@ class UnderlyingData {
         void handleOptionsChainData(const std::string& exchange, 
             int underlyingConId, const std::string& tradingClass, const std::string& multiplier, 
             const std::set<std::string>& expirations, const std::set<double>& strikes);
+
+        std::string serializeKeyPricePoints();
 
         std::map<long, std::pair<std::shared_ptr<TickNewsEvent>, double>> newsTicks; // Paired with most recent underlying price
 
@@ -130,6 +130,8 @@ class UnderlyingData {
         double low52Week{-1};
         double high52Week{-1};
         double averageVolume90Day{-1};
+
+        bool verifyAveragesRecveived();
 
         bool outputData{false};
 };
