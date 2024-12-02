@@ -22,12 +22,15 @@
 namespace protobuf_messages_2eproto {
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_messages_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_BasicMessage;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_messages_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_Confirmation;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_messages_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_FiveSecData;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_messages_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_ISBAction;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_messages_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_NewsEvent;
-extern PROTOBUF_INTERNAL_EXPORT_protobuf_messages_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_OptionData;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_messages_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_OneMinData;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_messages_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_TickData;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_messages_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_UnderlyingAverages;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_messages_2eproto ::google::protobuf::internal::SCCInfo<0> scc_info_UnderlyingOneMinData;
 extern PROTOBUF_INTERNAL_EXPORT_protobuf_messages_2eproto ::google::protobuf::internal::SCCInfo<2> scc_info_UnderlyingContract;
+extern PROTOBUF_INTERNAL_EXPORT_protobuf_messages_2eproto ::google::protobuf::internal::SCCInfo<3> scc_info_OptionData;
 }  // namespace protobuf_messages_2eproto
 class MessageDefaultTypeInternal {
  public:
@@ -55,11 +58,31 @@ class ISBActionDefaultTypeInternal {
   ::google::protobuf::internal::ExplicitlyConstructed<ISBAction>
       _instance;
 } _ISBAction_default_instance_;
+class TickDataDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<TickData>
+      _instance;
+} _TickData_default_instance_;
+class FiveSecDataDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<FiveSecData>
+      _instance;
+} _FiveSecData_default_instance_;
+class OneMinDataDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<OneMinData>
+      _instance;
+} _OneMinData_default_instance_;
 class OptionDataDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<OptionData>
       _instance;
 } _OptionData_default_instance_;
+class OptionDataBatchDefaultTypeInternal {
+ public:
+  ::google::protobuf::internal::ExplicitlyConstructed<OptionDataBatch>
+      _instance;
+} _OptionDataBatch_default_instance_;
 class UnderlyingOneMinDataDefaultTypeInternal {
  public:
   ::google::protobuf::internal::ExplicitlyConstructed<UnderlyingOneMinData>
@@ -143,6 +166,48 @@ static void InitDefaultsISBAction() {
 ::google::protobuf::internal::SCCInfo<0> scc_info_ISBAction =
     {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsISBAction}, {}};
 
+static void InitDefaultsTickData() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_TickData_default_instance_;
+    new (ptr) ::TickData();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::TickData::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_TickData =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsTickData}, {}};
+
+static void InitDefaultsFiveSecData() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_FiveSecData_default_instance_;
+    new (ptr) ::FiveSecData();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::FiveSecData::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_FiveSecData =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsFiveSecData}, {}};
+
+static void InitDefaultsOneMinData() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_OneMinData_default_instance_;
+    new (ptr) ::OneMinData();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::OneMinData::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<0> scc_info_OneMinData =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsOneMinData}, {}};
+
 static void InitDefaultsOptionData() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -154,8 +219,26 @@ static void InitDefaultsOptionData() {
   ::OptionData::InitAsDefaultInstance();
 }
 
-::google::protobuf::internal::SCCInfo<0> scc_info_OptionData =
-    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 0, InitDefaultsOptionData}, {}};
+::google::protobuf::internal::SCCInfo<3> scc_info_OptionData =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 3, InitDefaultsOptionData}, {
+      &protobuf_messages_2eproto::scc_info_TickData.base,
+      &protobuf_messages_2eproto::scc_info_FiveSecData.base,
+      &protobuf_messages_2eproto::scc_info_OneMinData.base,}};
+
+static void InitDefaultsOptionDataBatch() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::_OptionDataBatch_default_instance_;
+    new (ptr) ::OptionDataBatch();
+    ::google::protobuf::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::OptionDataBatch::InitAsDefaultInstance();
+}
+
+::google::protobuf::internal::SCCInfo<1> scc_info_OptionDataBatch =
+    {{ATOMIC_VAR_INIT(::google::protobuf::internal::SCCInfoBase::kUninitialized), 1, InitDefaultsOptionDataBatch}, {
+      &protobuf_messages_2eproto::scc_info_OptionData.base,}};
 
 static void InitDefaultsUnderlyingOneMinData() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
@@ -220,14 +303,18 @@ void InitDefaults() {
   ::google::protobuf::internal::InitSCC(&scc_info_BasicMessage.base);
   ::google::protobuf::internal::InitSCC(&scc_info_Confirmation.base);
   ::google::protobuf::internal::InitSCC(&scc_info_ISBAction.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_TickData.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_FiveSecData.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_OneMinData.base);
   ::google::protobuf::internal::InitSCC(&scc_info_OptionData.base);
+  ::google::protobuf::internal::InitSCC(&scc_info_OptionDataBatch.base);
   ::google::protobuf::internal::InitSCC(&scc_info_UnderlyingOneMinData.base);
   ::google::protobuf::internal::InitSCC(&scc_info_UnderlyingAverages.base);
   ::google::protobuf::internal::InitSCC(&scc_info_UnderlyingContract.base);
   ::google::protobuf::internal::InitSCC(&scc_info_NewsEvent.base);
 }
 
-::google::protobuf::Metadata file_level_metadata[9];
+::google::protobuf::Metadata file_level_metadata[13];
 
 const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
@@ -265,11 +352,80 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ISBAction, action_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::ISBAction, data_),
   ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, timestamp_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, bid_price_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, bid_size_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, ask_price_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, ask_size_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, last_price_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, mark_price_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, volume_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, implied_vol_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, delta_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, gamma_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, vega_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, theta_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, underlying_price_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, tas_price_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, tas_quantity_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, tas_total_volume_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, tas_vwap_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, relative_to_money_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::TickData, filled_by_mm_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::FiveSecData, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::FiveSecData, time_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::FiveSecData, open_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::FiveSecData, close_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::FiveSecData, high_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::FiveSecData, low_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::FiveSecData, volume_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::FiveSecData, count_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::FiveSecData, rtm_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, time_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, open_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, close_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, high_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, low_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, candlevol_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, tradecount_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, impliedvol_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, delta_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, gamma_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, vega_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, theta_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, undprice_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, totalvol_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OneMinData, rtm_),
+  ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, data_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, symbol_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, strike_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, right_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, ticks_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, fivesecdata_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, onemindata_),
+  ~0u,  // no _has_bits_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionDataBatch, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionDataBatch, optiondatapoints_),
   ~0u,  // no _has_bits_
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::UnderlyingOneMinData, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -329,11 +485,15 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 13, -1, sizeof(::BasicMessage)},
   { 19, -1, sizeof(::Confirmation)},
   { 26, -1, sizeof(::ISBAction)},
-  { 34, -1, sizeof(::OptionData)},
-  { 40, -1, sizeof(::UnderlyingOneMinData)},
-  { 64, -1, sizeof(::UnderlyingAverages)},
-  { 76, -1, sizeof(::UnderlyingContract)},
-  { 84, -1, sizeof(::NewsEvent)},
+  { 34, -1, sizeof(::TickData)},
+  { 59, -1, sizeof(::FiveSecData)},
+  { 72, -1, sizeof(::OneMinData)},
+  { 92, -1, sizeof(::OptionData)},
+  { 103, -1, sizeof(::OptionDataBatch)},
+  { 109, -1, sizeof(::UnderlyingOneMinData)},
+  { 133, -1, sizeof(::UnderlyingAverages)},
+  { 145, -1, sizeof(::UnderlyingContract)},
+  { 153, -1, sizeof(::NewsEvent)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -341,7 +501,11 @@ static ::google::protobuf::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::google::protobuf::Message*>(&::_BasicMessage_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::_Confirmation_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::_ISBAction_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::_TickData_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::_FiveSecData_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::_OneMinData_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::_OptionData_default_instance_),
+  reinterpret_cast<const ::google::protobuf::Message*>(&::_OptionDataBatch_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::_UnderlyingOneMinData_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::_UnderlyingAverages_default_instance_),
   reinterpret_cast<const ::google::protobuf::Message*>(&::_UnderlyingContract_default_instance_),
@@ -363,7 +527,7 @@ void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) GOOGLE_PROTOBUF_ATTRIBUTE_COLD;
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 9);
+  ::google::protobuf::internal::RegisterAllTypes(file_level_metadata, 13);
 }
 
 void AddDescriptorsImpl() {
@@ -379,32 +543,56 @@ void AddDescriptorsImpl() {
       "ad\"\037\n\014BasicMessage\022\017\n\007message\030\001 \001(\t\".\n\014C"
       "onfirmation\022\016\n\006action\030\001 \001(\t\022\016\n\006status\030\002 "
       "\001(\t\"<\n\tISBAction\022\021\n\tcomponent\030\001 \001(\t\022\016\n\006a"
-      "ction\030\002 \001(\t\022\014\n\004data\030\003 \001(\t\"\032\n\nOptionData\022"
-      "\014\n\004data\030\001 \001(\t\"\277\003\n\024UnderlyingOneMinData\022\014"
-      "\n\004time\030\001 \001(\003\022\014\n\004open\030\002 \001(\001\022\014\n\004high\030\003 \001(\001"
-      "\022\013\n\003low\030\004 \001(\001\022\r\n\005close\030\005 \001(\001\022\016\n\006volume\030\006"
-      " \001(\001\022\021\n\tdailyHigh\030\007 \001(\001\022\020\n\010dailyLow\030\010 \001("
-      "\001\022\023\n\013dailyVolume\030\t \001(\001\022\027\n\017totalCallVolum"
-      "e\030\n \001(\001\022\026\n\016totalPutVolume\030\013 \001(\001\022\032\n\022index"
-      "FuturePremium\030\014 \001(\001\022\027\n\017totalTradeCount\030\r"
-      " \001(\001\022\032\n\022oneMinuteTradeRate\030\016 \001(\001\022$\n\034real"
-      "TimeHistoricalVolatility\030\017 \001(\001\022\037\n\027option"
-      "ImpliedVolatility\030\020 \001(\001\022\030\n\020callOpenInter"
-      "est\030\021 \001(\001\022\027\n\017putOpenInterest\030\022 \001(\001\022\033\n\023fu"
-      "turesOpenInterest\030\023 \001(\001\"\245\001\n\022UnderlyingAv"
-      "erages\022\021\n\tlow13Week\030\001 \001(\001\022\022\n\nhigh13Week\030"
-      "\002 \001(\001\022\021\n\tlow26week\030\003 \001(\001\022\022\n\nhigh26Week\030\004"
-      " \001(\001\022\021\n\tlow52Week\030\005 \001(\001\022\022\n\nhigh52Week\030\006 "
-      "\001(\001\022\032\n\022averageVolume90Day\030\007 \001(\001\"\211\001\n\022Unde"
-      "rlyingContract\022\016\n\006symbol\030\001 \001(\t\0221\n\022underl"
-      "ying_one_min\030\002 \003(\0132\025.UnderlyingOneMinDat"
-      "a\0220\n\023underlying_averages\030\003 \003(\0132\023.Underly"
-      "ingAverages\"V\n\tNewsEvent\022\014\n\004time\030\001 \001(\003\022\021"
-      "\n\tarticleId\030\002 \001(\t\022\020\n\010headline\030\003 \001(\t\022\026\n\016s"
-      "entimentScore\030\004 \001(\001b\006proto3"
+      "ction\030\002 \001(\t\022\014\n\004data\030\003 \001(\t\"\217\003\n\010TickData\022\021"
+      "\n\ttimestamp\030\001 \001(\003\022\021\n\tbid_price\030\002 \001(\001\022\020\n\010"
+      "bid_size\030\003 \001(\001\022\021\n\task_price\030\004 \001(\001\022\020\n\010ask"
+      "_size\030\005 \001(\001\022\022\n\nlast_price\030\006 \001(\001\022\022\n\nmark_"
+      "price\030\007 \001(\001\022\016\n\006volume\030\010 \001(\001\022\023\n\013implied_v"
+      "ol\030\t \001(\001\022\r\n\005delta\030\n \001(\001\022\r\n\005gamma\030\013 \001(\001\022\014"
+      "\n\004vega\030\014 \001(\001\022\r\n\005theta\030\r \001(\001\022\030\n\020underlyin"
+      "g_price\030\016 \001(\001\022\021\n\ttas_price\030\017 \001(\001\022\024\n\014tas_"
+      "quantity\030\020 \001(\001\022\030\n\020tas_total_volume\030\021 \001(\001"
+      "\022\020\n\010tas_vwap\030\022 \001(\001\022\031\n\021relative_to_money\030"
+      "\023 \001(\t\022\024\n\014filled_by_mm\030\024 \001(\t\"\177\n\013FiveSecDa"
+      "ta\022\014\n\004time\030\001 \001(\003\022\014\n\004open\030\002 \001(\001\022\r\n\005close\030"
+      "\003 \001(\001\022\014\n\004high\030\004 \001(\001\022\013\n\003low\030\005 \001(\001\022\016\n\006volu"
+      "me\030\006 \001(\t\022\r\n\005count\030\007 \001(\005\022\013\n\003rtm\030\010 \001(\t\"\371\001\n"
+      "\nOneMinData\022\014\n\004time\030\001 \001(\003\022\014\n\004open\030\002 \001(\001\022"
+      "\r\n\005close\030\003 \001(\001\022\014\n\004high\030\004 \001(\001\022\013\n\003low\030\005 \001("
+      "\001\022\021\n\tcandleVol\030\006 \001(\001\022\022\n\ntradeCount\030\007 \001(\001"
+      "\022\022\n\nimpliedVol\030\010 \001(\001\022\r\n\005delta\030\t \001(\001\022\r\n\005g"
+      "amma\030\n \001(\001\022\014\n\004vega\030\013 \001(\001\022\r\n\005theta\030\014 \001(\001\022"
+      "\020\n\010undPrice\030\r \001(\001\022\020\n\010totalVol\030\016 \001(\001\022\013\n\003r"
+      "tm\030\017 \001(\t\"\231\001\n\nOptionData\022\016\n\006symbol\030\001 \001(\t\022"
+      "\016\n\006strike\030\002 \001(\001\022\r\n\005right\030\003 \001(\t\022\030\n\005ticks\030"
+      "\004 \003(\0132\t.TickData\022!\n\013fiveSecData\030\005 \003(\0132\014."
+      "FiveSecData\022\037\n\noneMinData\030\006 \003(\0132\013.OneMin"
+      "Data\"8\n\017OptionDataBatch\022%\n\020optionDataPoi"
+      "nts\030\001 \003(\0132\013.OptionData\"\277\003\n\024UnderlyingOne"
+      "MinData\022\014\n\004time\030\001 \001(\003\022\014\n\004open\030\002 \001(\001\022\014\n\004h"
+      "igh\030\003 \001(\001\022\013\n\003low\030\004 \001(\001\022\r\n\005close\030\005 \001(\001\022\016\n"
+      "\006volume\030\006 \001(\001\022\021\n\tdailyHigh\030\007 \001(\001\022\020\n\010dail"
+      "yLow\030\010 \001(\001\022\023\n\013dailyVolume\030\t \001(\001\022\027\n\017total"
+      "CallVolume\030\n \001(\001\022\026\n\016totalPutVolume\030\013 \001(\001"
+      "\022\032\n\022indexFuturePremium\030\014 \001(\001\022\027\n\017totalTra"
+      "deCount\030\r \001(\001\022\032\n\022oneMinuteTradeRate\030\016 \001("
+      "\001\022$\n\034realTimeHistoricalVolatility\030\017 \001(\001\022"
+      "\037\n\027optionImpliedVolatility\030\020 \001(\001\022\030\n\020call"
+      "OpenInterest\030\021 \001(\001\022\027\n\017putOpenInterest\030\022 "
+      "\001(\001\022\033\n\023futuresOpenInterest\030\023 \001(\001\"\245\001\n\022Und"
+      "erlyingAverages\022\021\n\tlow13Week\030\001 \001(\001\022\022\n\nhi"
+      "gh13Week\030\002 \001(\001\022\021\n\tlow26week\030\003 \001(\001\022\022\n\nhig"
+      "h26Week\030\004 \001(\001\022\021\n\tlow52Week\030\005 \001(\001\022\022\n\nhigh"
+      "52Week\030\006 \001(\001\022\032\n\022averageVolume90Day\030\007 \001(\001"
+      "\"\211\001\n\022UnderlyingContract\022\016\n\006symbol\030\001 \001(\t\022"
+      "1\n\022underlying_one_min\030\002 \003(\0132\025.Underlying"
+      "OneMinData\0220\n\023underlying_averages\030\003 \003(\0132"
+      "\023.UnderlyingAverages\"V\n\tNewsEvent\022\014\n\004tim"
+      "e\030\001 \001(\003\022\021\n\tarticleId\030\002 \001(\t\022\020\n\010headline\030\003"
+      " \001(\t\022\026\n\016sentimentScore\030\004 \001(\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1307);
+      descriptor, 2276);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "messages.proto", &protobuf_RegisterTypes);
 }
@@ -1965,10 +2153,2184 @@ void ISBAction::InternalSwap(ISBAction* other) {
 
 // ===================================================================
 
+void TickData::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int TickData::kTimestampFieldNumber;
+const int TickData::kBidPriceFieldNumber;
+const int TickData::kBidSizeFieldNumber;
+const int TickData::kAskPriceFieldNumber;
+const int TickData::kAskSizeFieldNumber;
+const int TickData::kLastPriceFieldNumber;
+const int TickData::kMarkPriceFieldNumber;
+const int TickData::kVolumeFieldNumber;
+const int TickData::kImpliedVolFieldNumber;
+const int TickData::kDeltaFieldNumber;
+const int TickData::kGammaFieldNumber;
+const int TickData::kVegaFieldNumber;
+const int TickData::kThetaFieldNumber;
+const int TickData::kUnderlyingPriceFieldNumber;
+const int TickData::kTasPriceFieldNumber;
+const int TickData::kTasQuantityFieldNumber;
+const int TickData::kTasTotalVolumeFieldNumber;
+const int TickData::kTasVwapFieldNumber;
+const int TickData::kRelativeToMoneyFieldNumber;
+const int TickData::kFilledByMmFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+TickData::TickData()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_messages_2eproto::scc_info_TickData.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:TickData)
+}
+TickData::TickData(const TickData& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  relative_to_money_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.relative_to_money().size() > 0) {
+    relative_to_money_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.relative_to_money_);
+  }
+  filled_by_mm_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.filled_by_mm().size() > 0) {
+    filled_by_mm_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.filled_by_mm_);
+  }
+  ::memcpy(&timestamp_, &from.timestamp_,
+    static_cast<size_t>(reinterpret_cast<char*>(&tas_vwap_) -
+    reinterpret_cast<char*>(&timestamp_)) + sizeof(tas_vwap_));
+  // @@protoc_insertion_point(copy_constructor:TickData)
+}
+
+void TickData::SharedCtor() {
+  relative_to_money_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  filled_by_mm_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&timestamp_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&tas_vwap_) -
+      reinterpret_cast<char*>(&timestamp_)) + sizeof(tas_vwap_));
+}
+
+TickData::~TickData() {
+  // @@protoc_insertion_point(destructor:TickData)
+  SharedDtor();
+}
+
+void TickData::SharedDtor() {
+  relative_to_money_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  filled_by_mm_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void TickData::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* TickData::descriptor() {
+  ::protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const TickData& TickData::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_messages_2eproto::scc_info_TickData.base);
+  return *internal_default_instance();
+}
+
+
+void TickData::Clear() {
+// @@protoc_insertion_point(message_clear_start:TickData)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  relative_to_money_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  filled_by_mm_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&timestamp_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&tas_vwap_) -
+      reinterpret_cast<char*>(&timestamp_)) + sizeof(tas_vwap_));
+  _internal_metadata_.Clear();
+}
+
+bool TickData::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:TickData)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(16383u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // int64 timestamp = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &timestamp_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double bid_price = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(17u /* 17 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &bid_price_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double bid_size = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(25u /* 25 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &bid_size_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double ask_price = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(33u /* 33 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &ask_price_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double ask_size = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &ask_size_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double last_price = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(49u /* 49 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &last_price_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double mark_price = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(57u /* 57 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &mark_price_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double volume = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(65u /* 65 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &volume_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double implied_vol = 9;
+      case 9: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(73u /* 73 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &implied_vol_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double delta = 10;
+      case 10: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(81u /* 81 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &delta_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double gamma = 11;
+      case 11: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(89u /* 89 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &gamma_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double vega = 12;
+      case 12: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(97u /* 97 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &vega_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double theta = 13;
+      case 13: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(105u /* 105 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &theta_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double underlying_price = 14;
+      case 14: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(113u /* 113 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &underlying_price_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double tas_price = 15;
+      case 15: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(121u /* 121 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &tas_price_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double tas_quantity = 16;
+      case 16: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(129u /* 129 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &tas_quantity_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double tas_total_volume = 17;
+      case 17: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(137u /* 137 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &tas_total_volume_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double tas_vwap = 18;
+      case 18: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(145u /* 145 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &tas_vwap_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string relative_to_money = 19;
+      case 19: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(154u /* 154 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_relative_to_money()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->relative_to_money().data(), static_cast<int>(this->relative_to_money().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "TickData.relative_to_money"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string filled_by_mm = 20;
+      case 20: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(162u /* 162 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_filled_by_mm()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->filled_by_mm().data(), static_cast<int>(this->filled_by_mm().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "TickData.filled_by_mm"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:TickData)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:TickData)
+  return false;
+#undef DO_
+}
+
+void TickData::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:TickData)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int64 timestamp = 1;
+  if (this->timestamp() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->timestamp(), output);
+  }
+
+  // double bid_price = 2;
+  if (this->bid_price() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->bid_price(), output);
+  }
+
+  // double bid_size = 3;
+  if (this->bid_size() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->bid_size(), output);
+  }
+
+  // double ask_price = 4;
+  if (this->ask_price() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->ask_price(), output);
+  }
+
+  // double ask_size = 5;
+  if (this->ask_size() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->ask_size(), output);
+  }
+
+  // double last_price = 6;
+  if (this->last_price() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(6, this->last_price(), output);
+  }
+
+  // double mark_price = 7;
+  if (this->mark_price() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(7, this->mark_price(), output);
+  }
+
+  // double volume = 8;
+  if (this->volume() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(8, this->volume(), output);
+  }
+
+  // double implied_vol = 9;
+  if (this->implied_vol() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(9, this->implied_vol(), output);
+  }
+
+  // double delta = 10;
+  if (this->delta() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(10, this->delta(), output);
+  }
+
+  // double gamma = 11;
+  if (this->gamma() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(11, this->gamma(), output);
+  }
+
+  // double vega = 12;
+  if (this->vega() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(12, this->vega(), output);
+  }
+
+  // double theta = 13;
+  if (this->theta() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(13, this->theta(), output);
+  }
+
+  // double underlying_price = 14;
+  if (this->underlying_price() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(14, this->underlying_price(), output);
+  }
+
+  // double tas_price = 15;
+  if (this->tas_price() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(15, this->tas_price(), output);
+  }
+
+  // double tas_quantity = 16;
+  if (this->tas_quantity() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(16, this->tas_quantity(), output);
+  }
+
+  // double tas_total_volume = 17;
+  if (this->tas_total_volume() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(17, this->tas_total_volume(), output);
+  }
+
+  // double tas_vwap = 18;
+  if (this->tas_vwap() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(18, this->tas_vwap(), output);
+  }
+
+  // string relative_to_money = 19;
+  if (this->relative_to_money().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->relative_to_money().data(), static_cast<int>(this->relative_to_money().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "TickData.relative_to_money");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      19, this->relative_to_money(), output);
+  }
+
+  // string filled_by_mm = 20;
+  if (this->filled_by_mm().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->filled_by_mm().data(), static_cast<int>(this->filled_by_mm().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "TickData.filled_by_mm");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      20, this->filled_by_mm(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:TickData)
+}
+
+::google::protobuf::uint8* TickData::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:TickData)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int64 timestamp = 1;
+  if (this->timestamp() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->timestamp(), target);
+  }
+
+  // double bid_price = 2;
+  if (this->bid_price() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->bid_price(), target);
+  }
+
+  // double bid_size = 3;
+  if (this->bid_size() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->bid_size(), target);
+  }
+
+  // double ask_price = 4;
+  if (this->ask_price() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->ask_price(), target);
+  }
+
+  // double ask_size = 5;
+  if (this->ask_size() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->ask_size(), target);
+  }
+
+  // double last_price = 6;
+  if (this->last_price() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(6, this->last_price(), target);
+  }
+
+  // double mark_price = 7;
+  if (this->mark_price() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(7, this->mark_price(), target);
+  }
+
+  // double volume = 8;
+  if (this->volume() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(8, this->volume(), target);
+  }
+
+  // double implied_vol = 9;
+  if (this->implied_vol() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(9, this->implied_vol(), target);
+  }
+
+  // double delta = 10;
+  if (this->delta() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(10, this->delta(), target);
+  }
+
+  // double gamma = 11;
+  if (this->gamma() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(11, this->gamma(), target);
+  }
+
+  // double vega = 12;
+  if (this->vega() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(12, this->vega(), target);
+  }
+
+  // double theta = 13;
+  if (this->theta() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(13, this->theta(), target);
+  }
+
+  // double underlying_price = 14;
+  if (this->underlying_price() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(14, this->underlying_price(), target);
+  }
+
+  // double tas_price = 15;
+  if (this->tas_price() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(15, this->tas_price(), target);
+  }
+
+  // double tas_quantity = 16;
+  if (this->tas_quantity() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(16, this->tas_quantity(), target);
+  }
+
+  // double tas_total_volume = 17;
+  if (this->tas_total_volume() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(17, this->tas_total_volume(), target);
+  }
+
+  // double tas_vwap = 18;
+  if (this->tas_vwap() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(18, this->tas_vwap(), target);
+  }
+
+  // string relative_to_money = 19;
+  if (this->relative_to_money().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->relative_to_money().data(), static_cast<int>(this->relative_to_money().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "TickData.relative_to_money");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        19, this->relative_to_money(), target);
+  }
+
+  // string filled_by_mm = 20;
+  if (this->filled_by_mm().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->filled_by_mm().data(), static_cast<int>(this->filled_by_mm().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "TickData.filled_by_mm");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        20, this->filled_by_mm(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:TickData)
+  return target;
+}
+
+size_t TickData::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:TickData)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // string relative_to_money = 19;
+  if (this->relative_to_money().size() > 0) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->relative_to_money());
+  }
+
+  // string filled_by_mm = 20;
+  if (this->filled_by_mm().size() > 0) {
+    total_size += 2 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->filled_by_mm());
+  }
+
+  // int64 timestamp = 1;
+  if (this->timestamp() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->timestamp());
+  }
+
+  // double bid_price = 2;
+  if (this->bid_price() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double bid_size = 3;
+  if (this->bid_size() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double ask_price = 4;
+  if (this->ask_price() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double ask_size = 5;
+  if (this->ask_size() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double last_price = 6;
+  if (this->last_price() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double mark_price = 7;
+  if (this->mark_price() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double volume = 8;
+  if (this->volume() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double implied_vol = 9;
+  if (this->implied_vol() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double delta = 10;
+  if (this->delta() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double gamma = 11;
+  if (this->gamma() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double vega = 12;
+  if (this->vega() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double theta = 13;
+  if (this->theta() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double underlying_price = 14;
+  if (this->underlying_price() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double tas_price = 15;
+  if (this->tas_price() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double tas_quantity = 16;
+  if (this->tas_quantity() != 0) {
+    total_size += 2 + 8;
+  }
+
+  // double tas_total_volume = 17;
+  if (this->tas_total_volume() != 0) {
+    total_size += 2 + 8;
+  }
+
+  // double tas_vwap = 18;
+  if (this->tas_vwap() != 0) {
+    total_size += 2 + 8;
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void TickData::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:TickData)
+  GOOGLE_DCHECK_NE(&from, this);
+  const TickData* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const TickData>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:TickData)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:TickData)
+    MergeFrom(*source);
+  }
+}
+
+void TickData::MergeFrom(const TickData& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:TickData)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.relative_to_money().size() > 0) {
+
+    relative_to_money_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.relative_to_money_);
+  }
+  if (from.filled_by_mm().size() > 0) {
+
+    filled_by_mm_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.filled_by_mm_);
+  }
+  if (from.timestamp() != 0) {
+    set_timestamp(from.timestamp());
+  }
+  if (from.bid_price() != 0) {
+    set_bid_price(from.bid_price());
+  }
+  if (from.bid_size() != 0) {
+    set_bid_size(from.bid_size());
+  }
+  if (from.ask_price() != 0) {
+    set_ask_price(from.ask_price());
+  }
+  if (from.ask_size() != 0) {
+    set_ask_size(from.ask_size());
+  }
+  if (from.last_price() != 0) {
+    set_last_price(from.last_price());
+  }
+  if (from.mark_price() != 0) {
+    set_mark_price(from.mark_price());
+  }
+  if (from.volume() != 0) {
+    set_volume(from.volume());
+  }
+  if (from.implied_vol() != 0) {
+    set_implied_vol(from.implied_vol());
+  }
+  if (from.delta() != 0) {
+    set_delta(from.delta());
+  }
+  if (from.gamma() != 0) {
+    set_gamma(from.gamma());
+  }
+  if (from.vega() != 0) {
+    set_vega(from.vega());
+  }
+  if (from.theta() != 0) {
+    set_theta(from.theta());
+  }
+  if (from.underlying_price() != 0) {
+    set_underlying_price(from.underlying_price());
+  }
+  if (from.tas_price() != 0) {
+    set_tas_price(from.tas_price());
+  }
+  if (from.tas_quantity() != 0) {
+    set_tas_quantity(from.tas_quantity());
+  }
+  if (from.tas_total_volume() != 0) {
+    set_tas_total_volume(from.tas_total_volume());
+  }
+  if (from.tas_vwap() != 0) {
+    set_tas_vwap(from.tas_vwap());
+  }
+}
+
+void TickData::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:TickData)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void TickData::CopyFrom(const TickData& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:TickData)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool TickData::IsInitialized() const {
+  return true;
+}
+
+void TickData::Swap(TickData* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void TickData::InternalSwap(TickData* other) {
+  using std::swap;
+  relative_to_money_.Swap(&other->relative_to_money_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  filled_by_mm_.Swap(&other->filled_by_mm_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(timestamp_, other->timestamp_);
+  swap(bid_price_, other->bid_price_);
+  swap(bid_size_, other->bid_size_);
+  swap(ask_price_, other->ask_price_);
+  swap(ask_size_, other->ask_size_);
+  swap(last_price_, other->last_price_);
+  swap(mark_price_, other->mark_price_);
+  swap(volume_, other->volume_);
+  swap(implied_vol_, other->implied_vol_);
+  swap(delta_, other->delta_);
+  swap(gamma_, other->gamma_);
+  swap(vega_, other->vega_);
+  swap(theta_, other->theta_);
+  swap(underlying_price_, other->underlying_price_);
+  swap(tas_price_, other->tas_price_);
+  swap(tas_quantity_, other->tas_quantity_);
+  swap(tas_total_volume_, other->tas_total_volume_);
+  swap(tas_vwap_, other->tas_vwap_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata TickData::GetMetadata() const {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void FiveSecData::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int FiveSecData::kTimeFieldNumber;
+const int FiveSecData::kOpenFieldNumber;
+const int FiveSecData::kCloseFieldNumber;
+const int FiveSecData::kHighFieldNumber;
+const int FiveSecData::kLowFieldNumber;
+const int FiveSecData::kVolumeFieldNumber;
+const int FiveSecData::kCountFieldNumber;
+const int FiveSecData::kRtmFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+FiveSecData::FiveSecData()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_messages_2eproto::scc_info_FiveSecData.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:FiveSecData)
+}
+FiveSecData::FiveSecData(const FiveSecData& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  volume_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.volume().size() > 0) {
+    volume_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.volume_);
+  }
+  rtm_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.rtm().size() > 0) {
+    rtm_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.rtm_);
+  }
+  ::memcpy(&time_, &from.time_,
+    static_cast<size_t>(reinterpret_cast<char*>(&count_) -
+    reinterpret_cast<char*>(&time_)) + sizeof(count_));
+  // @@protoc_insertion_point(copy_constructor:FiveSecData)
+}
+
+void FiveSecData::SharedCtor() {
+  volume_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  rtm_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&time_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&count_) -
+      reinterpret_cast<char*>(&time_)) + sizeof(count_));
+}
+
+FiveSecData::~FiveSecData() {
+  // @@protoc_insertion_point(destructor:FiveSecData)
+  SharedDtor();
+}
+
+void FiveSecData::SharedDtor() {
+  volume_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  rtm_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void FiveSecData::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* FiveSecData::descriptor() {
+  ::protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const FiveSecData& FiveSecData::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_messages_2eproto::scc_info_FiveSecData.base);
+  return *internal_default_instance();
+}
+
+
+void FiveSecData::Clear() {
+// @@protoc_insertion_point(message_clear_start:FiveSecData)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  volume_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  rtm_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&time_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&count_) -
+      reinterpret_cast<char*>(&time_)) + sizeof(count_));
+  _internal_metadata_.Clear();
+}
+
+bool FiveSecData::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:FiveSecData)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // int64 time = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &time_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double open = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(17u /* 17 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &open_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double close = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(25u /* 25 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &close_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double high = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(33u /* 33 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &high_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double low = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &low_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string volume = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_volume()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->volume().data(), static_cast<int>(this->volume().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "FiveSecData.volume"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // int32 count = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(56u /* 56 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &count_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string rtm = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(66u /* 66 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_rtm()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->rtm().data(), static_cast<int>(this->rtm().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "FiveSecData.rtm"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:FiveSecData)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:FiveSecData)
+  return false;
+#undef DO_
+}
+
+void FiveSecData::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:FiveSecData)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int64 time = 1;
+  if (this->time() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->time(), output);
+  }
+
+  // double open = 2;
+  if (this->open() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->open(), output);
+  }
+
+  // double close = 3;
+  if (this->close() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->close(), output);
+  }
+
+  // double high = 4;
+  if (this->high() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->high(), output);
+  }
+
+  // double low = 5;
+  if (this->low() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->low(), output);
+  }
+
+  // string volume = 6;
+  if (this->volume().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->volume().data(), static_cast<int>(this->volume().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "FiveSecData.volume");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      6, this->volume(), output);
+  }
+
+  // int32 count = 7;
+  if (this->count() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(7, this->count(), output);
+  }
+
+  // string rtm = 8;
+  if (this->rtm().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->rtm().data(), static_cast<int>(this->rtm().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "FiveSecData.rtm");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      8, this->rtm(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:FiveSecData)
+}
+
+::google::protobuf::uint8* FiveSecData::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:FiveSecData)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int64 time = 1;
+  if (this->time() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->time(), target);
+  }
+
+  // double open = 2;
+  if (this->open() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->open(), target);
+  }
+
+  // double close = 3;
+  if (this->close() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->close(), target);
+  }
+
+  // double high = 4;
+  if (this->high() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->high(), target);
+  }
+
+  // double low = 5;
+  if (this->low() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->low(), target);
+  }
+
+  // string volume = 6;
+  if (this->volume().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->volume().data(), static_cast<int>(this->volume().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "FiveSecData.volume");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        6, this->volume(), target);
+  }
+
+  // int32 count = 7;
+  if (this->count() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(7, this->count(), target);
+  }
+
+  // string rtm = 8;
+  if (this->rtm().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->rtm().data(), static_cast<int>(this->rtm().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "FiveSecData.rtm");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        8, this->rtm(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:FiveSecData)
+  return target;
+}
+
+size_t FiveSecData::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:FiveSecData)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // string volume = 6;
+  if (this->volume().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->volume());
+  }
+
+  // string rtm = 8;
+  if (this->rtm().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->rtm());
+  }
+
+  // int64 time = 1;
+  if (this->time() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->time());
+  }
+
+  // double open = 2;
+  if (this->open() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double close = 3;
+  if (this->close() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double high = 4;
+  if (this->high() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double low = 5;
+  if (this->low() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // int32 count = 7;
+  if (this->count() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->count());
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void FiveSecData::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:FiveSecData)
+  GOOGLE_DCHECK_NE(&from, this);
+  const FiveSecData* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const FiveSecData>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:FiveSecData)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:FiveSecData)
+    MergeFrom(*source);
+  }
+}
+
+void FiveSecData::MergeFrom(const FiveSecData& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:FiveSecData)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.volume().size() > 0) {
+
+    volume_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.volume_);
+  }
+  if (from.rtm().size() > 0) {
+
+    rtm_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.rtm_);
+  }
+  if (from.time() != 0) {
+    set_time(from.time());
+  }
+  if (from.open() != 0) {
+    set_open(from.open());
+  }
+  if (from.close() != 0) {
+    set_close(from.close());
+  }
+  if (from.high() != 0) {
+    set_high(from.high());
+  }
+  if (from.low() != 0) {
+    set_low(from.low());
+  }
+  if (from.count() != 0) {
+    set_count(from.count());
+  }
+}
+
+void FiveSecData::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:FiveSecData)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void FiveSecData::CopyFrom(const FiveSecData& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:FiveSecData)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool FiveSecData::IsInitialized() const {
+  return true;
+}
+
+void FiveSecData::Swap(FiveSecData* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void FiveSecData::InternalSwap(FiveSecData* other) {
+  using std::swap;
+  volume_.Swap(&other->volume_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  rtm_.Swap(&other->rtm_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(time_, other->time_);
+  swap(open_, other->open_);
+  swap(close_, other->close_);
+  swap(high_, other->high_);
+  swap(low_, other->low_);
+  swap(count_, other->count_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata FiveSecData::GetMetadata() const {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void OneMinData::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int OneMinData::kTimeFieldNumber;
+const int OneMinData::kOpenFieldNumber;
+const int OneMinData::kCloseFieldNumber;
+const int OneMinData::kHighFieldNumber;
+const int OneMinData::kLowFieldNumber;
+const int OneMinData::kCandleVolFieldNumber;
+const int OneMinData::kTradeCountFieldNumber;
+const int OneMinData::kImpliedVolFieldNumber;
+const int OneMinData::kDeltaFieldNumber;
+const int OneMinData::kGammaFieldNumber;
+const int OneMinData::kVegaFieldNumber;
+const int OneMinData::kThetaFieldNumber;
+const int OneMinData::kUndPriceFieldNumber;
+const int OneMinData::kTotalVolFieldNumber;
+const int OneMinData::kRtmFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+OneMinData::OneMinData()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_messages_2eproto::scc_info_OneMinData.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:OneMinData)
+}
+OneMinData::OneMinData(const OneMinData& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  rtm_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.rtm().size() > 0) {
+    rtm_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.rtm_);
+  }
+  ::memcpy(&time_, &from.time_,
+    static_cast<size_t>(reinterpret_cast<char*>(&totalvol_) -
+    reinterpret_cast<char*>(&time_)) + sizeof(totalvol_));
+  // @@protoc_insertion_point(copy_constructor:OneMinData)
+}
+
+void OneMinData::SharedCtor() {
+  rtm_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&time_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&totalvol_) -
+      reinterpret_cast<char*>(&time_)) + sizeof(totalvol_));
+}
+
+OneMinData::~OneMinData() {
+  // @@protoc_insertion_point(destructor:OneMinData)
+  SharedDtor();
+}
+
+void OneMinData::SharedDtor() {
+  rtm_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+
+void OneMinData::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* OneMinData::descriptor() {
+  ::protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const OneMinData& OneMinData::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_messages_2eproto::scc_info_OneMinData.base);
+  return *internal_default_instance();
+}
+
+
+void OneMinData::Clear() {
+// @@protoc_insertion_point(message_clear_start:OneMinData)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  rtm_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ::memset(&time_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&totalvol_) -
+      reinterpret_cast<char*>(&time_)) + sizeof(totalvol_));
+  _internal_metadata_.Clear();
+}
+
+bool OneMinData::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:OneMinData)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // int64 time = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(8u /* 8 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &time_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double open = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(17u /* 17 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &open_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double close = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(25u /* 25 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &close_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double high = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(33u /* 33 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &high_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double low = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(41u /* 41 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &low_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double candleVol = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(49u /* 49 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &candlevol_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double tradeCount = 7;
+      case 7: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(57u /* 57 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &tradecount_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double impliedVol = 8;
+      case 8: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(65u /* 65 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &impliedvol_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double delta = 9;
+      case 9: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(73u /* 73 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &delta_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double gamma = 10;
+      case 10: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(81u /* 81 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &gamma_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double vega = 11;
+      case 11: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(89u /* 89 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &vega_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double theta = 12;
+      case 12: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(97u /* 97 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &theta_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double undPrice = 13;
+      case 13: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(105u /* 105 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &undprice_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double totalVol = 14;
+      case 14: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(113u /* 113 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &totalvol_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string rtm = 15;
+      case 15: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(122u /* 122 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_rtm()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->rtm().data(), static_cast<int>(this->rtm().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "OneMinData.rtm"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:OneMinData)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:OneMinData)
+  return false;
+#undef DO_
+}
+
+void OneMinData::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:OneMinData)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int64 time = 1;
+  if (this->time() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->time(), output);
+  }
+
+  // double open = 2;
+  if (this->open() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->open(), output);
+  }
+
+  // double close = 3;
+  if (this->close() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(3, this->close(), output);
+  }
+
+  // double high = 4;
+  if (this->high() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(4, this->high(), output);
+  }
+
+  // double low = 5;
+  if (this->low() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(5, this->low(), output);
+  }
+
+  // double candleVol = 6;
+  if (this->candlevol() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(6, this->candlevol(), output);
+  }
+
+  // double tradeCount = 7;
+  if (this->tradecount() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(7, this->tradecount(), output);
+  }
+
+  // double impliedVol = 8;
+  if (this->impliedvol() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(8, this->impliedvol(), output);
+  }
+
+  // double delta = 9;
+  if (this->delta() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(9, this->delta(), output);
+  }
+
+  // double gamma = 10;
+  if (this->gamma() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(10, this->gamma(), output);
+  }
+
+  // double vega = 11;
+  if (this->vega() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(11, this->vega(), output);
+  }
+
+  // double theta = 12;
+  if (this->theta() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(12, this->theta(), output);
+  }
+
+  // double undPrice = 13;
+  if (this->undprice() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(13, this->undprice(), output);
+  }
+
+  // double totalVol = 14;
+  if (this->totalvol() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(14, this->totalvol(), output);
+  }
+
+  // string rtm = 15;
+  if (this->rtm().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->rtm().data(), static_cast<int>(this->rtm().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "OneMinData.rtm");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      15, this->rtm(), output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:OneMinData)
+}
+
+::google::protobuf::uint8* OneMinData::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:OneMinData)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // int64 time = 1;
+  if (this->time() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->time(), target);
+  }
+
+  // double open = 2;
+  if (this->open() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->open(), target);
+  }
+
+  // double close = 3;
+  if (this->close() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(3, this->close(), target);
+  }
+
+  // double high = 4;
+  if (this->high() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(4, this->high(), target);
+  }
+
+  // double low = 5;
+  if (this->low() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(5, this->low(), target);
+  }
+
+  // double candleVol = 6;
+  if (this->candlevol() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(6, this->candlevol(), target);
+  }
+
+  // double tradeCount = 7;
+  if (this->tradecount() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(7, this->tradecount(), target);
+  }
+
+  // double impliedVol = 8;
+  if (this->impliedvol() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(8, this->impliedvol(), target);
+  }
+
+  // double delta = 9;
+  if (this->delta() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(9, this->delta(), target);
+  }
+
+  // double gamma = 10;
+  if (this->gamma() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(10, this->gamma(), target);
+  }
+
+  // double vega = 11;
+  if (this->vega() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(11, this->vega(), target);
+  }
+
+  // double theta = 12;
+  if (this->theta() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(12, this->theta(), target);
+  }
+
+  // double undPrice = 13;
+  if (this->undprice() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(13, this->undprice(), target);
+  }
+
+  // double totalVol = 14;
+  if (this->totalvol() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(14, this->totalvol(), target);
+  }
+
+  // string rtm = 15;
+  if (this->rtm().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->rtm().data(), static_cast<int>(this->rtm().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "OneMinData.rtm");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        15, this->rtm(), target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:OneMinData)
+  return target;
+}
+
+size_t OneMinData::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:OneMinData)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // string rtm = 15;
+  if (this->rtm().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->rtm());
+  }
+
+  // int64 time = 1;
+  if (this->time() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int64Size(
+        this->time());
+  }
+
+  // double open = 2;
+  if (this->open() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double close = 3;
+  if (this->close() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double high = 4;
+  if (this->high() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double low = 5;
+  if (this->low() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double candleVol = 6;
+  if (this->candlevol() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double tradeCount = 7;
+  if (this->tradecount() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double impliedVol = 8;
+  if (this->impliedvol() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double delta = 9;
+  if (this->delta() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double gamma = 10;
+  if (this->gamma() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double vega = 11;
+  if (this->vega() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double theta = 12;
+  if (this->theta() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double undPrice = 13;
+  if (this->undprice() != 0) {
+    total_size += 1 + 8;
+  }
+
+  // double totalVol = 14;
+  if (this->totalvol() != 0) {
+    total_size += 1 + 8;
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void OneMinData::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:OneMinData)
+  GOOGLE_DCHECK_NE(&from, this);
+  const OneMinData* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const OneMinData>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:OneMinData)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:OneMinData)
+    MergeFrom(*source);
+  }
+}
+
+void OneMinData::MergeFrom(const OneMinData& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:OneMinData)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (from.rtm().size() > 0) {
+
+    rtm_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.rtm_);
+  }
+  if (from.time() != 0) {
+    set_time(from.time());
+  }
+  if (from.open() != 0) {
+    set_open(from.open());
+  }
+  if (from.close() != 0) {
+    set_close(from.close());
+  }
+  if (from.high() != 0) {
+    set_high(from.high());
+  }
+  if (from.low() != 0) {
+    set_low(from.low());
+  }
+  if (from.candlevol() != 0) {
+    set_candlevol(from.candlevol());
+  }
+  if (from.tradecount() != 0) {
+    set_tradecount(from.tradecount());
+  }
+  if (from.impliedvol() != 0) {
+    set_impliedvol(from.impliedvol());
+  }
+  if (from.delta() != 0) {
+    set_delta(from.delta());
+  }
+  if (from.gamma() != 0) {
+    set_gamma(from.gamma());
+  }
+  if (from.vega() != 0) {
+    set_vega(from.vega());
+  }
+  if (from.theta() != 0) {
+    set_theta(from.theta());
+  }
+  if (from.undprice() != 0) {
+    set_undprice(from.undprice());
+  }
+  if (from.totalvol() != 0) {
+    set_totalvol(from.totalvol());
+  }
+}
+
+void OneMinData::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:OneMinData)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void OneMinData::CopyFrom(const OneMinData& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:OneMinData)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool OneMinData::IsInitialized() const {
+  return true;
+}
+
+void OneMinData::Swap(OneMinData* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void OneMinData::InternalSwap(OneMinData* other) {
+  using std::swap;
+  rtm_.Swap(&other->rtm_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(time_, other->time_);
+  swap(open_, other->open_);
+  swap(close_, other->close_);
+  swap(high_, other->high_);
+  swap(low_, other->low_);
+  swap(candlevol_, other->candlevol_);
+  swap(tradecount_, other->tradecount_);
+  swap(impliedvol_, other->impliedvol_);
+  swap(delta_, other->delta_);
+  swap(gamma_, other->gamma_);
+  swap(vega_, other->vega_);
+  swap(theta_, other->theta_);
+  swap(undprice_, other->undprice_);
+  swap(totalvol_, other->totalvol_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata OneMinData::GetMetadata() const {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
 void OptionData::InitAsDefaultInstance() {
 }
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
-const int OptionData::kDataFieldNumber;
+const int OptionData::kSymbolFieldNumber;
+const int OptionData::kStrikeFieldNumber;
+const int OptionData::kRightFieldNumber;
+const int OptionData::kTicksFieldNumber;
+const int OptionData::kFiveSecDataFieldNumber;
+const int OptionData::kOneMinDataFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 OptionData::OptionData()
@@ -1980,17 +4342,27 @@ OptionData::OptionData()
 }
 OptionData::OptionData(const OptionData& from)
   : ::google::protobuf::Message(),
-      _internal_metadata_(NULL) {
+      _internal_metadata_(NULL),
+      ticks_(from.ticks_),
+      fivesecdata_(from.fivesecdata_),
+      onemindata_(from.onemindata_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
-  data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.data().size() > 0) {
-    data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
+  symbol_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.symbol().size() > 0) {
+    symbol_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.symbol_);
   }
+  right_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.right().size() > 0) {
+    right_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.right_);
+  }
+  strike_ = from.strike_;
   // @@protoc_insertion_point(copy_constructor:OptionData)
 }
 
 void OptionData::SharedCtor() {
-  data_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  symbol_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  right_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  strike_ = 0;
 }
 
 OptionData::~OptionData() {
@@ -1999,7 +4371,8 @@ OptionData::~OptionData() {
 }
 
 void OptionData::SharedDtor() {
-  data_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  symbol_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  right_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void OptionData::SetCachedSize(int size) const {
@@ -2022,7 +4395,12 @@ void OptionData::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  data_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  ticks_.Clear();
+  fivesecdata_.Clear();
+  onemindata_.Clear();
+  symbol_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  right_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  strike_ = 0;
   _internal_metadata_.Clear();
 }
 
@@ -2036,16 +4414,82 @@ bool OptionData::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // string data = 1;
+      // string symbol = 1;
       case 1: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_data()));
+                input, this->mutable_symbol()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->data().data(), static_cast<int>(this->data().length()),
+            this->symbol().data(), static_cast<int>(this->symbol().length()),
             ::google::protobuf::internal::WireFormatLite::PARSE,
-            "OptionData.data"));
+            "OptionData.symbol"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // double strike = 2;
+      case 2: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(17u /* 17 & 0xFF */)) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &strike_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string right = 3;
+      case 3: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(26u /* 26 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_right()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->right().data(), static_cast<int>(this->right().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "OptionData.right"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .TickData ticks = 4;
+      case 4: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_ticks()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .FiveSecData fiveSecData = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_fivesecdata()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .OneMinData oneMinData = 6;
+      case 6: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_onemindata()));
         } else {
           goto handle_unusual;
         }
@@ -2078,14 +4522,56 @@ void OptionData::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string data = 1;
-  if (this->data().size() > 0) {
+  // string symbol = 1;
+  if (this->symbol().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->data().data(), static_cast<int>(this->data().length()),
+      this->symbol().data(), static_cast<int>(this->symbol().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "OptionData.data");
+      "OptionData.symbol");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->data(), output);
+      1, this->symbol(), output);
+  }
+
+  // double strike = 2;
+  if (this->strike() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(2, this->strike(), output);
+  }
+
+  // string right = 3;
+  if (this->right().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->right().data(), static_cast<int>(this->right().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "OptionData.right");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      3, this->right(), output);
+  }
+
+  // repeated .TickData ticks = 4;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->ticks_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      4,
+      this->ticks(static_cast<int>(i)),
+      output);
+  }
+
+  // repeated .FiveSecData fiveSecData = 5;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->fivesecdata_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      5,
+      this->fivesecdata(static_cast<int>(i)),
+      output);
+  }
+
+  // repeated .OneMinData oneMinData = 6;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->onemindata_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      6,
+      this->onemindata(static_cast<int>(i)),
+      output);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -2102,15 +4588,55 @@ void OptionData::SerializeWithCachedSizes(
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string data = 1;
-  if (this->data().size() > 0) {
+  // string symbol = 1;
+  if (this->symbol().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->data().data(), static_cast<int>(this->data().length()),
+      this->symbol().data(), static_cast<int>(this->symbol().length()),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "OptionData.data");
+      "OptionData.symbol");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->data(), target);
+        1, this->symbol(), target);
+  }
+
+  // double strike = 2;
+  if (this->strike() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(2, this->strike(), target);
+  }
+
+  // string right = 3;
+  if (this->right().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->right().data(), static_cast<int>(this->right().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "OptionData.right");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->right(), target);
+  }
+
+  // repeated .TickData ticks = 4;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->ticks_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        4, this->ticks(static_cast<int>(i)), deterministic, target);
+  }
+
+  // repeated .FiveSecData fiveSecData = 5;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->fivesecdata_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        5, this->fivesecdata(static_cast<int>(i)), deterministic, target);
+  }
+
+  // repeated .OneMinData oneMinData = 6;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->onemindata_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        6, this->onemindata(static_cast<int>(i)), deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -2130,11 +4656,56 @@ size_t OptionData::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // string data = 1;
-  if (this->data().size() > 0) {
+  // repeated .TickData ticks = 4;
+  {
+    unsigned int count = static_cast<unsigned int>(this->ticks_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->ticks(static_cast<int>(i)));
+    }
+  }
+
+  // repeated .FiveSecData fiveSecData = 5;
+  {
+    unsigned int count = static_cast<unsigned int>(this->fivesecdata_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->fivesecdata(static_cast<int>(i)));
+    }
+  }
+
+  // repeated .OneMinData oneMinData = 6;
+  {
+    unsigned int count = static_cast<unsigned int>(this->onemindata_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->onemindata(static_cast<int>(i)));
+    }
+  }
+
+  // string symbol = 1;
+  if (this->symbol().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->data());
+        this->symbol());
+  }
+
+  // string right = 3;
+  if (this->right().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->right());
+  }
+
+  // double strike = 2;
+  if (this->strike() != 0) {
+    total_size += 1 + 8;
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -2164,9 +4735,19 @@ void OptionData::MergeFrom(const OptionData& from) {
   ::google::protobuf::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from.data().size() > 0) {
+  ticks_.MergeFrom(from.ticks_);
+  fivesecdata_.MergeFrom(from.fivesecdata_);
+  onemindata_.MergeFrom(from.onemindata_);
+  if (from.symbol().size() > 0) {
 
-    data_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.data_);
+    symbol_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.symbol_);
+  }
+  if (from.right().size() > 0) {
+
+    right_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.right_);
+  }
+  if (from.strike() != 0) {
+    set_strike(from.strike());
   }
 }
 
@@ -2194,12 +4775,247 @@ void OptionData::Swap(OptionData* other) {
 }
 void OptionData::InternalSwap(OptionData* other) {
   using std::swap;
-  data_.Swap(&other->data_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  CastToBase(&ticks_)->InternalSwap(CastToBase(&other->ticks_));
+  CastToBase(&fivesecdata_)->InternalSwap(CastToBase(&other->fivesecdata_));
+  CastToBase(&onemindata_)->InternalSwap(CastToBase(&other->onemindata_));
+  symbol_.Swap(&other->symbol_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
+  right_.Swap(&other->right_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  swap(strike_, other->strike_);
   _internal_metadata_.Swap(&other->_internal_metadata_);
 }
 
 ::google::protobuf::Metadata OptionData::GetMetadata() const {
+  protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages];
+}
+
+
+// ===================================================================
+
+void OptionDataBatch::InitAsDefaultInstance() {
+}
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int OptionDataBatch::kOptionDataPointsFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+OptionDataBatch::OptionDataBatch()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  ::google::protobuf::internal::InitSCC(
+      &protobuf_messages_2eproto::scc_info_OptionDataBatch.base);
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:OptionDataBatch)
+}
+OptionDataBatch::OptionDataBatch(const OptionDataBatch& from)
+  : ::google::protobuf::Message(),
+      _internal_metadata_(NULL),
+      optiondatapoints_(from.optiondatapoints_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  // @@protoc_insertion_point(copy_constructor:OptionDataBatch)
+}
+
+void OptionDataBatch::SharedCtor() {
+}
+
+OptionDataBatch::~OptionDataBatch() {
+  // @@protoc_insertion_point(destructor:OptionDataBatch)
+  SharedDtor();
+}
+
+void OptionDataBatch::SharedDtor() {
+}
+
+void OptionDataBatch::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const ::google::protobuf::Descriptor* OptionDataBatch::descriptor() {
+  ::protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
+  return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages].descriptor;
+}
+
+const OptionDataBatch& OptionDataBatch::default_instance() {
+  ::google::protobuf::internal::InitSCC(&protobuf_messages_2eproto::scc_info_OptionDataBatch.base);
+  return *internal_default_instance();
+}
+
+
+void OptionDataBatch::Clear() {
+// @@protoc_insertion_point(message_clear_start:OptionDataBatch)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  optiondatapoints_.Clear();
+  _internal_metadata_.Clear();
+}
+
+bool OptionDataBatch::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:OptionDataBatch)
+  for (;;) {
+    ::std::pair<::google::protobuf::uint32, bool> p = input->ReadTagWithCutoffNoLastTag(127u);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // repeated .OptionData optionDataPoints = 1;
+      case 1: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(10u /* 10 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
+                input, add_optiondatapoints()));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, _internal_metadata_.mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:OptionDataBatch)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:OptionDataBatch)
+  return false;
+#undef DO_
+}
+
+void OptionDataBatch::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:OptionDataBatch)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .OptionData optionDataPoints = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->optiondatapoints_size()); i < n; i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1,
+      this->optiondatapoints(static_cast<int>(i)),
+      output);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), output);
+  }
+  // @@protoc_insertion_point(serialize_end:OptionDataBatch)
+}
+
+::google::protobuf::uint8* OptionDataBatch::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  (void)deterministic; // Unused
+  // @@protoc_insertion_point(serialize_to_array_start:OptionDataBatch)
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // repeated .OptionData optionDataPoints = 1;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->optiondatapoints_size()); i < n; i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      InternalWriteMessageToArray(
+        1, this->optiondatapoints(static_cast<int>(i)), deterministic, target);
+  }
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()), target);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:OptionDataBatch)
+  return target;
+}
+
+size_t OptionDataBatch::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:OptionDataBatch)
+  size_t total_size = 0;
+
+  if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
+  }
+  // repeated .OptionData optionDataPoints = 1;
+  {
+    unsigned int count = static_cast<unsigned int>(this->optiondatapoints_size());
+    total_size += 1UL * count;
+    for (unsigned int i = 0; i < count; i++) {
+      total_size +=
+        ::google::protobuf::internal::WireFormatLite::MessageSize(
+          this->optiondatapoints(static_cast<int>(i)));
+    }
+  }
+
+  int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void OptionDataBatch::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:OptionDataBatch)
+  GOOGLE_DCHECK_NE(&from, this);
+  const OptionDataBatch* source =
+      ::google::protobuf::internal::DynamicCastToGenerated<const OptionDataBatch>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:OptionDataBatch)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:OptionDataBatch)
+    MergeFrom(*source);
+  }
+}
+
+void OptionDataBatch::MergeFrom(const OptionDataBatch& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:OptionDataBatch)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::google::protobuf::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  optiondatapoints_.MergeFrom(from.optiondatapoints_);
+}
+
+void OptionDataBatch::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:OptionDataBatch)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void OptionDataBatch::CopyFrom(const OptionDataBatch& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:OptionDataBatch)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool OptionDataBatch::IsInitialized() const {
+  return true;
+}
+
+void OptionDataBatch::Swap(OptionDataBatch* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void OptionDataBatch::InternalSwap(OptionDataBatch* other) {
+  using std::swap;
+  CastToBase(&optiondatapoints_)->InternalSwap(CastToBase(&other->optiondatapoints_));
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+}
+
+::google::protobuf::Metadata OptionDataBatch::GetMetadata() const {
   protobuf_messages_2eproto::protobuf_AssignDescriptorsOnce();
   return ::protobuf_messages_2eproto::file_level_metadata[kIndexInFileMessages];
 }
@@ -4203,8 +7019,20 @@ template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::Confirmation* Arena::CreateMaybe
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::ISBAction* Arena::CreateMaybeMessage< ::ISBAction >(Arena* arena) {
   return Arena::CreateInternal< ::ISBAction >(arena);
 }
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::TickData* Arena::CreateMaybeMessage< ::TickData >(Arena* arena) {
+  return Arena::CreateInternal< ::TickData >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::FiveSecData* Arena::CreateMaybeMessage< ::FiveSecData >(Arena* arena) {
+  return Arena::CreateInternal< ::FiveSecData >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::OneMinData* Arena::CreateMaybeMessage< ::OneMinData >(Arena* arena) {
+  return Arena::CreateInternal< ::OneMinData >(arena);
+}
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::OptionData* Arena::CreateMaybeMessage< ::OptionData >(Arena* arena) {
   return Arena::CreateInternal< ::OptionData >(arena);
+}
+template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::OptionDataBatch* Arena::CreateMaybeMessage< ::OptionDataBatch >(Arena* arena) {
+  return Arena::CreateInternal< ::OptionDataBatch >(arena);
 }
 template<> GOOGLE_PROTOBUF_ATTRIBUTE_NOINLINE ::UnderlyingOneMinData* Arena::CreateMaybeMessage< ::UnderlyingOneMinData >(Arena* arena) {
   return Arena::CreateInternal< ::UnderlyingOneMinData >(arena);
