@@ -55,7 +55,7 @@ void OptionScanner::addOption(Contract option, double strikeIncrement) {
     int mktDataId = wrapper->reqMktData(option, "100,101,106,104,225,232,233,293,294,295,411", false, false);
     int rtbId = wrapper->reqRealTimeBars(option, 5, "TRADES", true);
 
-    std::shared_ptr<ContractData> cd = std::make_shared<ContractData>(wrapper, csv, notifications, mktDataId, 
+    std::shared_ptr<ContractData> cd = std::make_shared<ContractData>(wrapper, sdc, notifications, mktDataId, 
         rtbId, option, strikeIncrement);
     
     if (option.right == "C") trackedCalls.insert({option.strike, cd});

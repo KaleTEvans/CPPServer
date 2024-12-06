@@ -417,6 +417,7 @@ const ::google::protobuf::uint32 TableStruct::offsets[] GOOGLE_PROTOBUF_ATTRIBUT
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, symbol_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, strike_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, right_),
+  GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, expdate_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, ticks_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, fivesecdata_),
   GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(::OptionData, onemindata_),
@@ -489,11 +490,11 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] GOOGLE_PROT
   { 59, -1, sizeof(::FiveSecData)},
   { 72, -1, sizeof(::OneMinData)},
   { 92, -1, sizeof(::OptionData)},
-  { 103, -1, sizeof(::OptionDataBatch)},
-  { 109, -1, sizeof(::UnderlyingOneMinData)},
-  { 133, -1, sizeof(::UnderlyingAverages)},
-  { 145, -1, sizeof(::UnderlyingContract)},
-  { 153, -1, sizeof(::NewsEvent)},
+  { 104, -1, sizeof(::OptionDataBatch)},
+  { 110, -1, sizeof(::UnderlyingOneMinData)},
+  { 134, -1, sizeof(::UnderlyingAverages)},
+  { 146, -1, sizeof(::UnderlyingContract)},
+  { 154, -1, sizeof(::NewsEvent)},
 };
 
 static ::google::protobuf::Message const * const file_default_instances[] = {
@@ -563,36 +564,37 @@ void AddDescriptorsImpl() {
       "\022\022\n\nimpliedVol\030\010 \001(\001\022\r\n\005delta\030\t \001(\001\022\r\n\005g"
       "amma\030\n \001(\001\022\014\n\004vega\030\013 \001(\001\022\r\n\005theta\030\014 \001(\001\022"
       "\020\n\010undPrice\030\r \001(\001\022\020\n\010totalVol\030\016 \001(\001\022\013\n\003r"
-      "tm\030\017 \001(\t\"\231\001\n\nOptionData\022\016\n\006symbol\030\001 \001(\t\022"
-      "\016\n\006strike\030\002 \001(\001\022\r\n\005right\030\003 \001(\t\022\030\n\005ticks\030"
-      "\004 \003(\0132\t.TickData\022!\n\013fiveSecData\030\005 \003(\0132\014."
-      "FiveSecData\022\037\n\noneMinData\030\006 \003(\0132\013.OneMin"
-      "Data\"8\n\017OptionDataBatch\022%\n\020optionDataPoi"
-      "nts\030\001 \003(\0132\013.OptionData\"\277\003\n\024UnderlyingOne"
-      "MinData\022\014\n\004time\030\001 \001(\003\022\014\n\004open\030\002 \001(\001\022\014\n\004h"
-      "igh\030\003 \001(\001\022\013\n\003low\030\004 \001(\001\022\r\n\005close\030\005 \001(\001\022\016\n"
-      "\006volume\030\006 \001(\001\022\021\n\tdailyHigh\030\007 \001(\001\022\020\n\010dail"
-      "yLow\030\010 \001(\001\022\023\n\013dailyVolume\030\t \001(\001\022\027\n\017total"
-      "CallVolume\030\n \001(\001\022\026\n\016totalPutVolume\030\013 \001(\001"
-      "\022\032\n\022indexFuturePremium\030\014 \001(\001\022\027\n\017totalTra"
-      "deCount\030\r \001(\001\022\032\n\022oneMinuteTradeRate\030\016 \001("
-      "\001\022$\n\034realTimeHistoricalVolatility\030\017 \001(\001\022"
-      "\037\n\027optionImpliedVolatility\030\020 \001(\001\022\030\n\020call"
-      "OpenInterest\030\021 \001(\001\022\027\n\017putOpenInterest\030\022 "
-      "\001(\001\022\033\n\023futuresOpenInterest\030\023 \001(\001\"\245\001\n\022Und"
-      "erlyingAverages\022\021\n\tlow13Week\030\001 \001(\001\022\022\n\nhi"
-      "gh13Week\030\002 \001(\001\022\021\n\tlow26week\030\003 \001(\001\022\022\n\nhig"
-      "h26Week\030\004 \001(\001\022\021\n\tlow52Week\030\005 \001(\001\022\022\n\nhigh"
-      "52Week\030\006 \001(\001\022\032\n\022averageVolume90Day\030\007 \001(\001"
-      "\"\211\001\n\022UnderlyingContract\022\016\n\006symbol\030\001 \001(\t\022"
-      "1\n\022underlying_one_min\030\002 \003(\0132\025.Underlying"
-      "OneMinData\0220\n\023underlying_averages\030\003 \003(\0132"
-      "\023.UnderlyingAverages\"V\n\tNewsEvent\022\014\n\004tim"
-      "e\030\001 \001(\003\022\021\n\tarticleId\030\002 \001(\t\022\020\n\010headline\030\003"
-      " \001(\t\022\026\n\016sentimentScore\030\004 \001(\001b\006proto3"
+      "tm\030\017 \001(\t\"\252\001\n\nOptionData\022\016\n\006symbol\030\001 \001(\t\022"
+      "\016\n\006strike\030\002 \001(\001\022\r\n\005right\030\003 \001(\t\022\017\n\007expDat"
+      "e\030\004 \001(\t\022\030\n\005ticks\030\005 \003(\0132\t.TickData\022!\n\013fiv"
+      "eSecData\030\006 \003(\0132\014.FiveSecData\022\037\n\noneMinDa"
+      "ta\030\007 \003(\0132\013.OneMinData\"8\n\017OptionDataBatch"
+      "\022%\n\020optionDataPoints\030\001 \003(\0132\013.OptionData\""
+      "\277\003\n\024UnderlyingOneMinData\022\014\n\004time\030\001 \001(\003\022\014"
+      "\n\004open\030\002 \001(\001\022\014\n\004high\030\003 \001(\001\022\013\n\003low\030\004 \001(\001\022"
+      "\r\n\005close\030\005 \001(\001\022\016\n\006volume\030\006 \001(\001\022\021\n\tdailyH"
+      "igh\030\007 \001(\001\022\020\n\010dailyLow\030\010 \001(\001\022\023\n\013dailyVolu"
+      "me\030\t \001(\001\022\027\n\017totalCallVolume\030\n \001(\001\022\026\n\016tot"
+      "alPutVolume\030\013 \001(\001\022\032\n\022indexFuturePremium\030"
+      "\014 \001(\001\022\027\n\017totalTradeCount\030\r \001(\001\022\032\n\022oneMin"
+      "uteTradeRate\030\016 \001(\001\022$\n\034realTimeHistorical"
+      "Volatility\030\017 \001(\001\022\037\n\027optionImpliedVolatil"
+      "ity\030\020 \001(\001\022\030\n\020callOpenInterest\030\021 \001(\001\022\027\n\017p"
+      "utOpenInterest\030\022 \001(\001\022\033\n\023futuresOpenInter"
+      "est\030\023 \001(\001\"\245\001\n\022UnderlyingAverages\022\021\n\tlow1"
+      "3Week\030\001 \001(\001\022\022\n\nhigh13Week\030\002 \001(\001\022\021\n\tlow26"
+      "week\030\003 \001(\001\022\022\n\nhigh26Week\030\004 \001(\001\022\021\n\tlow52W"
+      "eek\030\005 \001(\001\022\022\n\nhigh52Week\030\006 \001(\001\022\032\n\022average"
+      "Volume90Day\030\007 \001(\001\"\211\001\n\022UnderlyingContract"
+      "\022\016\n\006symbol\030\001 \001(\t\0221\n\022underlying_one_min\030\002"
+      " \003(\0132\025.UnderlyingOneMinData\0220\n\023underlyin"
+      "g_averages\030\003 \003(\0132\023.UnderlyingAverages\"V\n"
+      "\tNewsEvent\022\014\n\004time\030\001 \001(\003\022\021\n\tarticleId\030\002 "
+      "\001(\t\022\020\n\010headline\030\003 \001(\t\022\026\n\016sentimentScore\030"
+      "\004 \001(\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 2276);
+      descriptor, 2293);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "messages.proto", &protobuf_RegisterTypes);
 }
@@ -4328,6 +4330,7 @@ void OptionData::InitAsDefaultInstance() {
 const int OptionData::kSymbolFieldNumber;
 const int OptionData::kStrikeFieldNumber;
 const int OptionData::kRightFieldNumber;
+const int OptionData::kExpDateFieldNumber;
 const int OptionData::kTicksFieldNumber;
 const int OptionData::kFiveSecDataFieldNumber;
 const int OptionData::kOneMinDataFieldNumber;
@@ -4355,6 +4358,10 @@ OptionData::OptionData(const OptionData& from)
   if (from.right().size() > 0) {
     right_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.right_);
   }
+  expdate_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.expdate().size() > 0) {
+    expdate_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.expdate_);
+  }
   strike_ = from.strike_;
   // @@protoc_insertion_point(copy_constructor:OptionData)
 }
@@ -4362,6 +4369,7 @@ OptionData::OptionData(const OptionData& from)
 void OptionData::SharedCtor() {
   symbol_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   right_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  expdate_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   strike_ = 0;
 }
 
@@ -4373,6 +4381,7 @@ OptionData::~OptionData() {
 void OptionData::SharedDtor() {
   symbol_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   right_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  expdate_.DestroyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 
 void OptionData::SetCachedSize(int size) const {
@@ -4400,6 +4409,7 @@ void OptionData::Clear() {
   onemindata_.Clear();
   symbol_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   right_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  expdate_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   strike_ = 0;
   _internal_metadata_.Clear();
 }
@@ -4460,10 +4470,26 @@ bool OptionData::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .TickData ticks = 4;
+      // string expDate = 4;
       case 4: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
             static_cast< ::google::protobuf::uint8>(34u /* 34 & 0xFF */)) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_expdate()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->expdate().data(), static_cast<int>(this->expdate().length()),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "OptionData.expDate"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated .TickData ticks = 5;
+      case 5: {
+        if (static_cast< ::google::protobuf::uint8>(tag) ==
+            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                 input, add_ticks()));
         } else {
@@ -4472,10 +4498,10 @@ bool OptionData::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .FiveSecData fiveSecData = 5;
-      case 5: {
+      // repeated .FiveSecData fiveSecData = 6;
+      case 6: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(42u /* 42 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                 input, add_fivesecdata()));
         } else {
@@ -4484,10 +4510,10 @@ bool OptionData::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .OneMinData oneMinData = 6;
-      case 6: {
+      // repeated .OneMinData oneMinData = 7;
+      case 7: {
         if (static_cast< ::google::protobuf::uint8>(tag) ==
-            static_cast< ::google::protobuf::uint8>(50u /* 50 & 0xFF */)) {
+            static_cast< ::google::protobuf::uint8>(58u /* 58 & 0xFF */)) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessage(
                 input, add_onemindata()));
         } else {
@@ -4547,29 +4573,39 @@ void OptionData::SerializeWithCachedSizes(
       3, this->right(), output);
   }
 
-  // repeated .TickData ticks = 4;
+  // string expDate = 4;
+  if (this->expdate().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->expdate().data(), static_cast<int>(this->expdate().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "OptionData.expDate");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      4, this->expdate(), output);
+  }
+
+  // repeated .TickData ticks = 5;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->ticks_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      4,
+      5,
       this->ticks(static_cast<int>(i)),
       output);
   }
 
-  // repeated .FiveSecData fiveSecData = 5;
+  // repeated .FiveSecData fiveSecData = 6;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->fivesecdata_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      5,
+      6,
       this->fivesecdata(static_cast<int>(i)),
       output);
   }
 
-  // repeated .OneMinData oneMinData = 6;
+  // repeated .OneMinData oneMinData = 7;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->onemindata_size()); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      6,
+      7,
       this->onemindata(static_cast<int>(i)),
       output);
   }
@@ -4615,28 +4651,39 @@ void OptionData::SerializeWithCachedSizes(
         3, this->right(), target);
   }
 
-  // repeated .TickData ticks = 4;
+  // string expDate = 4;
+  if (this->expdate().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->expdate().data(), static_cast<int>(this->expdate().length()),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "OptionData.expDate");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->expdate(), target);
+  }
+
+  // repeated .TickData ticks = 5;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->ticks_size()); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        4, this->ticks(static_cast<int>(i)), deterministic, target);
+        5, this->ticks(static_cast<int>(i)), deterministic, target);
   }
 
-  // repeated .FiveSecData fiveSecData = 5;
+  // repeated .FiveSecData fiveSecData = 6;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->fivesecdata_size()); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        5, this->fivesecdata(static_cast<int>(i)), deterministic, target);
+        6, this->fivesecdata(static_cast<int>(i)), deterministic, target);
   }
 
-  // repeated .OneMinData oneMinData = 6;
+  // repeated .OneMinData oneMinData = 7;
   for (unsigned int i = 0,
       n = static_cast<unsigned int>(this->onemindata_size()); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageToArray(
-        6, this->onemindata(static_cast<int>(i)), deterministic, target);
+        7, this->onemindata(static_cast<int>(i)), deterministic, target);
   }
 
   if ((_internal_metadata_.have_unknown_fields() &&  ::google::protobuf::internal::GetProto3PreserveUnknownsDefault())) {
@@ -4656,7 +4703,7 @@ size_t OptionData::ByteSizeLong() const {
       ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
         (::google::protobuf::internal::GetProto3PreserveUnknownsDefault()   ? _internal_metadata_.unknown_fields()   : _internal_metadata_.default_instance()));
   }
-  // repeated .TickData ticks = 4;
+  // repeated .TickData ticks = 5;
   {
     unsigned int count = static_cast<unsigned int>(this->ticks_size());
     total_size += 1UL * count;
@@ -4667,7 +4714,7 @@ size_t OptionData::ByteSizeLong() const {
     }
   }
 
-  // repeated .FiveSecData fiveSecData = 5;
+  // repeated .FiveSecData fiveSecData = 6;
   {
     unsigned int count = static_cast<unsigned int>(this->fivesecdata_size());
     total_size += 1UL * count;
@@ -4678,7 +4725,7 @@ size_t OptionData::ByteSizeLong() const {
     }
   }
 
-  // repeated .OneMinData oneMinData = 6;
+  // repeated .OneMinData oneMinData = 7;
   {
     unsigned int count = static_cast<unsigned int>(this->onemindata_size());
     total_size += 1UL * count;
@@ -4701,6 +4748,13 @@ size_t OptionData::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->right());
+  }
+
+  // string expDate = 4;
+  if (this->expdate().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->expdate());
   }
 
   // double strike = 2;
@@ -4746,6 +4800,10 @@ void OptionData::MergeFrom(const OptionData& from) {
 
     right_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.right_);
   }
+  if (from.expdate().size() > 0) {
+
+    expdate_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.expdate_);
+  }
   if (from.strike() != 0) {
     set_strike(from.strike());
   }
@@ -4781,6 +4839,8 @@ void OptionData::InternalSwap(OptionData* other) {
   symbol_.Swap(&other->symbol_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   right_.Swap(&other->right_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+    GetArenaNoVirtual());
+  expdate_.Swap(&other->expdate_, &::google::protobuf::internal::GetEmptyStringAlreadyInited(),
     GetArenaNoVirtual());
   swap(strike_, other->strike_);
   _internal_metadata_.Swap(&other->_internal_metadata_);

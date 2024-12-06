@@ -33,6 +33,7 @@ int main(int argc, char** argv)
     context->use_certificate_chain_file("/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/CppServer/tools/certificates/server.pem");
     context->use_private_key_file("/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/CppServer/tools/certificates/server.pem", asio::ssl::context::pem);
     context->use_tmp_dh_file("/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/CppServer/tools/certificates/dh4096.pem");
+    context->load_verify_file("/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/CppServer/tools/certificates/ca.crt");
 
     // Create a new WebSocket server
     auto server = std::make_shared<TWSStrategyServer>(service, context, port);

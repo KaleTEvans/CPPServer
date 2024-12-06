@@ -36,10 +36,13 @@ std::string UnderlyingOneMinuteData::formatCSV() {
 }
 
 std::string UnderlyingOneMinuteData::serializeOneMinData(const std::string& symbol) {
-    UnderlyingContract underlyingContract;
-    underlyingContract.set_symbol(symbol);
+    Message message;
+    message.set_type("underlying_contract");
 
-    UnderlyingOneMinData* oneMin = underlyingContract.mutable_underlying_one_min()->Add();
+    UnderlyingContract* underlyingContract = message.mutable_underlying_contract();
+    underlyingContract->set_symbol(symbol);
+
+    UnderlyingOneMinData* oneMin = underlyingContract->mutable_underlying_one_min()->Add();
     oneMin->set_time(time);
     oneMin->set_open(open);
     oneMin->set_high(high);
@@ -61,7 +64,7 @@ std::string UnderlyingOneMinuteData::serializeOneMinData(const std::string& symb
     if (futuresOpenInterest != -1) oneMin->set_futuresopeninterest(futuresOpenInterest);
 
     std::string serialized;
-    underlyingContract.SerializeToString(&serialized);
+    message.SerializeToString(&serialized);
 
     return serialized;
 }
@@ -179,10 +182,13 @@ std::string UnderlyingData::formatAveragesCSV() {
 }
 
 std::string UnderlyingData::serializeKeyPricePoints() {
-    UnderlyingContract underlyingContract;
-    underlyingContract.set_symbol(contract.symbol);
+    Message message;
+    message.set_type("underlying_contract");
 
-    UnderlyingAverages* underlyingAverages = underlyingContract.mutable_underlying_averages()->Add();
+    UnderlyingContract* underlyingContract = message.mutable_underlying_contract();
+    underlyingContract->set_symbol(contract.symbol);
+
+    UnderlyingAverages* underlyingAverages = underlyingContract->mutable_underlying_averages()->Add();
     underlyingAverages->set_low13week(low13Week);
     underlyingAverages->set_high13week(high13Week);
     underlyingAverages->set_low26week(low26week);
@@ -192,7 +198,7 @@ std::string UnderlyingData::serializeKeyPricePoints() {
     underlyingAverages->set_averagevolume90day(averageVolume90Day);
 
     std::string serialized;
-    underlyingContract.SerializeToString(&serialized);
+    message.SerializeToString(&serialized);
 
     return serialized;
 }

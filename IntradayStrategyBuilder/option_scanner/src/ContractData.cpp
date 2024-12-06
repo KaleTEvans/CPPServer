@@ -1,9 +1,9 @@
 #include "ContractData.h"
 
-ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv,
+ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<SocketDataCollector> sdc,
     std::shared_ptr<ScannerNotificationBus> notifications,
     int mktDataId, int rtbId, Contract contract, double strikeIncrement) : 
-    mktDataId(mktDataId), csv(csv), notifications(notifications), rtbId(rtbId), contract(contract), 
+    mktDataId(mktDataId), sdc(sdc), notifications(notifications), rtbId(rtbId), contract(contract), 
     strikeIncrement(strikeIncrement), wrapper(wrapper) {
     // Subscribe to events
     wrapper->getMessageBus()->subscribe(EventType::TickPriceInfo, [this](std::shared_ptr<DataEvent> event) {
@@ -191,8 +191,8 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
     if (event->candle->time() % 60 == 0) isEvenMinute = true;
     //if (isEvenMinute) std::cout << "Even minute found for " << contract.strike << contract.right << std::endl;
 
-    // Save the five sec candle to csv
-    //csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::FiveSec, fsd->formatCSV());
+    // Send the candle to the websocket
+    
 
     tradeCount_fiveSecCandles.addValue(event->candle->count());
     priceDelta_fiveSecCandles.addValue(event->candle->high() - event->candle->low());
@@ -273,6 +273,32 @@ std::string FiveSecondData::formatCSV() {
             getRTMstr(rtm) + "\n";
 }
 
+std::string FiveSecondData::serializeFiveSecData(const Contract con, const RelativeToMoney rtm) {
+    Message message;
+    message.set_type("option_data");
+
+    OptionData* optionData = message.mutable_option_data();
+    optionData->set_symbol(con.symbol);
+    optionData->set_strike(con.strike);
+    optionData->set_right(con.right);
+    optionData->set_expdate(con.lastTradeDateOrContractMonth);
+
+    FiveSecData* fiveSecData = optionData->mutable_fivesecdata()->Add();
+    fiveSecData->set_time(candle->time());
+    fiveSecData->set_open(candle->open());
+    fiveSecData->set_close(candle->close());
+    fiveSecData->set_high(candle->high());
+    fiveSecData->set_low(candle->low());
+    fiveSecData->set_volume(decimalToString(candle->volume()));
+    fiveSecData->set_count(candle->count());
+    fiveSecData->set_rtm(getRTMstr(rtm));
+
+    std::string serialized;
+    message.SerializeToString(&serialized);
+
+    return serialized;
+}
+
 OneMinuteData::OneMinuteData(std::vector<std::shared_ptr<FiveSecondData>> candles, 
     std::shared_ptr<MarketDataSingleFrame> optionInfo, std::shared_ptr<MarketDataSingleFrame> tasInfo) 
     {
@@ -330,6 +356,39 @@ std::string OneMinuteData::formatCSV() {
             std::to_string(totalVol) + "," +
             getRTMstr(rtm) + "\n";
 }
+
+std::string OneMinuteData::serializeOneMinData(const Contract con, const RelativeToMoney rtm) {
+    Message message;
+    message.set_type("option_data");
+
+    OptionData* optionData = message.mutable_option_data();
+    optionData->set_symbol(con.symbol);
+    optionData->set_strike(con.strike);
+    optionData->set_right(con.right);
+    optionData->set_expdate(con.lastTradeDateOrContractMonth);
+
+    OneMinData* oneMin = optionData->mutable_onemindata()->Add();
+    oneMin->set_time(candle->time());
+    oneMin->set_open(candle->open());
+    oneMin->set_close(candle->close());
+    oneMin->set_high(candle->high());
+    oneMin->set_low(candle->low());
+    oneMin->set_candlevol(candleVol);
+    oneMin->set_tradecount(tradeCount);
+    oneMin->set_impliedvol(impliedVol);
+    oneMin->set_delta(delta);
+    oneMin->set_gamma(gamma);
+    oneMin->set_vega(vega);
+    oneMin->set_theta(theta);
+    oneMin->set_undprice(undPrice);
+    oneMin->set_totalvol(totalVol);
+    oneMin->set_rtm(getRTMstr(rtm));
+
+    std::string serialized;
+    message.SerializeToString(&serialized);
+
+    return serialized;
+} 
 
 MarketDataSingleFrame::MarketDataSingleFrame(int64_t timestamp) : timestamp(timestamp) {}
 

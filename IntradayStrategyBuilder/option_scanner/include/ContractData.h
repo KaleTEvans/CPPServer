@@ -7,6 +7,8 @@
 #include "OptionStatisticTrackers.h"
 #include "SaveToCSV.h"
 #include "ScannerNotificationHandler.h"
+#include "SocketDataCollector.h"
+#include "../generated/messages.pb.h"
 
 #include <set>
 #include <map>
@@ -61,6 +63,7 @@ struct MarketDataSingleFrame {
 
     std::string valueToCSV(double value);
     std::string formatCSV(RelativeToMoney rtm = RelativeToMoney::NoValue);
+    
 
     // Variables to track. Items not present will be set to a -1 value aside from greeks, which will be -100
     double bidPrice{-1};
@@ -94,6 +97,7 @@ struct FiveSecondData {
     FiveSecondData(std::shared_ptr<Candle> candle, RelativeToMoney rtm);
 
     std::string formatCSV();
+    std::string serializeFiveSecData(const Contract con, const RelativeToMoney rtm);
     
     std::map<int64_t, std::shared_ptr<MarketDataSingleFrame>> ticks;
 
@@ -113,6 +117,7 @@ struct OneMinuteData {
     std::shared_ptr<MarketDataSingleFrame> optionInfo, std::shared_ptr<MarketDataSingleFrame> tasInfo);
 
     std::string formatCSV();
+    std::string serializeOneMinData(const Contract con, const RelativeToMoney rtm);
 
     RelativeToMoney rtm;
     std::shared_ptr<Candle> candle;
@@ -139,7 +144,8 @@ struct OneMinuteData {
 
 class ContractData {
     public:
-        ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<CSVFileSaver> csv,
+        ContractData(std::shared_ptr<tWrapper> wrapper,
+            std::shared_ptr<SocketDataCollector> sdc,
             std::shared_ptr<ScannerNotificationBus> notifications,
             int mktDataId, int rtbId, Contract contract, double strikeIncrement);
         ~ContractData();
@@ -154,7 +160,8 @@ class ContractData {
         double strikeIncrement;
         double lastUnderlyingPrice{0};
         std::shared_ptr<tWrapper> wrapper;
-        std::shared_ptr<CSVFileSaver> csv;
+        //std::shared_ptr<CSVFileSaver> csv;
+        std::shared_ptr<SocketDataCollector> sdc;
         bool outputData{false};
 
         double currentBid{0};

@@ -85,9 +85,10 @@ message OptionData {
     string symbol = 1;
     double strike = 2;
     string right = 3;
-    repeated TickData ticks = 4;
-    repeated FiveSecData fiveSecData = 5;
-    repeated OneMinData oneMinData = 6;
+    string expDate = 4;
+    repeated TickData ticks = 5;
+    repeated FiveSecData fiveSecData = 6;
+    repeated OneMinData oneMinData = 7;
 }
 
 message OptionDataBatch {

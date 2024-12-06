@@ -18,6 +18,7 @@ class SocketDataCollector {
     public:
         SocketDataCollector(const std::shared_ptr<CppServer::WS::WSSServer>& server);
 
+        void sendOptionData(const std::string& od);
         void sendNewsData(const std::string& news);
         void sendUnderlyingContractData(const std::string& cd);
 
