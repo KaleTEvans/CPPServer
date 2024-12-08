@@ -195,7 +195,7 @@ std::string UnderlyingData::serializeKeyPricePoints() {
     underlyingAverages->set_high26week(high26Week);
     underlyingAverages->set_low52week(low52Week);
     underlyingAverages->set_high52week(high52Week);
-    underlyingAverages->set_averagevolume90day(averageVolume90Day);
+    if (averageVolume90Day != -1) underlyingAverages->set_averagevolume90day(averageVolume90Day);
 
     std::string serialized;
     message.SerializeToString(&serialized);

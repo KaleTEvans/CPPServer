@@ -189,10 +189,9 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
 
     // Check if candle falls on an even minute
     if (event->candle->time() % 60 == 0) isEvenMinute = true;
-    //if (isEvenMinute) std::cout << "Even minute found for " << contract.strike << contract.right << std::endl;
 
     // Send the candle to the websocket
-    
+    sdc->sendOptionData(fsd->serializeFiveSecData(contract, rtm));
 
     tradeCount_fiveSecCandles.addValue(event->candle->count());
     priceDelta_fiveSecCandles.addValue(event->candle->high() - event->candle->low());
@@ -289,7 +288,8 @@ std::string FiveSecondData::serializeFiveSecData(const Contract con, const Relat
     fiveSecData->set_close(candle->close());
     fiveSecData->set_high(candle->high());
     fiveSecData->set_low(candle->low());
-    fiveSecData->set_volume(decimalToString(candle->volume()));
+    double vol = decimalToDouble(candle->volume());
+    fiveSecData->set_volume(std::to_string(vol));
     fiveSecData->set_count(candle->count());
     fiveSecData->set_rtm(getRTMstr(rtm));
 

@@ -54,22 +54,21 @@ void TWSStrategySession::onWSConnected(const CppServer::HTTP::HTTPRequest& reque
     std::cout << "TWS Strategy Server WebSocket secure session with ID " << id() << " connected." << std::endl;
 
     if (twsClient->isConnected()) {
-        std::cout << "TWS client connected successfully!" << std::endl;
         std::string action_msg = "connected_to_tws";
         std::string status_msg = "success";
         std::string confirmation_msg = WSMessages::serializeConfirmationMessage(action_msg, status_msg);;
         sendSerializedMessage(confirmation_msg);
 
         // **** TEST *****
-        std::string ticker = "SPX";
-        std::string action = "add_ticker";
-        std::string component = "option_scanner";
-        std::string isb_action_msg = WSMessages::serializeIsbActionMessage(component, action, ticker);
-        sendSerializedMessage(isb_action_msg);
+        // std::string ticker = "SPX";
+        // std::string action = "add_ticker";
+        // std::string component = "option_scanner";
+        // std::string isb_action_msg = WSMessages::serializeIsbActionMessage(component, action, ticker);
+        // sendSerializedMessage(isb_action_msg);
 
-        action = "start";
-        isb_action_msg = WSMessages::serializeIsbActionMessage(component, action);
-        sendSerializedMessage(isb_action_msg);
+        // action = "start";
+        // isb_action_msg = WSMessages::serializeIsbActionMessage(component, action);
+        // sendSerializedMessage(isb_action_msg);
     }
 
     if (!scannerDataHandler) {if (optScanner) 
@@ -88,11 +87,12 @@ void TWSStrategySession::onWSDisconnected() {
 }
 
 void TWSStrategySession::sendSerializedMessage(const std::string& serialized) {
-    std::cout << "Sending serialized message of size: " << serialized.size() << std::endl;
-    SendBinaryAsync(serialized.data(), serialized.size());
-
-    // Simulate the server receiving its own messages for debugging purposes
-    onWSReceived(serialized.data(), serialized.size());
+    try {
+        std::cout << "Sending serialized message of size: " << serialized.size() << std::endl;
+        SendBinaryAsync(serialized.data(), serialized.size());
+    } catch (const std::exception& e) {
+        std::cerr << "Error sending message: " << e.what() << std::endl;
+    }
 }
 
 void TWSStrategySession::onWSReceived(const void* buffer, size_t size) {
@@ -108,17 +108,17 @@ void TWSStrategySession::onWSReceived(const void* buffer, size_t size) {
 
     if (message.type() == "basic_message" && message.has_basic_message()) {
         const BasicMessage& basicMessage = message.basic_message();
-        messageString = basicMessage.message();
+        // messageString = basicMessage.message();
     } else if (message.type() == "confirmation" && message.has_confirmation()) {
         const Confirmation& confirmation = message.confirmation();
-        messageString = confirmation.action() + " current status: " + confirmation.status();
+        // messageString = confirmation.action() + " current status: " + confirmation.status();
     } else if (message.type() == "isb_action" && message.has_isb_action()) {
         onIsbActionMessage(message);
     }
  
     // Multicast message to all connected sessions
-    std::cout << "[Message Received] " << messageString << std::endl;
-    std::dynamic_pointer_cast<CppServer::WS::WSSServer>(server())->MulticastText(messageString);
+    // std::cout << "[Message Received] " << messageString << std::endl;
+    // std::dynamic_pointer_cast<CppServer::WS::WSSServer>(server())->MulticastText(messageString);
 
     // If the buffer starts with '!' the disconnect tconst ISBAction& isbAction = message.isb_action();he current session
     if (messageString == "!")
@@ -144,14 +144,29 @@ void TWSStrategySession::onIsbActionMessage(Message& message) {
 
         if (isbAction.action() == "start") {
             optScanner->start();
+            // Send confirmation
+            std::string action = "start_option_scanner";
+            std::string status = "success";
+            std::string messageString = WSMessages::serializeConfirmationMessage(action, status);
+            std::dynamic_pointer_cast<CppServer::WS::WSSServer>(server())->MulticastBinary(messageString);
         } else if (isbAction.action() == "stop") {
             optScanner->stop();
+            // Send confirmation
+            std::string action = "stop_option_scanner";
+            std::string status = "success";
+            std::string messageString = WSMessages::serializeConfirmationMessage(action, status);
+            std::dynamic_pointer_cast<CppServer::WS::WSSServer>(server())->MulticastBinary(messageString);
         } else if (isbAction.action() == "add_ticker") {
             std::string ticker = isbAction.data();
             if (ticker == "SPX") {
                 Contract spx = ContractDefs::SPXInd();
                 Contract spxOpt = ContractDefs::SPXOpt0DTE("C", 1000);
                 optScanner->addSecurity(spx, spxOpt);
+                // Send confirmation
+                std::string action = "add_ticker";
+                std::string status = "success";
+                std::string messageString = WSMessages::serializeConfirmationMessage(action, status);
+                std::dynamic_pointer_cast<CppServer::WS::WSSServer>(server())->MulticastBinary(messageString);
             }
         }
     }
@@ -161,6 +176,10 @@ TWSStrategyServer::TWSStrategyServer(const std::shared_ptr<CppServer::Asio::Serv
                                      const std::shared_ptr<CppServer::Asio::SSLContext>& context,
                                      int port)
     : CppServer::WS::WSSServer(service, context, port) {
+    // Server setup options
+    SetupKeepAlive(true);
+    SetupNoDelay(true);
+
     // Initialize shared objects
     twsClient = std::make_shared<tWrapper>();
     scannerDataHandler = std::make_shared<ScannerNotificationBus>();
@@ -195,5 +214,3 @@ void TWSStrategyServer::onError(int error, const std::string& category, const st
     std::cout << "TWS Strategy Server WebSocket secure session caught an error with code " 
         << error << " and category '"   << category << "': " << message << std::endl;
 }
-
-
