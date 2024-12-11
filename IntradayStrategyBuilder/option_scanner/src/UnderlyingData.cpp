@@ -49,19 +49,19 @@ std::string UnderlyingOneMinuteData::serializeOneMinData(const std::string& symb
     oneMin->set_low(low);
     oneMin->set_close(close);
     if (volume != -1) oneMin->set_volume(volume);
-    if (dailyHigh != -1) oneMin->set_dailyhigh(dailyHigh);
-    if (dailyLow != -1) oneMin->set_dailylow(dailyLow);
-    if (dailyVolume != -1) oneMin->set_dailyvolume(dailyVolume);
-    if (totalCallVolume != -1) oneMin->set_totalcallvolume(totalCallVolume);
-    if (totalPutVolume != -1) oneMin->set_totalputvolume(totalPutVolume);
-    if (indexFuturePremium != -1) oneMin->set_indexfuturepremium(indexFuturePremium);
-    if (totalTradeCount != -1) oneMin->set_totaltradecount(totalTradeCount);
-    if (oneMinuteTradeRate != -1) oneMin->set_oneminutetraderate(oneMinuteTradeRate);
-    if (realTimeHistoricalVolatility != -100) oneMin->set_realtimehistoricalvolatility(realTimeHistoricalVolatility);
-    if (optionImpliedVolatility != -100) oneMin->set_optionimpliedvolatility(optionImpliedVolatility);
-    if (callOpenInterest != -1) oneMin->set_callopeninterest(callOpenInterest);
-    if (putOpenInterest != -1) oneMin->set_putopeninterest(putOpenInterest);
-    if (futuresOpenInterest != -1) oneMin->set_futuresopeninterest(futuresOpenInterest);
+    if (dailyHigh != -1) oneMin->set_daily_high(dailyHigh);
+    if (dailyLow != -1) oneMin->set_daily_low(dailyLow);
+    if (dailyVolume != -1) oneMin->set_daily_volume(dailyVolume);
+    if (totalCallVolume != -1) oneMin->set_total_call_volume(totalCallVolume);
+    if (totalPutVolume != -1) oneMin->set_total_put_volume(totalPutVolume);
+    if (indexFuturePremium != -1) oneMin->set_index_future_premium(indexFuturePremium);
+    if (totalTradeCount != -1) oneMin->set_total_trade_count(totalTradeCount);
+    if (oneMinuteTradeRate != -1) oneMin->set_one_minute_trade_rate(oneMinuteTradeRate);
+    if (realTimeHistoricalVolatility != -100) oneMin->set_real_time_historical_volatility(realTimeHistoricalVolatility);
+    if (optionImpliedVolatility != -100) oneMin->set_option_implied_volatility(optionImpliedVolatility);
+    if (callOpenInterest != -1) oneMin->set_call_open_interest(callOpenInterest);
+    if (putOpenInterest != -1) oneMin->set_put_open_interest(putOpenInterest);
+    if (futuresOpenInterest != -1) oneMin->set_futures_open_interest(futuresOpenInterest);
 
     std::string serialized;
     message.SerializeToString(&serialized);
@@ -82,9 +82,9 @@ std::string ContractNewsData::serializeNewsObject() {
     message.set_type("news");
     NewsEvent* news = message.mutable_news();
     news->set_time(time);
-    news->set_articleid(articleId);
+    news->set_article_id(articleId);
     news->set_headline(headline);
-    news->set_sentimentscore(sentimentScore);
+    news->set_sentiment_score(sentimentScore);
 
     std::string serialized;
     message.SerializeToString(&serialized);
@@ -189,13 +189,30 @@ std::string UnderlyingData::serializeKeyPricePoints() {
     underlyingContract->set_symbol(contract.symbol);
 
     UnderlyingAverages* underlyingAverages = underlyingContract->mutable_underlying_averages()->Add();
-    underlyingAverages->set_low13week(low13Week);
-    underlyingAverages->set_high13week(high13Week);
-    underlyingAverages->set_low26week(low26week);
-    underlyingAverages->set_high26week(high26Week);
-    underlyingAverages->set_low52week(low52Week);
-    underlyingAverages->set_high52week(high52Week);
-    if (averageVolume90Day != -1) underlyingAverages->set_averagevolume90day(averageVolume90Day);
+    underlyingAverages->set_low_13_week(low13Week);
+    underlyingAverages->set_high_13_week(high13Week);
+    underlyingAverages->set_low_26_week(low26week);
+    underlyingAverages->set_high_26_week(high26Week);
+    underlyingAverages->set_low_52_week(low52Week);
+    underlyingAverages->set_high_52_week(high52Week);
+    if (averageVolume90Day != -1) underlyingAverages->set_average_volume_90_day(averageVolume90Day);
+
+    std::string serialized;
+    message.SerializeToString(&serialized);
+
+    return serialized;
+}
+
+std::string UnderlyingData::serializePriceTick(long time, double price) {
+    Message message;
+    message.set_type("underlying_contract");
+
+    UnderlyingContract* underlyingContract = message.mutable_underlying_contract();
+    underlyingContract->set_symbol(contract.symbol);
+
+    UnderlyingPriceTick* underlyingPriceTick = underlyingContract->mutable_underlying_price_tick()->Add();
+    underlyingPriceTick->set_time(time);
+    underlyingPriceTick->set_price(price);
 
     std::string serialized;
     message.SerializeToString(&serialized);
@@ -233,6 +250,10 @@ int UnderlyingData::requestOptionsChain() {
 }
 
 int UnderlyingData::getStrikeIncrement() { return strikeIncrement; }
+double UnderlyingData::getLastPrice() { 
+    std::lock_guard<std::mutex> lock(mtx);
+    return currentPrice; 
+}
 
 std::pair<std::vector<double>, std::vector<double>> UnderlyingData::getStrikes(int countITM) {
     // Insert set items into vector for easier manipulation
@@ -279,21 +300,8 @@ void UnderlyingData::handleOptionsChainData(const std::string& exchange,
 
 void UnderlyingData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
     if (event->tickType == TickType::LAST) {
-        // Check news tick map for time
-        currentPrice = event->price;
-        auto it = newsTicks.find(event->timeStamp);
-        // If the time isn't in the map already, insert empty news object to track price in the same file
-        // If an object already exists, ignore it
-        if (it == newsTicks.end()) {
-            std::pair<std::shared_ptr<TickNewsEvent>, double> lastTick{nullptr, event->price};
-            newsTicks.insert({event->timeStamp, lastTick});
-
-            // Create news object with empty news columns and send to csv
-            ContractNewsData cnd;
-            cnd.time = event->timeStamp;
-            cnd.price = currentPrice;
-            //csv->addDataToQueue(contract.symbol, 0, "None", DataType::News, cnd.formatCSV());
-        } 
+        // Send price to web socket
+        sdc->sendUnderlyingContractData(serializePriceTick(event->timeStamp, event->price));
     } else {
         switch (event->tickType)
         {

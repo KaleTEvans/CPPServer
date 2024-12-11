@@ -31,6 +31,9 @@ ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<So
 
     std::cout << "ContractData Request IDs: " << mktDataId << "," << rtbId << " created for  contract: " <<
             contract.symbol << " " << contract.strike << contract.right << std::endl;
+
+    // Wait for underlying price to populate
+    while (lastUnderlyingPrice == 0) std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 ContractData::~ContractData() {
@@ -41,6 +44,11 @@ void ContractData::cancelDataStream() {
     wrapper->cancelMktData(mktDataId);
     wrapper->cancelRealTimeBars(rtbId);
     std::cout << "Market data and RTB streams have ended for Contract: " << contract.strike << contract.right << std::endl;
+}
+
+void ContractData::updateUnderlyingPrice(double price) { 
+    std::lock_guard<std::mutex> lock(mtx);
+    lastUnderlyingPrice = price; 
 }
 
 void ContractData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
@@ -55,6 +63,9 @@ void ContractData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
         it->second->inputTickPrice(event);
     }
     if (outputData) event->print();
+
+    // Serialize and send tick to websocket
+    sdc->sendOptionData(ticks[event->timeStamp]->serializeTickData(contract));
 
     // Update current bid and ask
     if (event->tickType == TickType::ASK) currentAsk = event->price;
@@ -73,6 +84,9 @@ void ContractData::handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
         it->second->inputTickSize(event);
     }
     if (outputData) event->print();
+
+    // Serialize and send tick to websocket
+    sdc->sendOptionData(ticks[event->timeStamp]->serializeTickData(contract));
 }
 
 void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event) {
@@ -85,6 +99,7 @@ void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event)
         // Now, if trade size is over $10k, create a notification
         double priceInDollars = tas->price * 100;
         double totalTradePrice = priceInDollars * tas->quantity;
+        sdc->sendTimeAndSales(tas->serializeTimeAndSales(contract, currentRtm, currentAsk, currentBid));
         if (totalTradePrice >= 25000) {
             auto largeOrder = std::make_shared<LargeOrderEvent>(contract, tas->timeValue, tas->price,
                 tas->quantity, totalTradePrice, tas->totalVol, tas->vwap, currentAsk, currentBid, currentRtm);
@@ -144,6 +159,33 @@ TimeAndSales::TimeAndSales(std::string data) : data(data) {
     vwap = std::round(vwap * 1000) / 1000;
 }
 
+std::string TimeAndSales::serializeTimeAndSales(const Contract con, const RelativeToMoney rtm, 
+    double currentAsk, double currentBid) {
+    Message message;
+    message.set_type("option_data");
+
+    OptionData* optionData = message.mutable_option_data();
+    optionData->set_symbol(con.symbol);
+    optionData->set_strike(con.strike);
+    optionData->set_right(con.right);
+    optionData->set_exp_date(con.lastTradeDateOrContractMonth);
+
+    TimeAndSalesData* timeAndSales = optionData->mutable_tas()->Add();
+    timeAndSales->set_timestamp(timeValue);
+    timeAndSales->set_price(price);
+    timeAndSales->set_quantity(quantity);
+    timeAndSales->set_total_volume(totalVol);
+    timeAndSales->set_vwap(vwap);
+    timeAndSales->set_current_ask(currentAsk);
+    timeAndSales->set_current_bid(currentBid);
+    timeAndSales->set_current_rtm(getRTMstr(rtm));
+
+    std::string serialized;
+    message.SerializeToString(&serialized);
+
+    return serialized;
+}
+
 void TimeAndSales::print() {
     std::cout << timeValue << " | Price: " << price << " | Quantity: " << quantity << " | Total Vol: "
         << totalVol << " | VWAP: " << vwap << " | Filled by single MM: " << filledBySingleMM << std::endl;
@@ -166,6 +208,9 @@ void ContractData::tickOptionInfo(std::shared_ptr<TickOptionComputationEvent> ev
 
         // Update IV 
         currentIV = event->impliedVol;
+
+        // Serialize and send tick to websocket
+        sdc->sendOptionData(ticks[event->timeStamp]->serializeTickData(contract));
     }
     if (outputData) event->print();
 }
@@ -247,9 +292,9 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
 
         priceDelta_oneMinCandles.addValue(c->candle->high() - c->candle->low());
 
-        // Save one minute candle to db
-        //csv->addDataToQueue(contract.symbol, contract.strike, contract.right, DataType::OneMin, c->formatCSV());
-
+        // Send one minute data to websocket
+        sdc->sendOptionData(c->serializeOneMinData(contract, rtm));
+        
         // Clear temp candles and reset even minute flag
         tempCandles.clear();
         isEvenMinute = false;
@@ -280,9 +325,9 @@ std::string FiveSecondData::serializeFiveSecData(const Contract con, const Relat
     optionData->set_symbol(con.symbol);
     optionData->set_strike(con.strike);
     optionData->set_right(con.right);
-    optionData->set_expdate(con.lastTradeDateOrContractMonth);
+    optionData->set_exp_date(con.lastTradeDateOrContractMonth);
 
-    FiveSecData* fiveSecData = optionData->mutable_fivesecdata()->Add();
+    FiveSecData* fiveSecData = optionData->mutable_five_sec_data()->Add();
     fiveSecData->set_time(candle->time());
     fiveSecData->set_open(candle->open());
     fiveSecData->set_close(candle->close());
@@ -365,23 +410,23 @@ std::string OneMinuteData::serializeOneMinData(const Contract con, const Relativ
     optionData->set_symbol(con.symbol);
     optionData->set_strike(con.strike);
     optionData->set_right(con.right);
-    optionData->set_expdate(con.lastTradeDateOrContractMonth);
+    optionData->set_exp_date(con.lastTradeDateOrContractMonth);
 
-    OneMinData* oneMin = optionData->mutable_onemindata()->Add();
+    OneMinData* oneMin = optionData->mutable_one_min_data()->Add();
     oneMin->set_time(candle->time());
     oneMin->set_open(candle->open());
     oneMin->set_close(candle->close());
     oneMin->set_high(candle->high());
     oneMin->set_low(candle->low());
-    oneMin->set_candlevol(candleVol);
-    oneMin->set_tradecount(tradeCount);
-    oneMin->set_impliedvol(impliedVol);
+    oneMin->set_candle_vol(candleVol);
+    oneMin->set_trade_count(tradeCount);
+    oneMin->set_implied_vol(impliedVol);
     oneMin->set_delta(delta);
     oneMin->set_gamma(gamma);
     oneMin->set_vega(vega);
     oneMin->set_theta(theta);
-    oneMin->set_undprice(undPrice);
-    oneMin->set_totalvol(totalVol);
+    oneMin->set_und_price(undPrice);
+    oneMin->set_total_vol(totalVol);
     oneMin->set_rtm(getRTMstr(rtm));
 
     std::string serialized;
@@ -482,4 +527,34 @@ std::string MarketDataSingleFrame::formatCSV(RelativeToMoney rtm) {
                valueToCSV(tasVWAP) + "," +
                getRTMstr(rtm) + "," +
                filledByMM + "\n";
+}
+
+std::string MarketDataSingleFrame::serializeTickData(const Contract con) {
+    Message message;
+    message.set_type("option_data");
+
+    OptionData* optionData = message.mutable_option_data();
+    optionData->set_symbol(con.symbol);
+    optionData->set_strike(con.strike);
+    optionData->set_right(con.right);
+    optionData->set_exp_date(con.lastTradeDateOrContractMonth);
+
+    TickData* tickData = optionData->mutable_ticks()->Add();
+    tickData->set_timestamp(timestamp);
+    if (bidPrice != -1) tickData->set_bid_price(bidPrice);
+    if (bidSize != -1) tickData->set_bid_size(bidSize);
+    if (askPrice != -1) tickData->set_ask_price(askPrice);
+    if (askSize != -1) tickData->set_ask_size(askSize);
+    if (lastPrice != -1) tickData->set_last_price(lastPrice);
+    if (markPrice != -1) tickData->set_mark_price(markPrice);
+    if (volume != -1) tickData->set_volume(volume);
+    if (impliedVol != -100) tickData->set_implied_vol(impliedVol);
+    if (delta != -100) tickData->set_delta(delta);
+    if (gamma != -100) tickData->set_gamma(gamma);
+    if (vega != -100) tickData->set_vega(vega);
+
+    std::string serialized;
+    message.SerializeToString(&serialized);
+
+    return serialized;
 }

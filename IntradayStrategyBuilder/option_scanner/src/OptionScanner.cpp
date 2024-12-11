@@ -100,6 +100,10 @@ void OptionScanner::monitorOptionChains() {
         std::unique_lock<std::mutex> lock(mtx);
         for (const auto& underlying : trackedTickers) {
             updateOptionStrikes(underlying);
+
+            // Loop over tracked Contract data objects and update underlying price
+            for (auto& i : trackedCalls) { i.second->updateUnderlyingPrice(underlying->getLastPrice()); }
+            for (auto& i : trackedPuts) { i.second->updateUnderlyingPrice(underlying->getLastPrice()); }
         }
         lock.unlock();
 

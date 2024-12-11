@@ -39,6 +39,9 @@ class TimeAndSales {
         TimeAndSales(std::string data);
         void print();
 
+        std::string serializeTimeAndSales(const Contract con, const RelativeToMoney rtm,
+            double currentAsk, double currentBid);
+
         std::string data;
         double price{0};
         int quantity{0};
@@ -63,7 +66,7 @@ struct MarketDataSingleFrame {
 
     std::string valueToCSV(double value);
     std::string formatCSV(RelativeToMoney rtm = RelativeToMoney::NoValue);
-    
+    std::string serializeTickData(const Contract con);
 
     // Variables to track. Items not present will be set to a -1 value aside from greeks, which will be -100
     double bidPrice{-1};
@@ -153,6 +156,9 @@ class ContractData {
         void cancelDataStream();
         void printData();
 
+        // Underlying Price will be updated from the option scnnaer in the case of slow incoming ticks
+        void updateUnderlyingPrice(double price);
+
     private:
         int mktDataId;
         int rtbId;
@@ -163,6 +169,8 @@ class ContractData {
         //std::shared_ptr<CSVFileSaver> csv;
         std::shared_ptr<SocketDataCollector> sdc;
         bool outputData{false};
+
+        std::mutex mtx;
 
         double currentBid{0};
         double currentAsk{0};

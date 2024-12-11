@@ -14,3 +14,7 @@ void SocketDataCollector::sendNewsData(const std::string& news) {
 void SocketDataCollector::sendUnderlyingContractData(const std::string& cd) {
     server->MulticastBinary(cd.data(), cd.size());
 }
+
+void SocketDataCollector::sendTimeAndSales(const std::string& tas) {
+    server->MulticastBinary(tas.data(), tas.size());
+}

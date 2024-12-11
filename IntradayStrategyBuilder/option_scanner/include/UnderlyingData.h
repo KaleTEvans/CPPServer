@@ -92,6 +92,7 @@ class UnderlyingData {
         void startReceivingData();
         void stopReceivingData();
         int getStrikeIncrement();
+        double getLastPrice();
         std::pair<std::vector<double>, std::vector<double>> getStrikes(int countITM = 2);
         std::string formatAveragesCSV();
 
@@ -107,6 +108,7 @@ class UnderlyingData {
             const std::set<std::string>& expirations, const std::set<double>& strikes);
 
         std::string serializeKeyPricePoints();
+        std::string serializePriceTick(long time, double price);
 
         std::map<long, std::pair<std::shared_ptr<TickNewsEvent>, double>> newsTicks; // Paired with most recent underlying price
 
@@ -122,6 +124,8 @@ class UnderlyingData {
         std::shared_ptr<tWrapper> wrapper;
         //std::shared_ptr<CSVFileSaver> csv;
         std::shared_ptr<SocketDataCollector> sdc;
+
+        std::mutex mtx;
 
         double low13Week{-1};
         double high13Week{-1};

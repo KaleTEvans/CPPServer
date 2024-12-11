@@ -21,6 +21,7 @@ class SocketDataCollector {
         void sendOptionData(const std::string& od);
         void sendNewsData(const std::string& news);
         void sendUnderlyingContractData(const std::string& cd);
+        void sendTimeAndSales(const std::string& tas);
 
     private:
         std::shared_ptr<CppServer::WS::WSSServer> server;
