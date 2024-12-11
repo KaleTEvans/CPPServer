@@ -150,7 +150,7 @@ class ContractData {
         ContractData(std::shared_ptr<tWrapper> wrapper,
             std::shared_ptr<SocketDataCollector> sdc,
             std::shared_ptr<ScannerNotificationBus> notifications,
-            int mktDataId, int rtbId, Contract contract, double strikeIncrement);
+            int mktDataId, int rtbId, Contract contract, double strikeIncrement, double underlyingPrice);
         ~ContractData();
 
         void cancelDataStream();
@@ -166,7 +166,6 @@ class ContractData {
         double strikeIncrement;
         double lastUnderlyingPrice{0};
         std::shared_ptr<tWrapper> wrapper;
-        //std::shared_ptr<CSVFileSaver> csv;
         std::shared_ptr<SocketDataCollector> sdc;
         bool outputData{false};
 
@@ -176,6 +175,8 @@ class ContractData {
         double currentAsk{0};
         double currentIV{0};
         RelativeToMoney currentRtm{RelativeToMoney::NoValue};
+
+        RelativeToMoney calculateRTM();
         
         // Send any notifications via the bus
         std::shared_ptr<ScannerNotificationBus> notifications;

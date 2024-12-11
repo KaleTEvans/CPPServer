@@ -2,9 +2,9 @@
 
 ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<SocketDataCollector> sdc,
     std::shared_ptr<ScannerNotificationBus> notifications,
-    int mktDataId, int rtbId, Contract contract, double strikeIncrement) : 
+    int mktDataId, int rtbId, Contract contract, double strikeIncrement, double underlyingPrice) : 
     mktDataId(mktDataId), sdc(sdc), notifications(notifications), rtbId(rtbId), contract(contract), 
-    strikeIncrement(strikeIncrement), wrapper(wrapper) {
+    strikeIncrement(strikeIncrement), wrapper(wrapper), lastUnderlyingPrice(underlyingPrice) {
     // Subscribe to events
     wrapper->getMessageBus()->subscribe(EventType::TickPriceInfo, [this](std::shared_ptr<DataEvent> event) {
         // Use dynamic_pointer_cast to cast Event type to child class type
@@ -27,13 +27,8 @@ ContractData::ContractData(std::shared_ptr<tWrapper> wrapper, std::shared_ptr<So
         if (event->getReqId() == this->rtbId) this->realTimeCandles(std::dynamic_pointer_cast<CandleDataEvent>(event));
     });
 
-    //csv->createDirectoriesAndFiles(contract.symbol, contract.strike, contract.right);
-
     std::cout << "ContractData Request IDs: " << mktDataId << "," << rtbId << " created for  contract: " <<
             contract.symbol << " " << contract.strike << contract.right << std::endl;
-
-    // Wait for underlying price to populate
-    while (lastUnderlyingPrice == 0) std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 ContractData::~ContractData() {
@@ -86,7 +81,7 @@ void ContractData::handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event) {
     if (outputData) event->print();
 
     // Serialize and send tick to websocket
-    sdc->sendOptionData(ticks[event->timeStamp]->serializeTickData(contract));
+    // sdc->sendOptionData(ticks[event->timeStamp]->serializeTickData(contract));
 }
 
 void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event) {
@@ -99,7 +94,7 @@ void ContractData::handleTickStringEvent(std::shared_ptr<TickStringEvent> event)
         // Now, if trade size is over $10k, create a notification
         double priceInDollars = tas->price * 100;
         double totalTradePrice = priceInDollars * tas->quantity;
-        sdc->sendTimeAndSales(tas->serializeTimeAndSales(contract, currentRtm, currentAsk, currentBid));
+        sdc->sendTimeAndSales(tas->serializeTimeAndSales(contract, calculateRTM(), currentAsk, currentBid));
         if (totalTradePrice >= 25000) {
             auto largeOrder = std::make_shared<LargeOrderEvent>(contract, tas->timeValue, tas->price,
                 tas->quantity, totalTradePrice, tas->totalVol, tas->vwap, currentAsk, currentBid, currentRtm);
@@ -215,7 +210,7 @@ void ContractData::tickOptionInfo(std::shared_ptr<TickOptionComputationEvent> ev
     if (outputData) event->print();
 }
 
-void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
+RelativeToMoney ContractData::calculateRTM() {
     double priceDiff = contract.strike - lastUnderlyingPrice;
     double multiple = priceDiff / strikeIncrement;
     double strike = 0;
@@ -227,16 +222,32 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
     RelativeToMoney rtm = RelativeToMoney::NoValue;
     if (contract.right == "C") rtm = getRTM(strike * -1);
     else rtm = getRTM(strike);
-    currentRtm = rtm;
+    
+    return rtm;
+}
 
-    std::shared_ptr<FiveSecondData> fsd = std::make_shared<FiveSecondData>(event->candle, rtm);
+void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
+    // double priceDiff = contract.strike - lastUnderlyingPrice;
+    // double multiple = priceDiff / strikeIncrement;
+    // double strike = 0;
+
+    // if (multiple >= 0) strike = std::ceil(multiple);
+    // else strike = std::floor(multiple);
+
+    // // If a call, positive strike means ITM
+    // RelativeToMoney rtm = RelativeToMoney::NoValue;
+    // if (contract.right == "C") rtm = getRTM(strike * -1);
+    // else rtm = getRTM(strike);
+    currentRtm = calculateRTM();
+
+    std::shared_ptr<FiveSecondData> fsd = std::make_shared<FiveSecondData>(event->candle, currentRtm);
     fiveSecData[event->candle->time()] = fsd;
 
     // Check if candle falls on an even minute
     if (event->candle->time() % 60 == 0) isEvenMinute = true;
 
     // Send the candle to the websocket
-    sdc->sendOptionData(fsd->serializeFiveSecData(contract, rtm));
+    sdc->sendOptionData(fsd->serializeFiveSecData(contract, currentRtm));
 
     tradeCount_fiveSecCandles.addValue(event->candle->count());
     priceDelta_fiveSecCandles.addValue(event->candle->high() - event->candle->low());
@@ -293,7 +304,7 @@ void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
         priceDelta_oneMinCandles.addValue(c->candle->high() - c->candle->low());
 
         // Send one minute data to websocket
-        sdc->sendOptionData(c->serializeOneMinData(contract, rtm));
+        sdc->sendOptionData(c->serializeOneMinData(contract, calculateRTM()));
         
         // Clear temp candles and reset even minute flag
         tempCandles.clear();

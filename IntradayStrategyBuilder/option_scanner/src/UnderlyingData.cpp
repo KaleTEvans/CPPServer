@@ -166,7 +166,6 @@ void UnderlyingData::startReceivingData() {
 
 void UnderlyingData::stopReceivingData() {
     // Save daily data at the end
-    //csv->addDataToQueue(contract.symbol, 0, "None", DataType::UnderlyingAverages, formatAveragesCSV());
     wrapper->cancelMktData(mktDataId);
     wrapper->cancelRealTimeBars(rtbId);
 }
@@ -301,6 +300,7 @@ void UnderlyingData::handleOptionsChainData(const std::string& exchange,
 void UnderlyingData::handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event) {
     if (event->tickType == TickType::LAST) {
         // Send price to web socket
+        currentPrice = event->price;
         sdc->sendUnderlyingContractData(serializePriceTick(event->timeStamp, event->price));
     } else {
         switch (event->tickType)

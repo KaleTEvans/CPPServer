@@ -24,7 +24,7 @@ class OptionScanner {
 
     private:
         // Create option contract requests
-        void addOption(Contract option, double strikeIncrement);
+        void addOption(Contract option, double strikeIncrement, double underlyingPrice);
         // Update option strikes to add new items within chain limit as underlying price changes
         void updateOptionStrikes(std::shared_ptr<UnderlyingData> underlying);
         // Loop that will check for option chain updates every 5 seconds

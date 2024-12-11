@@ -14,15 +14,13 @@ void OptionScanner::start() {
         underlying->startReceivingData();
     }
 
-    // Start csv collection
-    //csv->start();
-
     // Now start the thread to run monitorOptionChains
     optionScannerThread = std::thread([this]() {
         monitorOptionChains();
     });
 
     optScannerRunning = true;
+    std::cout << "Option Scanner Started" << std::endl;
 }
 
 void OptionScanner::stop() {
@@ -36,8 +34,6 @@ void OptionScanner::stop() {
     trackedCalls.clear();
     trackedPuts.clear();
     trackedTickers.clear();
-    // End csv collection
-    //csv->stop();
 }
 
 bool OptionScanner::checkScannerRunning() { return optScannerRunning; }
@@ -51,12 +47,12 @@ void OptionScanner::addSecurity(Contract contract, Contract optionBase) {
     optionBaseContracts.insert({optionBase.symbol, optionBase});
 }
 
-void OptionScanner::addOption(Contract option, double strikeIncrement) {
+void OptionScanner::addOption(Contract option, double strikeIncrement, double underlyingPrice) {
     int mktDataId = wrapper->reqMktData(option, "100,101,106,104,225,232,233,293,294,295,411", false, false);
     int rtbId = wrapper->reqRealTimeBars(option, 5, "TRADES", true);
 
     std::shared_ptr<ContractData> cd = std::make_shared<ContractData>(wrapper, sdc, notifications, mktDataId, 
-        rtbId, option, strikeIncrement);
+        rtbId, option, strikeIncrement, underlyingPrice);
     
     if (option.right == "C") trackedCalls.insert({option.strike, cd});
     else trackedPuts.insert({option.strike, cd});
@@ -83,14 +79,14 @@ void OptionScanner::updateOptionStrikes(std::shared_ptr<UnderlyingData> underlyi
         if (trackedCalls.find(callStrike) == trackedCalls.end()) {
             optionBase.strike = callStrike;
             optionBase.right = "C";
-            addOption(optionBase, strikeIncrement);
+            addOption(optionBase, strikeIncrement, underlying->getLastPrice());
         }
     }
     for (const auto& putStrike : strikes.second) {
         if (trackedPuts.find(putStrike) == trackedPuts.end()) {
             optionBase.strike = putStrike;
             optionBase.right = "P";
-            addOption(optionBase, strikeIncrement);
+            addOption(optionBase, strikeIncrement, underlying->getLastPrice());
         }
     }
 }

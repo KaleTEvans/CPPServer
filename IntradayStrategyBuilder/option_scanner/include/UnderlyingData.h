@@ -122,7 +122,6 @@ class UnderlyingData {
         double currentPrice{0};
         double strikeIncrement{0};
         std::shared_ptr<tWrapper> wrapper;
-        //std::shared_ptr<CSVFileSaver> csv;
         std::shared_ptr<SocketDataCollector> sdc;
 
         std::mutex mtx;
