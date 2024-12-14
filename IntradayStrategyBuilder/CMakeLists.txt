@@ -19,9 +19,9 @@ add_subdirectory(http_server)
 
 add_executable(TwsStrategyCppServer main.cpp ${CMAKE_SOURCE_DIR}/generated/messages.pb.cc)
 
-option(BUILD_TWS_DATA_TEST "Build the test file in tws_data_handler" ON)
-option(BUILD_OPTION_SCANNER_TEST "Build the test file in option_scanner" ON)
-option(BUILD_HTTP_SERVER_TEST "Build the test file in http server" ON)
+option(BUILD_TWS_DATA_TEST "Build the test file in tws_data_handler" OFF)
+option(BUILD_OPTION_SCANNER_TEST "Build the test file in option_scanner" OFF)
+option(BUILD_HTTP_SERVER_TEST "Build the test file in http server" OFF)
 
 # Path to TwsApiIBKR
 # set(TWSAPIIBKR_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/third_party_libs/TwsApiIBKR/source/cppclient/client/libTwsSocketClient.so")

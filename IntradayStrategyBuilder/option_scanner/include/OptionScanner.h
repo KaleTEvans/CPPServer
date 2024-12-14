@@ -30,6 +30,9 @@ class OptionScanner {
         // Loop that will check for option chain updates every 5 seconds
         void monitorOptionChains();
 
+        // Collect news separately from contracts to capture past market hours
+        void handleTickNewsEvent(std::shared_ptr<TickNewsEvent> event);
+
         std::thread optionScannerThread;
         bool optScannerRunning{false};
         bool quitOptionScanner{false};

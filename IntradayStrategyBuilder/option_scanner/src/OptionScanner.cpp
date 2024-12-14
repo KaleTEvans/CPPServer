@@ -6,6 +6,11 @@ OptionScanner::OptionScanner(std::shared_ptr<tWrapper> wrapper,
     wrapper(wrapper), notifications(notifications), sdc(sdc) {
     // Create CSV instance
     csv = std::make_shared<CSVFileSaver>();
+
+    // Subscribe to news events
+    wrapper->getMessageBus()->subscribe(EventType::TickNewsInfo, [this](std::shared_ptr<DataEvent> event) {
+            this->handleTickNewsEvent(std::dynamic_pointer_cast<TickNewsEvent>(event));
+        });
 }
 
 void OptionScanner::start() {
@@ -34,6 +39,7 @@ void OptionScanner::stop() {
     trackedCalls.clear();
     trackedPuts.clear();
     trackedTickers.clear();
+    optionBaseContracts.clear();
 }
 
 bool OptionScanner::checkScannerRunning() { return optScannerRunning; }
@@ -105,4 +111,17 @@ void OptionScanner::monitorOptionChains() {
 
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
+}
+
+void OptionScanner::handleTickNewsEvent(std::shared_ptr<TickNewsEvent> event) {
+    long timeStamp = event->dateTime;
+
+    ContractNewsData cnd;
+    cnd.time = timeStamp;
+    cnd.articleId = event->articleId;
+    cnd.headline = event->headline;
+    cnd.sentimentScore = event->sentimentScore;
+    if (event->hasFullExtraData) sdc->sendNewsData(cnd.serializeNewsObject());
+
+    event->print();
 }

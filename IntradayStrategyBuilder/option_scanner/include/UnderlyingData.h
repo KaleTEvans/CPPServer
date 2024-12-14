@@ -101,7 +101,7 @@ class UnderlyingData {
         void handleTickPriceEvent(std::shared_ptr<TickPriceEvent> event);
         void handleTickSizeEvent(std::shared_ptr<TickSizeEvent> event);
         void handleTickGenericEvent(std::shared_ptr<TickGenericEvent> event);
-        void handleTickNewsEvent(std::shared_ptr<TickNewsEvent> event);
+        // void handleTickNewsEvent(std::shared_ptr<TickNewsEvent> event);
         void handleRealTimeCandles(std::shared_ptr<CandleDataEvent> event);
         void handleOptionsChainData(const std::string& exchange, 
             int underlyingConId, const std::string& tradingClass, const std::string& multiplier, 
@@ -110,7 +110,7 @@ class UnderlyingData {
         std::string serializeKeyPricePoints();
         std::string serializePriceTick(long time, double price);
 
-        std::map<long, std::pair<std::shared_ptr<TickNewsEvent>, double>> newsTicks; // Paired with most recent underlying price
+        // std::map<long, std::pair<std::shared_ptr<TickNewsEvent>, double>> newsTicks; 
 
         std::vector<double> optionsChain;
         std::set<double> optionStrikes;
