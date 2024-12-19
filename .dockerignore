@@ -1,0 +1,16 @@
+# Exclude the root-level build directory
+Build
+Build/*
+
+# Ignore object files and archives at the project root only
+*.o
+*.so
+*.a
+
+# Exclude root-level CMake outputs only
+/CMakeCache.txt
+/CMakeFiles/
+
+# Exclude the CppServer library to be rebuilt in the docker config
+third_party_libs/CppServer/*
+third_party_libs/CppServer

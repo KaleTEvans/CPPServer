@@ -23,9 +23,7 @@ option(BUILD_TWS_DATA_TEST "Build the test file in tws_data_handler" OFF)
 option(BUILD_OPTION_SCANNER_TEST "Build the test file in option_scanner" OFF)
 option(BUILD_HTTP_SERVER_TEST "Build the test file in http server" OFF)
 
-# Path to TwsApiIBKR
-# set(TWSAPIIBKR_LIBRARY_PATH "${CMAKE_CURRENT_SOURCE_DIR}/third_party_libs/TwsApiIBKR/source/cppclient/client/libTwsSocketClient.so")
-# set(TWSAPIIBKR_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/third_party_libs/TwsApiIBKR/source/cppclient/client")
+set(CPPCOMMON_MODULE "Set to on to build only the core cppserver library" ON)
 
 target_link_libraries(TwsStrategyCppServer PUBLIC 
     pthread
@@ -43,12 +41,10 @@ target_include_directories(TwsStrategyCppServer PUBLIC
     ${HTTP_SERVER_INCLUDE_DIR}
 )
 
-#target_compile_options(twsapicpp PRIVATE -Wno-switch)
-
-set_target_properties(
-    TwsStrategyCppServer
-    option_scanner_test
-    http_server_test
-    TwsData_test
-    PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Executables
-)
+# set_target_properties(
+#     TwsStrategyCppServer
+#     option_scanner_test
+#     http_server_test
+#     TwsData_test
+#     PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../Executables
+# )

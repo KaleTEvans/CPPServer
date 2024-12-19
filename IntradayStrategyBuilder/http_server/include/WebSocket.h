@@ -57,7 +57,7 @@ class TWSStrategyServer : public CppServer::WS::WSSServer {
 
         TWSStrategyServer(const std::shared_ptr<CppServer::Asio::Service>& service,
             const std::shared_ptr<CppServer::Asio::SSLContext>& context,
-            int port);
+            const char* twsClientIp,  int port);
 
     protected:
         std::shared_ptr<CppServer::Asio::SSLSession> CreateSession(const std::shared_ptr<CppServer::Asio::SSLServer>& server) override; 
@@ -69,7 +69,7 @@ class TWSStrategyServer : public CppServer::WS::WSSServer {
         std::shared_ptr<SocketDataCollector> sdc = nullptr;
         std::shared_ptr<OptionScanner> optScanner = nullptr;
 
-        const char* twsClientIp = "192.168.12.148";
+        const char* twsClientIp;
         int twsClientPort = 7496;
 
         friend class TWSStrategySession;

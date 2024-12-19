@@ -174,8 +174,8 @@ void TWSStrategySession::onIsbActionMessage(Message& message) {
 
 TWSStrategyServer::TWSStrategyServer(const std::shared_ptr<CppServer::Asio::Service>& service,
                                      const std::shared_ptr<CppServer::Asio::SSLContext>& context,
-                                     int port)
-    : CppServer::WS::WSSServer(service, context, port) {
+                                     const char* twsClientIp, int port)
+    : CppServer::WS::WSSServer(service, context, port), twsClientIp(twsClientIp) {
     // Server setup options
     SetupKeepAlive(true);
     SetupNoDelay(true);

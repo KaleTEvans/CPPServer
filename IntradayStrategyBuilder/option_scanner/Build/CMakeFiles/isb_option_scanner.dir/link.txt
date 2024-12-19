@@ -1,2 +1,0 @@
-/usr/bin/ar qc libisb_option_scanner.a  CMakeFiles/isb_option_scanner.dir/src/Candle.o CMakeFiles/isb_option_scanner.dir/src/CandleTags.o CMakeFiles/isb_option_scanner.dir/src/ContractData.o CMakeFiles/isb_option_scanner.dir/src/OptionEnums.o CMakeFiles/isb_option_scanner.dir/src/OptionScanner.o CMakeFiles/isb_option_scanner.dir/src/OptionTagFormulas.o CMakeFiles/isb_option_scanner.dir/src/PerformanceTracker.o
-/usr/bin/ranlib libisb_option_scanner.a
