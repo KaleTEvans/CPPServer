@@ -52,6 +52,20 @@ RelativeToMoney getRTM(int x) {
     case 4: return RelativeToMoney::ITM4;
     case 5: return RelativeToMoney::ITM5;
     case 6: return RelativeToMoney::ITM6;
+    case 7: return RelativeToMoney::ITM7;
+    case 8: return RelativeToMoney::ITM8;
+    case 9: return RelativeToMoney::ITM9;
+    case 10: return RelativeToMoney::ITM10;
+    case 11: return RelativeToMoney::ITM11;
+    case 12: return RelativeToMoney::ITM12;
+    case 13: return RelativeToMoney::ITM13;
+    case 14: return RelativeToMoney::ITM14;
+    case 15: return RelativeToMoney::ITM15;
+    case 16: return RelativeToMoney::ITM16;
+    case 17: return RelativeToMoney::ITM17;
+    case 18: return RelativeToMoney::ITM18;
+    case 19: return RelativeToMoney::ITM19;
+    case 20: return RelativeToMoney::ITM20;
     
     case -1: return RelativeToMoney::OTM1;
     case -2: return RelativeToMoney::OTM2;
@@ -65,6 +79,14 @@ RelativeToMoney getRTM(int x) {
     case -10: return RelativeToMoney::OTM10;
     case -11: return RelativeToMoney::OTM11;
     case -12: return RelativeToMoney::OTM12;
+    case -13: return RelativeToMoney::OTM13;
+    case -14: return RelativeToMoney::OTM14;
+    case -15: return RelativeToMoney::OTM15;
+    case -16: return RelativeToMoney::OTM16;
+    case -17: return RelativeToMoney::OTM17;
+    case -18: return RelativeToMoney::OTM18;
+    case -19: return RelativeToMoney::OTM19;
+    case -20: return RelativeToMoney::OTM20;
     
     default: return RelativeToMoney::NoValue;
     }
@@ -80,6 +102,20 @@ std::string getRTMstr(RelativeToMoney rtm) {
     case RelativeToMoney::ITM4: return "ITM4";
     case RelativeToMoney::ITM5: return "ITM5";
     case RelativeToMoney::ITM6: return "ITM6";
+    case RelativeToMoney::ITM7: return "ITM7";
+    case RelativeToMoney::ITM8: return "ITM8";
+    case RelativeToMoney::ITM9: return "ITM9";
+    case RelativeToMoney::ITM10: return "ITM10";
+    case RelativeToMoney::ITM11: return "ITM11";
+    case RelativeToMoney::ITM12: return "ITM12";
+    case RelativeToMoney::ITM13: return "ITM13";
+    case RelativeToMoney::ITM14: return "ITM14";
+    case RelativeToMoney::ITM15: return "ITM15";
+    case RelativeToMoney::ITM16: return "ITM16";
+    case RelativeToMoney::ITM17: return "ITM17";
+    case RelativeToMoney::ITM18: return "ITM18";
+    case RelativeToMoney::ITM19: return "ITM19";
+    case RelativeToMoney::ITM20: return "ITM20";
     
     case RelativeToMoney::OTM1: return "OTM1";
     case RelativeToMoney::OTM2: return "OTM2";
@@ -93,6 +129,14 @@ std::string getRTMstr(RelativeToMoney rtm) {
     case RelativeToMoney::OTM10: return "OTM10";
     case RelativeToMoney::OTM11: return "OTM11";
     case RelativeToMoney::OTM12: return "OTM12";
+    case RelativeToMoney::OTM13: return "OTM13";
+    case RelativeToMoney::OTM14: return "OTM14";
+    case RelativeToMoney::OTM15: return "OTM15";
+    case RelativeToMoney::OTM16: return "OTM16";
+    case RelativeToMoney::OTM17: return "OTM17";
+    case RelativeToMoney::OTM18: return "OTM18";
+    case RelativeToMoney::OTM19: return "OTM19";
+    case RelativeToMoney::OTM20: return "OTM20";
 
     case RelativeToMoney::NoValue: return "NoValue";
     

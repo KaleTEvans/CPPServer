@@ -13,7 +13,6 @@ int main(int argc, char** argv)
     std::string base_path = "/home/kale/dev/TWSStrategyCPPServer/IntradayStrategyBuilder/third_party_libs/CppServer/";
     if (argc > 2) 
         base_path = argv[2];
-        std::cout << "Base PAth: " << base_path << std::endl;
 
     // HTTPS server content path
     std::string www = "www/wss";

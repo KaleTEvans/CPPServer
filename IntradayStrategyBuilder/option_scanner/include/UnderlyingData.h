@@ -93,7 +93,7 @@ class UnderlyingData {
         void stopReceivingData();
         int getStrikeIncrement();
         double getLastPrice();
-        std::pair<std::vector<double>, std::vector<double>> getStrikes(int countITM = 2);
+        std::pair<std::vector<double>, std::vector<double>> getStrikes(int countITM = 10);
         std::string formatAveragesCSV();
 
     private:
@@ -109,8 +109,6 @@ class UnderlyingData {
 
         std::string serializeKeyPricePoints();
         std::string serializePriceTick(long time, double price);
-
-        // std::map<long, std::pair<std::shared_ptr<TickNewsEvent>, double>> newsTicks; 
 
         std::vector<double> optionsChain;
         std::set<double> optionStrikes;
@@ -137,6 +135,7 @@ class UnderlyingData {
         bool verifyAveragesRecveived();
 
         bool outputData{false};
+        bool isEvenMinute{false};
 };
 
 #endif

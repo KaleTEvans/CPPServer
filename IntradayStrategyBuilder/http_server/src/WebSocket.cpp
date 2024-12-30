@@ -168,6 +168,18 @@ void TWSStrategySession::onIsbActionMessage(Message& message) {
                 std::string messageString = WSMessages::serializeConfirmationMessage(action, status);
                 std::dynamic_pointer_cast<CppServer::WS::WSSServer>(server())->MulticastBinary(messageString);
             }
+        } else if (isbAction.action() == "check_running") {
+            if (optScanner->checkScannerRunning()) {
+                std::string action = "check_scanner_running";
+                std::string status = "yes";
+                std::string messageString = WSMessages::serializeConfirmationMessage(action, status);
+                std::dynamic_pointer_cast<CppServer::WS::WSSServer>(server())->MulticastBinary(messageString);
+            } else {
+                std::string action = "check_scanner_running";
+                std::string status = "no";
+                std::string messageString = WSMessages::serializeConfirmationMessage(action, status);
+                std::dynamic_pointer_cast<CppServer::WS::WSSServer>(server())->MulticastBinary(messageString);
+            }
         }
     }
 }

@@ -78,7 +78,14 @@
         "scoped_allocator": "cpp",
         "valarray": "cpp",
         "hash_map": "cpp",
-        "hash_set": "cpp"
+        "hash_set": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "coroutine": "cpp",
+        "numbers": "cpp",
+        "ranges": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp"
     },
     "C_Cpp.default.browse.limitSymbolsToIncludedHeaders": true,
     "C_Cpp.default.browse.databaseFilename": "/tmp/vscode/browse.vc.db"

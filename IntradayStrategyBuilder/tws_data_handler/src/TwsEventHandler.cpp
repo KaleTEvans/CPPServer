@@ -50,7 +50,6 @@ MessageBus::MessageBus() {
 void MessageBus::subscribe(EventType type, std::function<void(std::shared_ptr<DataEvent>)> listener) {
     std::lock_guard<std::mutex> lock(mtx);
     listeners[type].push_back(listener);
-    std::cout << "Listener subscribed" << std::endl;
 }
 
 void MessageBus::publish(std::shared_ptr<DataEvent> event) {

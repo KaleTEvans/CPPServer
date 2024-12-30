@@ -121,10 +121,6 @@ UnderlyingData::UnderlyingData(std::shared_ptr<tWrapper> wrapper, std::shared_pt
             if (event->getReqId() == this->mktDataId) this->handleTickGenericEvent(std::dynamic_pointer_cast<TickGenericEvent>(event));
         });
 
-        // wrapper->getMessageBus()->subscribe(EventType::TickNewsInfo, [this](std::shared_ptr<DataEvent> event) {
-        //     this->handleTickNewsEvent(std::dynamic_pointer_cast<TickNewsEvent>(event));
-        // });
-
         wrapper->getMessageBus()->subscribe(EventType::RealTimeCandleData, [this](std::shared_ptr<DataEvent> event) {
             if (event->getReqId() == this->rtbId) this->handleRealTimeCandles(std::dynamic_pointer_cast<CandleDataEvent>(event));
         });
@@ -274,11 +270,11 @@ std::pair<std::vector<double>, std::vector<double>> UnderlyingData::getStrikes(i
     std::vector<double> putStrikes;
     int callIndex = firstOTM - countITM;
     int putIndex = firstOTM + (countITM - 1);
-    while (callStrikes.size() != 10 && callIndex < optionsChain.size()) {
+    while (callStrikes.size() != 20 && callIndex < optionsChain.size()) {
         callStrikes.push_back(optionsChain[callIndex]);
         callIndex++;
     }
-    while (putStrikes.size() != 10 && putIndex >= 0) {
+    while (putStrikes.size() != 20 && putIndex >= 0) {
         putStrikes.push_back(optionsChain[putIndex]);
         putIndex--;
     }
@@ -402,33 +398,10 @@ void UnderlyingData::handleTickGenericEvent(std::shared_ptr<TickGenericEvent> ev
     if (outputData) event->print();
 }
 
-// void UnderlyingData::handleTickNewsEvent(std::shared_ptr<TickNewsEvent> event) {
-//     long timeStamp = event->dateTime;
-//     // Check news tick map for time
-//     auto it = newsTicks.find(timeStamp);
-//     if (it == newsTicks.end()) {
-//         std::pair<std::shared_ptr<TickNewsEvent>, double> lastTick{event, 0};
-//         newsTicks.insert({timeStamp, lastTick});
-//     } else {
-//         it->second.first = event;
-//     }
-
-//     // Since there might be multiple news articles at the same time, we will just ignore the map
-//     // and create objects for each event to save in the data table
-//     ContractNewsData cnd;
-//     cnd.time = timeStamp;
-//     cnd.articleId = event->articleId;
-//     cnd.headline = event->headline;
-//     cnd.sentimentScore = event->sentimentScore;
-//     cnd.price = currentPrice;
-//     if (event->hasFullExtraData) sdc->sendNewsData(cnd.serializeNewsObject());
-//     //if (event->hasFullExtraData) csv->addDataToQueue(contract.symbol, 0, "None", DataType::News, cnd.formatCSV());
-
-//     event->print();
-// }
-
 void UnderlyingData::handleRealTimeCandles(std::shared_ptr<CandleDataEvent> event) {
-    fiveSecData.push_back(event->candle);
+    if (event->candle->time() % 60 == 0) isEvenMinute = true;
+
+    if (isEvenMinute) fiveSecData.push_back(event->candle);
 
     // If there are 12 candles, add to one min candle and clear vector
     if (fiveSecData.size() >= 12) {
@@ -444,6 +417,8 @@ void UnderlyingData::handleRealTimeCandles(std::shared_ptr<CandleDataEvent> even
         // Now add an empty one min candle to back of vector
         UnderlyingOneMinuteData oneMinCandle;
         oneMinuteData.push_back(oneMinCandle);
+
+        isEvenMinute = false;
     }
 
     if (outputData) event->candle->printCandle();
