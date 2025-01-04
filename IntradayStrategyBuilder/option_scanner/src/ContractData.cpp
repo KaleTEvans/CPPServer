@@ -227,17 +227,6 @@ RelativeToMoney ContractData::calculateRTM() {
 }
 
 void ContractData::realTimeCandles(std::shared_ptr<CandleDataEvent> event) {
-    // double priceDiff = contract.strike - lastUnderlyingPrice;
-    // double multiple = priceDiff / strikeIncrement;
-    // double strike = 0;
-
-    // if (multiple >= 0) strike = std::ceil(multiple);
-    // else strike = std::floor(multiple);
-
-    // // If a call, positive strike means ITM
-    // RelativeToMoney rtm = RelativeToMoney::NoValue;
-    // if (contract.right == "C") rtm = getRTM(strike * -1);
-    // else rtm = getRTM(strike);
     currentRtm = calculateRTM();
 
     std::shared_ptr<FiveSecondData> fsd = std::make_shared<FiveSecondData>(event->candle, currentRtm);
